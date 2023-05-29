@@ -9,7 +9,7 @@ function App() {
   const data = useSelector((state) => state.users.users);
 
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
+    fetch(import.meta.env.VITE_REACT_APP_API)
       .then((res) => res.json())
       .then((data) => dispatch(getUsers(data)))
       .catch((error) => console.log(error));
