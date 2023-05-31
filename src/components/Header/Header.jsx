@@ -6,6 +6,7 @@ import { FaRegUser } from "react-icons/fa";
 import ShoppingCart from "./ShoppingCart";
 import SearchBar from "./SearchMobile";
 import Dropdown from "./Dropdown";
+import UserDropdown from "./UserDropdown";
 
 const Header = () => {
   const [navbar, setNavbar] = useState(false);
@@ -37,10 +38,10 @@ const Header = () => {
         />
       )}
 
-      <header className="w-full bg-header flex flex-col items-center justify-center max-[1026px]:fixed max-[1026px]:top-0 ">
+      <header className="w-full  flex flex-col items-center justify-center max-[1026px]:fixed max-[1026px]:top-0 ">
         <section
           className="
-     flex flex-row justify-between items-center h-16 w-full mx-auto border-b-[10px] border-grid"
+     flex flex-row justify-between items-center h-16 w-full mx-auto border-b-[10px] border-grid bg-header"
         >
           <div className="flex flex-row text-white justify-between w-1/2 sm:w-1/3 lg:w-1/5 h-full pl-2">
             <button className="w-full h-full flex justify-center items-center focus:border-r focus:border-r-white">
@@ -71,7 +72,7 @@ const Header = () => {
             </button>
           </div>
         </section>
-        <nav className="h-full  w-full bg-header flex flex-col items-center justify-center">
+        <nav className="h-full w-full bg-header flex flex-col items-center justify-center">
           <div className="p-3 w-full h-2/3 flex flex-row justify-between items-center">
             <div className="lg:hidden flex justify-start items-center w-1/3">
               <button
@@ -129,13 +130,11 @@ const Header = () => {
                 <IoIosSearch color="white" fontSize={32} />
               </button>
             </div>
-            <div className=" lg:flex hidden flex-row-reverse justify-between items-center">
-              <button className="pr-6" onClick={toggleShoppingCart}>
+            <div className=" lg:flex hidden flex-row-reverse justify-between items-center ">
+              <button className="pr-6 " onClick={toggleShoppingCart}>
                 <FiShoppingCart color="white" fontSize={22} />
               </button>
-              <button className="pr-6">
-                <FaRegUser color="white" fontSize={20} />
-              </button>
+              <UserDropdown />
             </div>
             <div
               className={`lg:hidden flex justify-end w-1/3 ${
@@ -152,36 +151,153 @@ const Header = () => {
             style={{ fontSize: "16px" }}
           >
             <div className="hidden lg:flex flex-row justify-between items-center w-full pb-2">
-              <button onClick={toggleDropdown} className="uppercase">
+              <button className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid">
                 new in
               </button>
-              <button onClick={toggleDropdown} className="uppercase">
+              <button
+                onClick={toggleDropdown}
+                className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid"
+              >
                 tus favoritos
               </button>
-              <button onClick={toggleDropdown} className="uppercase">
+              <button
+                onClick={toggleDropdown}
+                className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid"
+              >
                 hombre
               </button>
-              <button onClick={toggleDropdown} className="uppercase">
+              <button
+                onClick={toggleDropdown}
+                className="transition-all easy-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid"
+              >
                 mujer
               </button>
-              <button onClick={toggleDropdown} className="uppercase">
+              <button
+                onClick={toggleDropdown}
+                className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid"
+              >
                 niños
               </button>
-              <button onClick={toggleDropdown} className="uppercase">
+              <button
+                onClick={toggleDropdown}
+                className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid"
+              >
                 marcas
               </button>
-              <button onClick={toggleDropdown} className="uppercase">
+              <button className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid ">
                 sale
               </button>
             </div>
             <p className="lg:hidden block">envío gratis a partir de $29.999</p>
           </div>
         </nav>
+
         {isDropdownOpen && (
           <Dropdown
             isDropdownOpen={isDropdownOpen}
             toggleDropdown={toggleDropdown}
           />
+        )}
+        {navbar && (
+          <div className="overflow-y-auto relative top-0 right-0 h-full w-full bg-nav bg-opacity-5 flex items-center justify-start ">
+            <div className="bg-header text-white h-auto w-1/2 sm:w-1/3 p-4 ease-in-out transform transition-transform duration-300 delay-150">
+              <div className=" text-xl font-medium flex justify-center items-center">
+                <button>NEW IN</button>
+              </div>
+              <div className="collapse collapse-arrow ">
+                <input type="checkbox" />
+                <div className="collapse-title text-xl font-medium ">TITLE</div>
+                <div className="collapse-content">
+                  <ul>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 1
+                    </li>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 2
+                    </li>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 3
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className="collapse collapse-arrow">
+                <input type="checkbox" />
+                <div className="collapse-title text-xl font-medium">TITLE</div>
+                <div className="collapse-content">
+                  <ul>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 1
+                    </li>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 2
+                    </li>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 3
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className="collapse collapse-arrow focus:bg-grid">
+                <input type="checkbox" />
+                <div className="collapse-title text-xl font-medium ">TITLE</div>
+                <div className="collapse-content">
+                  <ul>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 1
+                    </li>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 2
+                    </li>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 3
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className="collapse collapse-arrow">
+                <input type="checkbox" />
+                <div className="collapse-title text-xl font-medium ">TITLE</div>
+                <div className="collapse-content">
+                  <ul>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 1
+                    </li>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 2
+                    </li>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 3
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className="collapse collapse-arrow focus:bg-grid">
+                <input type="checkbox" />
+                <div className="collapse-title text-xl font-medium ">TITLE</div>
+                <div className="collapse-content">
+                  <ul>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 1
+                    </li>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 2
+                    </li>
+                    <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
+                      Opción 3
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className="text-xl font-medium flex justify-center items-center pb-4">
+                <span>SALE</span>
+              </div>
+              <div className="text-xl font-medium flex justify-center items-center ">
+                <FaRegUser color="white" fontSize={20} className="pr-2" />{" "}
+                <span>INGRESAR</span>
+              </div>
+            </div>
+          </div>
         )}
       </header>
     </>
