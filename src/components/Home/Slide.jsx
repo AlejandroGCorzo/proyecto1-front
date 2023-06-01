@@ -85,7 +85,7 @@ const Slide = ({ data }) => {
           key={index}
           src={item.url}
           alt={item.title}
-          className="w-2/3 h-[600px] aspect-auto object-cover"
+          className="w-2/3 h-[350px] md:h-[400px]  xl:h-[500px] 2xl:h-[600px] aspect-auto object-cover"
         />
       ))}
     </Slider>

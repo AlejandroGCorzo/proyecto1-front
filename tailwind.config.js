@@ -18,6 +18,8 @@ export default {
         grid: "#fbc827",
         dash: "#5c5cff",
         orange: "#ed6800",
+        grey: "#f5f5f5",
+        fontGrey: "#e4e4e4",
       },
     },
   },

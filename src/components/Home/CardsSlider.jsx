@@ -89,7 +89,7 @@ const CardsSlider = ({ data }) => {
           {data.map((item, index) => (
             <div
               key={`${index}card`}
-              className="sm:max-w-[250px] border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1"
+              className="sm:max-w-[250px] border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white"
             >
               <span className=" absolute text-white bg-header p-1 ">NUEVO</span>
               <img
@@ -98,7 +98,7 @@ const CardsSlider = ({ data }) => {
                 className="w-full h-56 aspect-auto object-cover"
               />
               <p>brand</p>
-              <p className="text-nav py-2 uppercase font-medium">
+              <p className="text-fontGrey py-2 uppercase font-medium">
                 Product's title
               </p>
               <p>
