@@ -1,8 +1,10 @@
 import Users from "./components/Users";
 import Header from "./components/Header/Header";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getUsers } from "./redux/userSlice";
+import { Route, Routes } from "react-router-dom";
+import Home from "./components/Home/Home";
 
 function App() {
   /* const dispatch = useDispatch();
@@ -16,8 +18,11 @@ function App() {
   }, []); */
 
   return (
-    <div className="flex justify-start items-start flex-col text-center h-auto">
+    <div className="flex flex-col w-full h-full">
       <Header />
+      <Routes>
+        <Route exact path="/" Component={Home} />
+      </Routes>
     </div>
   );
 }

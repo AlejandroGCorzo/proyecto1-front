@@ -17,6 +17,7 @@ export default {
         mark: "#23b9d6",
         grid: "#fbc827",
         dash: "#5c5cff",
+        orange: "#ed6800",
       },
     },
   },
