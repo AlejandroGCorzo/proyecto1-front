@@ -3,14 +3,14 @@ import { FaFacebookF } from "react-icons/fa";
 import { GrInstagram } from "react-icons/gr";
 const Footer = () => {
   return (
-    <div className="w-full h-full mt-20 text-fontGrey text-sm">
-      <div className="h-[420px] flex flex-col justify-center items-center ">
-        <div className="w-full h-36 bg-grid flex flex-row justify-center items-center">
-          <div className="w-1/2 flex flex-row justify-between items-center">
-            <div className="uppercase font-semibold text-nav text-lg w-1/3">
+    <div className="w-full h-auto mt-20 text-fontGrey text-sm self-end justify-end flex">
+      <div className="h-[420px] w-full flex flex-col justify-center items-center">
+        <div className="w-full h-1/2 lg:h-36 bg-grid flex flex-row justify-center items-center">
+          <div className="h-full w-1/2 flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
+            <div className="uppercase font-semibold text-nav text-lg w-full lg:w-1/3 flex justify-center">
               <p>suscribite al newsletter</p>
             </div>
-            <form className="w-1/3 flex justify-center">
+            <form className="w-full lg:w-1/3 flex justify-center">
               <input
                 type="email"
                 name="email"

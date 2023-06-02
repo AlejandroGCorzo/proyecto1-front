@@ -46,24 +46,48 @@ const Home = () => {
         </div>
         <CardsSlider data={data.slice(0, 30)} />
       </div>
-      <div className="w-full lg:w-[85%] flex flex-row justify-center items-center p-10 mt-10 gap-3">
-        <div className="border rounded-md shadow p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
-          <img src="/fila.jpg" alt="fila icon" className="w-1/3" />
+      <div className="w-full lg:w-[85%] flex flex-row justify-center items-center p-5 md:p-10 mt-5 md:mt-10 gap-3">
+        <div className="border rounded-md shadow p-2 md:p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
+          <img
+            src="/fila.jpg"
+            alt="fila icon"
+            className="object-contain h-full w-full md:w-1/2"
+          />
         </div>
-        <div className="border rounded-md shadow p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
-          <img src="/champion.webp" alt="champion icon" className="w-2/3" />
+        <div className="border rounded-md shadow p-2 md:p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
+          <img
+            src="/champion.webp"
+            alt="champion icon"
+            className="object-contain h-full w-full md:w-2/3"
+          />
         </div>
-        <div className="border rounded-md shadow p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
-          <img src="/jordan.png" alt="jordan icon" className="w-1/2" />
+        <div className="border rounded-md shadow p-2 md:p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
+          <img
+            src="/jordan.png"
+            alt="jordan icon"
+            className="object-contain h-full w-full md:w-1/2"
+          />
         </div>
-        <div className="border rounded-md shadow p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
-          <img src="/adidas.jpeg" alt="adidas icon" className="w-1/2" />
+        <div className="border rounded-md shadow p-2 md:p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
+          <img
+            src="/adidas.jpeg"
+            alt="adidas icon"
+            className="object-contain h-full w-full md:w-1/2"
+          />
         </div>
-        <div className="border rounded-md shadow p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
-          <img src="/nike.png" alt="nike icon" className="w-1/2" />
+        <div className="border rounded-md shadow p-2 md:p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
+          <img
+            src="/nike.png"
+            alt="nike icon"
+            className="object-contain h-full w-full md:w-1/2"
+          />
         </div>
-        <div className="border rounded-md shadow p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
-          <img src="/puma.webp" alt="puma icon" className="w-1/2" />
+        <div className="border rounded-md shadow p-2 md:p-4 h-[70px] w-1/6 bg-white flex justify-center items-center">
+          <img
+            src="/puma.webp"
+            alt="puma icon"
+            className="object-contain h-full w-full md:w-1/2"
+          />
         </div>
       </div>
       <div className="w-[95%] h-auto flex justify-center items-center flex-col">
