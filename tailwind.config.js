@@ -20,6 +20,8 @@ export default {
         orange: "#ed6800",
         grey: "#f5f5f5",
         fontGrey: "#e4e4e4",
+        fontDark: "#424e5b",
+        fontLigth: "#979899",
       },
     },
   },
