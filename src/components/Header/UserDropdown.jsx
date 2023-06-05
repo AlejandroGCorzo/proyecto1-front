@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import SignUp from "../Session/SignUp";
 import LogInCode from "../Session/LogInCode";
 import LogIn from "../Session/LogIn";
@@ -68,6 +68,9 @@ function validatePassword(input) {
 const UserDropdown = () => {
   const dropdownRef = useRef(null);
   const dispatch = useDispatch();
+  const currentPath = useLocation();
+  const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
+  const condition = currentPath.pathname === "/login";
   const [logIn, setLogIn] = useState(false);
   const [resetPass, setResetPass] = useState(false);
   const [signUpPass, setSignUpPass] = useState(false);
@@ -76,8 +79,6 @@ const UserDropdown = () => {
   const [code, setCode] = useState(false);
   const [codeSignUp, setCodeSignUp] = useState(false);
   const [codeReset, setCodeReset] = useState(false);
-  const currentPath = useLocation();
-  const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
 
   const toggleDropdown = () => {
     dropdownRef.current.classList.toggle("dropdown-open");
@@ -103,8 +104,9 @@ const UserDropdown = () => {
 
   return (
     <>
-      {currentPath.pathname === "/login" ? (
+      {condition ? (
         <div className="flex flex-col justify-center items-center mt-56 bg-grey">
+          {condition && isLoggedIn && <Navigate to="/" replace={true} />}
           <ul
             className={` text-nav w-96 font-medium flex flex-col justify-center items-center p-4  ${
               isLoggedIn ? "gap-2" : "gap-4"
@@ -151,12 +153,17 @@ const UserDropdown = () => {
             !resetPass &&
             !code &&
             !codeReset &&
+            !codeSignUp &&
             !isLoggedIn ? (
               <>
                 <li className="py-2 font-semibold">
                   Elija una opción para ingresar
                 </li>
-                <li className="bg-gray-100 border rounded w-80 h-10 focus:bg-blue-100">
+                <li
+                  className={`${
+                    condition ? "bg-white" : "bg-gray-100"
+                  } border rounded w-80 h-10 focus:bg-blue-100`}
+                >
                   <button
                     className="w-80 h-10 text-center flex justify-center items-center focus:bg-blue-100"
                     onClick={() => setLogInCode(true)}
@@ -164,7 +171,11 @@ const UserDropdown = () => {
                     Recibir codigo de acceso por e-mail
                   </button>
                 </li>
-                <li className="bg-gray-100 border rounded w-80 h-10 focus:bg-blue-100">
+                <li
+                  className={`${
+                    condition ? "bg-white" : "bg-gray-100"
+                  } border rounded w-80 h-10 focus:bg-blue-100`}
+                >
                   <button
                     className="w-80 h-10 text-center flex justify-center items-center focus:bg-blue-100"
                     onClick={() => setLogIn(true)}
@@ -179,8 +190,9 @@ const UserDropdown = () => {
               !resetPass &&
               !code &&
               !codeReset &&
+              !codeSignUp &&
               isLoggedIn ? (
-              <Session />
+              <Session handleLogOut={handleLogOut} />
             ) : null}
           </ul>
         </div>
@@ -252,7 +264,11 @@ const UserDropdown = () => {
                 <li className="py-2 font-semibold">
                   Elija una opción para ingresar
                 </li>
-                <li className="bg-gray-100 border rounded w-80 h-10 focus:bg-blue-100">
+                <li
+                  className={`${
+                    condition ? "bg-white" : "bg-gray-100"
+                  } border rounded w-80 h-10 focus:bg-blue-100`}
+                >
                   <button
                     className="w-80 h-10 text-center flex justify-center focus:bg-blue-100"
                     onClick={() => setLogInCode(true)}
@@ -260,7 +276,11 @@ const UserDropdown = () => {
                     Recibir codigo de acceso por e-mail
                   </button>
                 </li>
-                <li className="bg-gray-100 border rounded w-80 h-10 focus:bg-blue-100">
+                <li
+                  className={`${
+                    condition ? "bg-white" : "bg-gray-100"
+                  } border rounded w-80 h-10 focus:bg-blue-100`}
+                >
                   <button
                     className="w-80 h-10 text-center flex justify-center focus:bg-blue-100"
                     onClick={() => setLogIn(true)}
@@ -277,7 +297,7 @@ const UserDropdown = () => {
               !codeSignUp &&
               !codeReset &&
               isLoggedIn ? (
-              <Session />
+              <Session handleLogOut={handleLogOut} />
             ) : null}
           </ul>
         </div>

@@ -88,7 +88,7 @@ export const resetPasswordAction = (values) => {
 };
 
 //accion de cerrar sesion
-export const logOutAction = (values) => {
+export const logOutAction = () => {
   return async function (dispatch) {
     try {
       dispatch(logout());

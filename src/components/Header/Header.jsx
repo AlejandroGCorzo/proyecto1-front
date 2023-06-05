@@ -303,7 +303,7 @@ const Header = () => {
               >
                 <div className="text-xl font-medium flex justify-center items-center ">
                   <FaRegUser color="white" fontSize={20} className="pr-2" />{" "}
-                  <span>INGRESAR</span>
+                  {!isLoggedIn ? <span>INGRESAR</span> : <span>MI PERFIL</span>}
                 </div>
               </Link>
             </div>
