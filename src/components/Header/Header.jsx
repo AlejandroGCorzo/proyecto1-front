@@ -7,8 +7,11 @@ import ShoppingCart from "./ShoppingCart";
 import SearchBar from "./SearchMobile";
 import Dropdown from "./Dropdown";
 import UserDropdown from "./UserDropdown";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Header = () => {
+  const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
   const [navbar, setNavbar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -38,7 +41,7 @@ const Header = () => {
         />
       )}
 
-      <header className="w-full  flex flex-col items-center justify-center max-[1026px]:fixed max-[1026px]:top-0 ">
+      <header className="z-[9999] w-full  flex flex-col items-center justify-center max-[1026px]:fixed max-[1026px]:top-0 ">
         <section
           className="
      flex flex-row justify-between items-center h-16 w-full mx-auto border-b-[10px] border-grid bg-header"
@@ -111,10 +114,12 @@ const Header = () => {
               </button>
             </div>
             <div className="flex justify-center items-center w-auto">
-              <img
-                src="https://grid0.vtexassets.com/assets/vtex/assets-builder/grid0.theme/1.0.69/Img/Header/grid___3f6eaa5876e60f68a28d0f2f14c68944.svg"
-                alt="GRID icon"
-              />
+              <Link to={"/"}>
+                <img
+                  src="https://grid0.vtexassets.com/assets/vtex/assets-builder/grid0.theme/1.0.69/Img/Header/grid___3f6eaa5876e60f68a28d0f2f14c68944.svg"
+                  alt="GRID icon"
+                />
+              </Link>
             </div>
             <div className="hidden lg:flex justify-end bg-nav w-[410px] pr-2">
               <input
@@ -199,9 +204,9 @@ const Header = () => {
           />
         )}
         {navbar && (
-          <div className="overflow-y-auto relative top-0 right-0 h-full w-full bg-nav bg-opacity-5 flex items-center justify-start ">
-            <div className="bg-header text-white h-auto w-1/2 sm:w-1/3 p-4 ease-in-out transform transition-transform duration-300 delay-150">
-              <div className=" text-xl font-medium flex justify-center items-center">
+          <div className="overflow-y-auto relative top-0 right-0 h-[100vh] w-full bg-nav bg-opacity-20 flex items-start justify-start ">
+            <div className="bg-header text-white h-auto w-1/2 sm:w-1/3 p-4 ease-in-out transform transition-transform duration-300 delay-150 ">
+              <div className=" text-xl font-medium flex justify-center items-center overflow-y-auto">
                 <button>NEW IN</button>
               </div>
               <div className="collapse collapse-arrow ">
@@ -292,10 +297,15 @@ const Header = () => {
               <div className="text-xl font-medium flex justify-center items-center pb-4">
                 <span>SALE</span>
               </div>
-              <div className="text-xl font-medium flex justify-center items-center ">
-                <FaRegUser color="white" fontSize={20} className="pr-2" />{" "}
-                <span>INGRESAR</span>
-              </div>
+              <Link
+                to={isLoggedIn ? "/" : "/login"}
+                onClick={() => setNavbar(false)}
+              >
+                <div className="text-xl font-medium flex justify-center items-center ">
+                  <FaRegUser color="white" fontSize={20} className="pr-2" />{" "}
+                  {!isLoggedIn ? <span>INGRESAR</span> : <span>MI PERFIL</span>}
+                </div>
+              </Link>
             </div>
           </div>
         )}
