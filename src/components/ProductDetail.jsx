@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Modal from './Modal';
+import { useSwipeable } from 'react-swipeable';
 
 import { useSelector } from "react-redux";
 
@@ -9,13 +10,14 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [isSucursalesOpen, setIsSucursalesOpen] = useState(false);
   const [isEnvioOpen, setIsEnvioOpen] = useState(false);
+  const [isTalleOpen, setIsTalleOpen] = useState(false);
   console.log(isTooltipOpen);
   const detailProduct = {
     tipo: "Zapatillas",
     marca: "Adidas",
     modelo: "Superstar",
     colores: ["Negro", "Rojo"],
-    talle: ["37", "38", "39", "40", "41", "42"],
+    talle: ["37", "38", "39", "40", "41", "42", "43"],
     precio: 89.99,
     codigo: "ZA002",
     genero: "Unisex",
@@ -27,8 +29,13 @@ const ProductDetail = () => {
       images: ["https://essential.vtexassets.com/arquivos/ids/791457-800-auto?v=638193268383530000&width=800&height=auto&aspect=true", "https://essential.vtexassets.com/arquivos/ids/791459-800-auto?v=638193268391030000&width=800&height=auto&aspect=true", "https://essential.vtexassets.com/arquivos/ids/791458-800-auto?v=638193268387270000&width=800&height=auto&aspect=true"],
   };
   const [selectedImage, setSelectedImage] = useState(detailProduct.images[0]);
+  const rutaDelArticulo = "Calzados > Botitas > Botitas Jordan Air 5 Retr";
   const handleToggleTooltip = () => {
     setIsTooltipOpen(!isTooltipOpen);
+  };
+
+  const handleToggleTalle = () => {
+    setIsTalleOpen(!isTalleOpen);
   };
 
   const handleToggleEnvio = () => {
@@ -60,6 +67,24 @@ const ProductDetail = () => {
   const handleImageClick = (imageName) => {
     setSelectedImage(imageName);
   };
+
+  const handleSwipe = (direction) => {
+    if (direction === 'LEFT') {
+      const currentIndex = detailProduct.images.indexOf(selectedImage);
+      const nextIndex = currentIndex === 0 ? detailProduct.images.length - 1 : currentIndex - 1;
+      setSelectedImage(detailProduct.images[nextIndex]);
+    } else if (direction === 'RIGHT') {
+      const currentIndex = detailProduct.images.indexOf(selectedImage);
+      const nextIndex = currentIndex === detailProduct.images.length - 1 ? 0 : currentIndex + 1;
+      setSelectedImage(detailProduct.images[nextIndex]);
+    }
+  };
+  
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => handleSwipe('LEFT'),
+    onSwipedRight: () => handleSwipe('RIGHT'),
+  })
   
   const handleToggleSucursales = () => {
     setIsSucursalesOpen(!isSucursalesOpen);
@@ -90,27 +115,41 @@ const ProductDetail = () => {
     <div className="flex flex-col items-center sm:items-start">
 <div className="lg:flex">
   {/* Contenido del carrusel vertical */}
-  <div className="hidden lg:block lg:w-1/4 sm:mt-2 md:mt-2 sm:ml-1 md:ml-1 lg:mr-1 sm:mr-1 md:mr-1">
-   
-    {detailProduct.images.map((imageName, index) => (
-   <img
-   key={index}
-   className={`w-full mb-4 ${selectedImage === imageName ? 'border border-black' : ''}`}
-   src={imageName}
-   alt={`Image ${index + 1}`}
-   onClick={() => handleImageClick(imageName)}
- />
-))}
-  </div>
-  <div className="w-full lg:w-3/4">
-    <img
-      src={selectedImage}
-      alt={detailProduct.modelo}
-      className="xsm:h-auto sm:mb-0 xsm:w-auto md:w-auto md:mt-auto md:h-auto xsm:mt-40"
-    />
-  </div>
-</div>
+  <div {...handlers} className="hidden lg:block lg:w-1/4 sm:mt-2 md:mt-2 sm:ml-1 md:ml-1 lg:mr-1 sm:mr-1 md:mr-1">
+          
+            {detailProduct.images.map((imageName, index) => (
+              <img
+                key={index}
+                className={`w-full mb-4 ${selectedImage === imageName ? 'border border-black' : ''}`}
+                src={imageName}
+                alt={`Image ${index + 1}`}
+                onClick={() => handleImageClick(imageName)}
+              />
+            ))}
+          </div>
+          <div className="w-full lg:w-3/4">
+             {/** Imagen principal */}
+        <img
+          src={selectedImage}
+          alt={detailProduct.modelo}
+          className="xsm:h-auto sm:mb-0 xsm:w-auto md:w-auto md:mt-auto md:h-auto xsm:mt-40"
+        />
 
+        {/** Navegación */}
+        <div className="md:hidden flex justify-between mt-2">
+          <button onClick={() => handleSwipe('LEFT')}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button onClick={() => handleSwipe('RIGHT')}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+          </div>
+</div>
       <div className="md:hidden">
       </div>
       <div className="mt-3">
@@ -145,8 +184,11 @@ const ProductDetail = () => {
 
     </div>
   </main>
-      <aside className="flex-1 xsm:mt-0 xsm:mb-0 xsm:ml-0 xsm:mr-0 sm:ml-2 sm:mr-0 mx-auto w-full sm:w-1/3 sm:mt-10 justify-end">
-      <img src={detailProduct.icono} alt="Logo del producto" className="w-12 h-12 mb-2" />
+      <aside className="flex-1 md:mt-0 xsm:mt-0 xsm:mb-0 xsm:ml-0 xsm:mr-0 sm:ml-2 sm:mr-0 mx-auto w-full sm:w-1/3 sm:mt-10 justify-end">
+      <h1 className="font-bold tracking-tight text-gray-400 text-1xl mt-4 xsm:mt.0">
+    {rutaDelArticulo}
+  </h1>
+      <img src={detailProduct.icono} alt="Logo del producto" className="w-12 h-12 mt-2 mb-2" />
         <h1 className="font-extrabold tracking-tight text-gray-900 text-3xl mt-4 xsm:mt.0 ">
           {detailProduct.tipo} - {detailProduct.marca} {detailProduct.modelo}
         </h1>
@@ -193,13 +235,112 @@ const ProductDetail = () => {
           <p>12 CUOTAS FIJAS DE $ 13.905,30</p>
         </div>
         <div className="mt-4">
-          <p className="text-lg font-bold">Talles</p>
-          <p>Seleccione un talle:</p>
+            <div className="flex items-center justify-between mr-16">
+            <p>Seleccione un talle:</p>
+        
+      <button onClick={handleToggleTalle} className="flex items-center ml-10 ">
+      
+        <p className="text-blue-500 underline mr-2">Tabla de Talles</p>
+      </button>
+      </div>
+      <Modal id="talleModal" isOpen={isTalleOpen} onClose={handleToggleTalle}>
+  <div className="bg-white text-black p-6">
+    <div>
+      <h3 className="font-bold">TABLA DE TALLES</h3>
+      <div className="leading-tight text-sm">
+        <p className="mt-8">
+          Buscá tu talle en la tabla y comprá seguro. Si tienes dudas sobre cómo medir tu talle, visita el siguiente link:
+          <a href="URL_DEL_LINK">Enlace para medir el talle</a>
+        </p>
+        <table className="mt-4 w-full h-full">
+  <tbody>
+    <tr>
+    <td className="text-center bg-black text-white py-2 px-4">CM</td>
+      <td className="text-center bg-black text-white border py-2 px-4">24</td>
+      <td className="text-center bg-black text-white border py-2 px-4">24.5</td>
+      <td className="text-center bg-black text-white border py-2 px-4">25</td>
+      <td className="text-center bg-black text-white border py-2 px-4">25.5</td>
+      <td className="text-center bg-black text-white border py-2 px-4">26</td>
+      <td className="text-center bg-black text-white border py-2 px-4">26.5</td>
+      <td className="text-center bg-black text-white border py-2 px-4">27</td>
+      <td className="text-center bg-black text-white border py-2 px-4">27.5</td>
+      <td className="text-center bg-black text-white border py-2 px-4">28</td>   
+      <td className="text-center bg-black text-white border py-2 px-4">28.5</td>
+      <td className="text-center bg-black text-white border py-2 px-4">29</td>
+      <td className="text-center bg-black text-white border py-2 px-4">29.5</td>
+      <td className="text-center bg-black text-white border py-2 px-4">30</td>
+      <td className="text-center bg-black text-white border py-2 px-4">30.5</td>
+      <td className="text-center bg-black text-white border py-2 px-4">31</td>
+    </tr>
+    <tr>
+    <td className="text-center bg-white py-2 px-4">ARG</td>
+      <td className="text-center border py-2 px-4">37.5</td>
+      <td className="text-center border py-2 px-4">38</td>
+      <td className="text-center border py-2 px-4">39</td>
+      <td className="text-center border py-2 px-4">39.5</td>
+      <td className="text-center border py-2 px-4">40</td>
+      <td className="text-center border py-2 px-4">40.5</td>
+      <td className="text-center border py-2 px-4">41</td>
+      <td className="text-center border py-2 px-4">41.5</td>
+      <td className="text-center border py-2 px-4">42</td>
+      <td className="text-center border py-2 px-4">42.5</td>
+      <td className="text-center border py-2 px-4">43</td>
+      <td className="text-center border py-2 px-4">43.5</td>
+      <td className="text-center border py-2 px-4">44</td>
+      <td className="text-center border py-2 px-4">44.5</td>
+      <td className="text-center border py-2 px-4">45</td>
+    </tr>
+    <tr>
+    <td className="text-center bg-white py-2 px-4">US</td>
+      <td className="text-center border py-2 px-4">6.00</td>
+      <td className="text-center border py-2 px-4">6.50</td>
+      <td className="text-center border py-2 px-4">7.00</td>
+      <td className="text-center border py-2 px-4">7.50</td>
+      <td className="text-center border py-2 px-4">8.00</td>
+      <td className="text-center border py-2 px-4">8.50</td>
+      <td className="text-center border py-2 px-4">9.00</td>
+      <td className="text-center border py-2 px-4">9.50</td>
+      <td className="text-center border py-2 px-4">10.0</td>
+      <td className="text-center border py-2 px-4">10.5</td>
+      <td className="text-center border py-2 px-4">11.0</td>
+      <td className="text-center border py-2 px-4">11.5</td>
+      <td className="text-center border py-2 px-4">12.0</td>
+      <td className="text-center border py-2 px-4">12.5</td>
+      <td className="text-center border py-2 px-4">13.0</td>
+    </tr>
+    <tr>
+      <td className="text-center bg-white py-2 px-4">EU</td>
+      <td className="text-center border py-2 px-4">38.5</td>
+      <td className="text-center border py-2 px-4">39</td>
+      <td className="text-center border py-2 px-4">40</td>
+      <td className="text-center border py-2 px-4">40.5</td>
+      <td className="text-center border py-2 px-4">41</td>
+      <td className="text-center border py-2 px-4">42</td>
+      <td className="text-center border py-2 px-4">42.5</td>
+      <td className="text-center border py-2 px-4">43</td>
+      <td className="text-center border py-2 px-4">44</td>
+      <td className="text-center border py-2 px-4">44.5</td>
+      <td className="text-center border py-2 px-4">45</td>
+      <td className="text-center border py-2 px-4">45.5</td>
+      <td className="text-center border py-2 px-4">46</td>
+      <td className="text-center border py-2 px-4">46.5</td>
+      <td className="text-center border py-2 px-4">47</td>
+    </tr>
+    {/* Continuar con las filas restantes */}
+  </tbody>
+</table>
+
+
+      </div>
+    </div>
+  </div>
+</Modal>
+
           <div className="flex mt-2">
             {detailProduct.talle.map((size) => (
               <div
                 key={size}
-                className={`border border-gray-300 rounded-md p-2 mr-2 ${
+                className={`border border-gray-300 rounded-md p-4 mr-4 ${
                   selectedSize === size ? "bg-black text-white" : ""
                 }`}
                 onClick={() => handleSizeSelection(size)}
