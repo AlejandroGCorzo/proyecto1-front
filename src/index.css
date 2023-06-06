@@ -12,3 +12,37 @@ body,
   height: 100vh;
   background-color: white;
 }
+
+.contentScroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.contentScroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.contentScroll::-webkit-scrollbar-thumb {
+  background: grey;
+  border-radius: 1rem;
+}
+
+.contentScroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.contentScroll {
+  padding: 1px;
+  max-height: 450px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: white;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 640px) {
+  .contentScroll {
+    padding: 15px;
+    max-height: 600px;
+  }
+}

@@ -109,82 +109,83 @@ const ProductDetail = () => {
   };
 
   return detailProduct ? (
-    <div className="flex flex-col sm:flex-row w-full mt-0">
+    <div className="flex flex-col sm:flex-row w-full mt-0 lg:w-full xl:w-full">
       <div className="hidden sm:block w-full sm:w-1/5"></div>
-      <main className="flex-1 mt-1 ml-1 mb-6 mr-8 sm:mr-0 mx-auto w-full sm:w-3/5 justify-end">
-    <div className="flex flex-col items-center sm:items-start">
-<div className="lg:flex">
-  {/* Contenido del carrusel vertical */}
+      <div className="lg:flex">
+      
   <div {...handlers} className="hidden lg:block lg:w-1/4 sm:mt-2 md:mt-2 sm:ml-1 md:ml-1 lg:mr-1 sm:mr-1 md:mr-1">
-          
-            {detailProduct.images.map((imageName, index) => (
-              <img
-                key={index}
-                className={`w-full mb-4 ${selectedImage === imageName ? 'border border-black' : ''}`}
-                src={imageName}
-                alt={`Image ${index + 1}`}
-                onClick={() => handleImageClick(imageName)}
-              />
-            ))}
-          </div>
-          <div className="w-full lg:w-3/4">
-             {/** Imagen principal */}
-        <img
-          src={selectedImage}
-          alt={detailProduct.modelo}
-          className="xsm:h-auto sm:mb-0 xsm:w-auto md:w-auto md:mt-auto md:h-auto xsm:mt-40"
-        />
+    {detailProduct.images.map((imageName, index) => (
+      <img
+        key={index}
+        className={`w-full mb-4 ${selectedImage === imageName ? 'border border-black' : ''}`}
+        src={imageName}
+        alt={`Image ${index + 1}`}
+        onClick={() => handleImageClick(imageName)}
+      />
+    ))}
+  </div>
+  
+  <div className="w-full lg:w-3/4">
+    {/* Imagen principal */}
+    <img
+      src={selectedImage}
+      alt={detailProduct.modelo}
+      className="xsm:h-auto sm:mb-0 w-500 md:w-400 h-400 xsm:mt-20"
+    />
 
-        {/** Navegación */}
-        <div className="md:hidden flex justify-between mt-2">
-          <button onClick={() => handleSwipe('LEFT')}>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button onClick={() => handleSwipe('RIGHT')}>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-          </div>
-</div>
-      <div className="md:hidden">
-      </div>
-      <div className="mt-3">
-        <h3 className="text-lg3 mt-3 font-bold">DESCRIPCION</h3>
-        <p className="text-gray-500 mt-3">{detailProduct.descripcion}</p>
-      </div>
+    {/* Navegación */}
+    <div className="md:hidden flex justify-between mt-2">
+      <button onClick={() => handleSwipe('LEFT')}>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button onClick={() => handleSwipe('RIGHT')}>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
     </div>
-    <div className="mt-4">
-      <h3 className="text-lg font-bold">ESPECIFICACIONES</h3>
-      <table className="mt-3 w-full">
+    <main className="flex-1 h-auto lg:w-3/4 order-2 xsm:order-1 mt-1 ml-1 mb-6 mr-8 sm:mr-0 mx-auto w-full sm:w-3/5 justify-center sm:justify-end">
+  <div className="flex flex-col items-center sm:items-start">
+    <div className="mt-0">
+      <h3 className="text-lg3 mt-3 font-bold">DESCRIPCION</h3>
+      <p className="text-gray-500 mt-3">{detailProduct.descripcion}</p>
+    </div>
+  </div>
+  <div className="mt-4">
+    <h3 className="text-lg font-bold">ESPECIFICACIONES</h3>
+    <table className="mt-3 w-full">
+        <tbody>    
+              <tr>
+        <th className="bg-gray-200 text-left px-4 py-2">Genero:</th>
+        <td className="bg-gray-100 text-left px-4 py-2">{detailProduct.genero}</td>
+      </tr>
       <tr>
-    <th className="bg-gray-200 text-left px-4 py-2">Genero:</th>
-    <td className="bg-gray-100 text-left px-4 py-2">{detailProduct.genero}</td>
-  </tr>
-  <tr>
-    <th className="bg-gray-100 text-left px-4 py-2">Color:</th>
-    <td className="bg-gray-100 text-left px-4 py-2">{detailProduct.colores.join(", ")}</td>
-  </tr>
-  <tr>
-    <th className="bg-gray-200 text-left px-4 py-2">Proveedor:</th>
-    <td className="bg-gray-100 text-left px-4 py-2">{detailProduct.proveedor}</td>
-  </tr>
-  <tr>
-    <th className="bg-gray-100 text-left px-4 py-2">Disciplina:</th>
-    <td className="bg-gray-100 text-left px-4 py-2">{detailProduct.disciplina}</td>
-  </tr>
-  <tr>
-    <th className="bg-gray-200 text-left px-4 py-2">Marca:</th>
-    <td className="bg-gray-100 text-left px-4 py-2">{detailProduct.marca}</td>
-  </tr>
-</table>
+        <th className="bg-gray-100 text-left px-4 py-2">Color:</th>
+        <td className="bg-gray-100 text-left px-4 py-2">{detailProduct.colores.join(", ")}</td>
+      </tr>
+      <tr>
+        <th className="bg-gray-200 text-left px-4 py-2">Proveedor:</th>
+        <td className="bg-gray-100 text-left px-4 py-2">{detailProduct.proveedor}</td>
+      </tr>
+      <tr>
+        <th className="bg-gray-100 text-left px-4 py-2">Disciplina:</th>
+        <td className="bg-gray-100 text-left px-4 py-2">{detailProduct.disciplina}</td>
+      </tr>
+      <tr>
+        <th className="bg-gray-200 text-left px-4 py-2">Marca:</th>
+        <td className="bg-gray-100 text-left px-4 py-2">{detailProduct.marca}</td>
+      </tr>
+      </tbody>
 
-    </div>
-  </main>
-      <aside className="flex-1 md:mt-0 xsm:mt-0 xsm:mb-0 xsm:ml-0 xsm:mr-0 sm:ml-2 sm:mr-0 mx-auto w-full sm:w-1/3 sm:mt-10 justify-end">
+    </table>
+  </div>
+</main>
+  </div>
+</div>
+
+      <aside className="flex-1 lg:w-1/4 order-2 xsm:order-1 md:mt-0 xsm:mt-0 xsm:mb-0 xsm:ml-0 xsm:mr-0 sm:ml-2 sm:mr-0 mx-auto w-full sm:w-1/3 sm:mt-10 justify-end">
       <h1 className="font-bold tracking-tight text-gray-400 text-1xl mt-4 xsm:mt.0">
     {rutaDelArticulo}
   </h1>
