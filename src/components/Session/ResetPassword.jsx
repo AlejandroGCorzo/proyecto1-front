@@ -41,17 +41,17 @@ const ResetPassword = ({
   };
   const handleInputChangeReset = (e) => {
     e.preventDefault();
-    setInputReset((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setInputReset((prev) => ({ ...prev, [name]: value }));
     let errorObj = validatePassword({
       ...inputReset,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
     setErrorReset(errorObj);
   };
   const handleCodeReset = (e) => {
     e.preventDefault();
-    const value = e.target.value;
-    const name = e.target.name;
+    const { name, value } = e.target;
     if (value === "back") {
       setResetPass(false);
       setCodeReset(false);

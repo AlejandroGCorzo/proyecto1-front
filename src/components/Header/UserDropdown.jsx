@@ -87,7 +87,7 @@ const UserDropdown = () => {
 
   const handleComponents = (e) => {
     e.preventDefault();
-    const value = e.target.value;
+    const { value } = e.target;
     if (value === "forgotPass") {
       setResetPass(true);
       setLogIn(false);
@@ -105,7 +105,7 @@ const UserDropdown = () => {
   return (
     <>
       {condition ? (
-        <div className="flex flex-col justify-center items-center mt-56 bg-grey">
+        <div className="flex flex-col justify-center items-center mt-52 bg-grey">
           {condition && isLoggedIn && <Navigate to="/" replace={true} />}
           <ul
             className={` text-nav w-96 font-medium flex flex-col justify-center items-center p-4  ${

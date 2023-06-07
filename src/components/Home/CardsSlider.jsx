@@ -98,7 +98,7 @@ const CardsSlider = ({ data }) => {
                 className="w-full h-56 aspect-auto object-cover"
               />
               <p>brand</p>
-              <p className="text-fontGrey py-2 uppercase font-medium">
+              <p className="text-gray-400 py-2 uppercase font-medium">
                 Product's title
               </p>
               <p>
