@@ -3,14 +3,19 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./components/Home/Home";
 import Footer from "./components/Footer.jsx/Footer";
 import UserDropdown from "./components/Header/UserDropdown";
+import PanelHome from "./components/PanelAdmin/PanelHome";
+import PrivateRoutes from "./utils/PrivateRoutes";
 
 function App() {
   return (
     <div className="flex flex-col w-full h-auto bg-grey">
       <Header />
       <Routes>
-        <Route path="/" Component={Home} />
-        <Route path="/login" Component={UserDropdown} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<UserDropdown />} />
+        <Route element={<PrivateRoutes />}>
+          <Route path="/admin/*" element={<PanelHome />} />
+        </Route>
       </Routes>
       <Footer />
       <a href="https://wa.me/5491133130958/?text=Hola" target="_blank">
