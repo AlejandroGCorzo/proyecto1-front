@@ -88,11 +88,8 @@ const CardsSlider = ({ data }) => {
       <div className="containerSlider">
         <Slider {...settings} arrows={true}>
           {data.map((item, index) => (
-            <Link to={"/detail"}>
-              <div
-                key={`${index}card`}
-                className="sm:max-w-[250px] border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white"
-              >
+            <Link to={"/detail"} key={`${index}card`}>
+              <div className="sm:max-w-[250px] border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
                 <span className=" absolute text-white bg-header p-1 ">
                   NUEVO
                 </span>
