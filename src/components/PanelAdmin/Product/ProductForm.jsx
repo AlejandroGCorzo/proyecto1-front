@@ -80,6 +80,9 @@ function validateProduct(input) {
   if (!input.genero) {
     errorsProduct.genero = "El campo Género no puede estar vacío.";
   }
+  if (input.proveedor !== input.codigo) {
+    errorsProduct.proveedor = "El campo Proveedor debe ser igual al Código.";
+  }
   if (!input.proveedor) {
     errorsProduct.proveedor = "El campo Proveedor no puede estar vacío.";
   }
@@ -91,6 +94,7 @@ function validateProduct(input) {
 }
 const ProductForm = () => {
   const dispatch = useDispatch();
+  const token = localStorage.getItem("token");
   const [color, setColor] = useState("");
   const [errorColor, setErrorColor] = useState({});
   const [size, setSize] = useState({ talle: "", cantidad: 0 });
@@ -204,11 +208,14 @@ const ProductForm = () => {
       }));
 
       await dispatch(
-        postProductAction({
-          ...form,
-          precio: priceToNumber,
-          talle: sizeAmountToNumber,
-        })
+        postProductAction(
+          {
+            ...form,
+            precio: priceToNumber,
+            talle: sizeAmountToNumber,
+          },
+          token
+        )
       );
     }
     post();

@@ -71,7 +71,7 @@ export const resetPasswordAction = (values) => {
       const res = await axios.patch(`${url}/user/changePassword`, values);
       dispatch(setUser(res.data));
     } catch (error) {
-      console.log();
+      console.log(error);
     }
   };
 };

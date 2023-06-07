@@ -69,7 +69,7 @@ const UserDropdown = () => {
   const dropdownRef = useRef(null);
   const dispatch = useDispatch();
   const currentPath = useLocation();
-  const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
+  const { isLoggedIn, userRole } = useSelector((state) => state.users);
   const condition = currentPath.pathname === "/login";
   const [logIn, setLogIn] = useState(false);
   const [resetPass, setResetPass] = useState(false);
@@ -192,7 +192,7 @@ const UserDropdown = () => {
               !codeReset &&
               !codeSignUp &&
               isLoggedIn ? (
-              <Session handleLogOut={handleLogOut} />
+              <Session handleLogOut={handleLogOut} userRole={userRole} />
             ) : null}
           </ul>
         </div>
@@ -297,7 +297,7 @@ const UserDropdown = () => {
               !codeSignUp &&
               !codeReset &&
               isLoggedIn ? (
-              <Session handleLogOut={handleLogOut} />
+              <Session handleLogOut={handleLogOut} userRole={userRole} />
             ) : null}
           </ul>
         </div>

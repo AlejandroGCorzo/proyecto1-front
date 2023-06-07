@@ -3,7 +3,7 @@ import { addProduct, setError, setLoading, setProduct } from "./productSlice";
 const url = import.meta.env.VITE_REACT_APP_API;
 
 //accion de creacion de producto
-export const getProductAction = (values) => {
+export const getProductAction = () => {
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
@@ -16,11 +16,15 @@ export const getProductAction = (values) => {
   };
 };
 //accion de creacion de producto
-export const postProductAction = (values) => {
+export const postProductAction = (values, token) => {
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
-      const res = await axios.post(`${url}/productos`, values);
+      const res = await axios.post(`${url}/productos`, values, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
       dispatch(addProduct(res.data));
       dispatch(setLoading(false));
     } catch (error) {
