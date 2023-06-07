@@ -10,7 +10,7 @@ function Session({ handleLogOut, userRole }) {
         </button>
       </li>
       <li className="border w-[90%]"></li>
-      {userRole[0] === "ADMIN" && (
+      {userRole.includes("ADMIN") && (
         <Link to={"/admin"}>
           <li className=" w-80 h-10 pb-2 ">
             <button className="w-80 h-10 text-start flex justify-start items-start uppercase hover:text-orange transition-all ease-in-out">
