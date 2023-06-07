@@ -4,7 +4,7 @@ import { FaShoppingCart } from "react-icons/fa";
 const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
   return (
     <div
-      className={`fixed inset-0 flex flex-1 z-50 justify-end transition-all ease-in-out${
+      className={`fixed inset-0 flex flex-1 z-[9999] justify-end transition-all ease-in-out${
         isOpen ? "flex" : "hidden"
       }`}
     >

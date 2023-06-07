@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   return (
-    <nav className="w-1/4 h-full p-5 min-w-min">
+    <nav className="w-1/4 h-full p-5 min-w-[150px]">
       <section className="flex flex-row items-center justify-start gap-4 py-6">
         <img
           src="/avatar.jpg"

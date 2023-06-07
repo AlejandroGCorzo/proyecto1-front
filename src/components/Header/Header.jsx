@@ -41,7 +41,7 @@ const Header = () => {
         />
       )}
 
-      <header className="z-[9999] w-full  flex flex-col items-center justify-center max-[1026px]:fixed max-[1026px]:top-0 ">
+      <header className="z-[999] w-full  flex flex-col items-center justify-center max-[1026px]:fixed max-[1026px]:top-0 ">
         <section
           className="
      flex flex-row justify-between items-center h-16 w-full mx-auto border-b-[10px] border-grid bg-header"
