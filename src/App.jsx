@@ -5,7 +5,7 @@ import Footer from "./components/Footer.jsx/Footer";
 import UserDropdown from "./components/Header/UserDropdown";
 import PanelHome from "./components/PanelAdmin/PanelHome";
 import PrivateRoutes from "./utils/PrivateRoutes";
-import ProductDetail from "./components/ProductDetail/ProductDetail";
+import ProductDetail from "./components/ProductDetail";
 
 function App() {
   return (
