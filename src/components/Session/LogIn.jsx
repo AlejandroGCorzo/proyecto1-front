@@ -19,10 +19,11 @@ const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
 
   const handleInputChangeLogIn = (e) => {
     e.preventDefault();
-    setInputLogIn((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setInputLogIn((prev) => ({ ...prev, [name]: value }));
     let errorObj = validatePassword({
       ...inputLogIn,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
     setErrorLogIn((prev) => errorObj);
   };

@@ -15,12 +15,13 @@ const LogInCode = ({ logInCode, setLogInCode, code, setCode }) => {
 
   const handleInputChange = (e) => {
     e.preventDefault();
-    setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setInput((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleCodeLogIn = (e) => {
     e.preventDefault();
-    const value = e.target.value;
+    const { value } = e.target;
 
     if (value === "back") {
       setLogInCode(false);
@@ -34,7 +35,7 @@ const LogInCode = ({ logInCode, setLogInCode, code, setCode }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const name = e.target.name;
+    const { name } = e.target;
     if (name === "logInWithCode") {
       setLogInCode(false);
       setCode(false);
@@ -43,7 +44,7 @@ const LogInCode = ({ logInCode, setLogInCode, code, setCode }) => {
     if (name === "sendLogInCode") {
       setLogInCode(false);
       setCode(true);
-
+      //conprobar que el usuario exista
       dispatch(logInSetNewCodeAction({ email: encode(input.email) }));
     }
   };

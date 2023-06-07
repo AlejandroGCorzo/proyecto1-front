@@ -4,7 +4,7 @@ import { GrInstagram } from "react-icons/gr";
 import FooterOptions from "./FooterOptions";
 const Footer = () => {
   return (
-    <div className="w-full h-auto mt-14 lg:mt-20 text-fontGrey text-sm self-end justify-end flex bg-header">
+    <div className="w-full h-auto mt-10 lg:mt-18 text-fontGrey text-sm self-end justify-end flex bg-header">
       <div className="h-auto lg:h-[420px] w-full flex flex-col justify-end items-center">
         <div className="w-full h-auto lg:h-36 bg-grid flex flex-row justify-center items-center py-2">
           <div className="h-full w-3/4 flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
@@ -44,7 +44,7 @@ const Footer = () => {
           <a
             href="https://wa.me/5491133130958/?text=Hola, quisiera cancelar mi compra..."
             target="_blank"
-            className="flex items-center border-b border-b-white h-12 w-full bg-header lg:h-auto lg:bg-nav lg:w-auto lg:border py-2 px-4 lg:self-end lg:rounded lg:uppercase"
+            className="text-base flex items-center border-b border-b-white h-12 w-full bg-header lg:h-auto lg:bg-nav lg:w-auto lg:border py-2 px-4 lg:self-end lg:rounded lg:uppercase"
           >
             Arrepentimiento de compra
           </a>

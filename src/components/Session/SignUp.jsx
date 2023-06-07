@@ -39,8 +39,7 @@ const SignUp = ({
   };
   const handleCodeSignUp = (e) => {
     e.preventDefault();
-    const name = e.target.name;
-    const value = e.target.value;
+    const { name, value } = e.target;
     if (value === "back") {
       setSignUpPass(false);
       setCodeSignUp(false);
@@ -57,10 +56,11 @@ const SignUp = ({
 
   const handleInputChangeSignUp = (e) => {
     e.preventDefault();
-    setInputSignUp((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setInputSignUp((prev) => ({ ...prev, [name]: value }));
     let errorObj = validatePassword({
       ...inputSignUp,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
     setErrorSignUp(errorObj);
   };
