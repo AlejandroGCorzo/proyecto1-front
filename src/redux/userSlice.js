@@ -17,19 +17,16 @@ const userSlice = createSlice({
         state.email = action.payload.user.email;
         state.userId = action.payload.user._id;
         state.userRole = action.payload.user.role;
-        state.token = action.payload.token ? action.payload.token : "";
+        state.token = action.payload.token;
         state.isLoggedIn = true;
       } else {
         state.email = action.payload.email;
         state.userId = action.payload._id;
         state.userRole = action.payload.role;
-        state.token = action.payload.token ? action.payload.token : "";
+        state.token = action.payload.token;
         state.isLoggedIn = true;
       }
-      localStorage.setItem(
-        "token",
-        action.payload.token ? action.payload.token : ""
-      );
+      localStorage.setItem("token", action.payload.token);
     },
 
     logout: (state) => {
