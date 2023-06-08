@@ -6,6 +6,8 @@ const initialState = {
   userRole: [],
   token: "",
   isLoggedIn: false,
+  userError: "",
+  loading: false,
 };
 
 const userSlice = createSlice({
@@ -28,6 +30,12 @@ const userSlice = createSlice({
       }
       localStorage.setItem("token", action.payload.token);
     },
+    setUserError: (state, action) => {
+      state.userError = action.payload;
+    },
+    setUserLoading: (state, action) => {
+      state.loading = action.payload;
+    },
 
     logout: (state) => {
       state.isLoggedIn = false;
@@ -40,6 +48,7 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUser, logout } = userSlice.actions;
+export const { setUser, setUserError, setUserLoading, logout } =
+  userSlice.actions;
 
 export default userSlice.reducer;
