@@ -1,9 +1,24 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { postProductAction } from "../../../redux/productActions";
+import {
+  setErrorProduct,
+  setSuccessProduct,
+} from "../../../redux/productSlice";
+import ServerError from "../../../utils/ServerError";
+import ServerSuccess from "../../../utils/ServerSuccess";
 
+function validateImage(input) {
+  let errorsImage = {};
+
+  if (!input) {
+    errorsImage.image = "Cargar mínimo una imagen al campo Imagen.";
+  }
+
+  return errorsImage;
+}
 function validateColor(input) {
   let errorsColor = {};
 
@@ -93,13 +108,19 @@ function validateProduct(input) {
   return errorsProduct;
 }
 const ProductForm = () => {
+  const formData = new FormData();
+  const fileInputRef = useRef(null);
   const dispatch = useDispatch();
+  const { error, success } = useSelector((state) => state.products);
   const token = localStorage.getItem("token");
+  const [image, setImage] = useState([]);
+  const [errorImage, setErrorImage] = useState({});
   const [color, setColor] = useState("");
   const [errorColor, setErrorColor] = useState({});
   const [size, setSize] = useState({ talle: "", cantidad: 0 });
   const [errorSize, setErrorSize] = useState({ talle: "", cantidad: "" });
   const [form, setForm] = useState({
+    imagenes: [],
     tipo: "",
     modelo: "",
     marca: "",
@@ -115,22 +136,35 @@ const ProductForm = () => {
   const [errorsForm, setErrorsForm] = useState({});
 
   const validateOnBlur = (e) => {
-    const { value, name } = e.target;
+    const { value, name, files } = e.target;
     if (name === "color") {
       let errorColorValidation = validateColor(color);
       setErrorColor(errorColorValidation);
     } else if (name === "talle" || name === "cantidad") {
       let errorSizeValidation = validateSize(size);
       setErrorSize(errorSizeValidation);
+    } else if (name === "image") {
+      let validatedImage = validateImage(files[0]);
+      setErrorImage(validatedImage);
     } else {
       let errorFormValidation = validateProduct(form);
       setErrorsForm(errorFormValidation);
     }
   };
+
+  const clearReducer = () => {
+    dispatch(setErrorProduct(""));
+    dispatch(setSuccessProduct(""));
+  };
   const clearForm = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Limpiar el valor del input
+    }
     setColor("");
+    setImage([]);
     setSize({ talle: "", cantidad: 0 });
     setForm({
+      imagenes: [],
       tipo: "",
       modelo: "",
       marca: "",
@@ -143,8 +177,29 @@ const ProductForm = () => {
       proveedor: "",
       disciplina: "",
     });
+    dispatch(setErrorProduct(""));
+    dispatch(setSuccessProduct(""));
   };
 
+  const handleImageChange = (e) => {
+    const { files, name } = e.target;
+    let file = files[0];
+    if (file) {
+      if (image.length) {
+        setImage((prev) => [...prev, file]);
+      } else {
+        setImage([file]);
+      }
+    }
+    let validatedImage = validateImage(file);
+    setErrorImage(validatedImage);
+  };
+  const handleImageSubmit = (e) => {
+    e.preventDefault();
+    for (let index = 0; index < image.length; index++) {
+      formData.append("files", image[index]);
+    }
+  };
   const handleColorChange = (e) => {
     e.preventDefault();
     const { value, name } = e.target;
@@ -198,31 +253,33 @@ const ProductForm = () => {
     });
     setErrorsForm(errorObj);
   };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     async function post() {
-      let priceToNumber = Number(form.precio);
-      let sizeAmountToNumber = form.talle.map((item) => ({
-        talle: item.talle,
-        cantidad: Number(item.cantidad),
-      }));
+      formData.append("data", JSON.stringify(form));
+      for (let index = 0; index < image.length; index++) {
+        formData.append("files", image[index]);
+      }
 
-      await dispatch(
-        postProductAction(
-          {
-            ...form,
-            precio: priceToNumber,
-            talle: sizeAmountToNumber,
-          },
-          token
-        )
-      );
+      await dispatch(postProductAction(formData, token));
     }
     post();
     clearForm();
   };
 
-  let isDisabled =
+  let isColorDisabled =
+    !color.length || Object.values(errorColor).join("").length ? true : false;
+  let isImageDisabled =
+    !image.length || Object.values(errorImage).join("").length ? true : false;
+
+  let isSizeDisabled =
+    !Object.values(size).every((value) => !!value) ||
+    Object.values(errorSize).join("").length
+      ? true
+      : false;
+
+  let isFormDisabled =
     !Object.values(form).join("").length ||
     Object.values(errorColor).join("").length ||
     Object.values(errorSize).join("").length ||
@@ -233,11 +290,15 @@ const ProductForm = () => {
   return (
     <div className="flex flex-col w-full justify-start items-center">
       <div
-        className="w-full p-2 flex flex-row self-start justify-between 
-        text-xl text-blue-400 ml-4"
+        className="w-full p-2 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between sm:mt-0
+        text-xl text-blue-400 ml-4 mt-4"
       >
-        <Link to="/admin/products" className="flex items-center ">
-          <AiOutlineArrowLeft className=" pr-1" fontSize={20} /> Volver
+        <Link
+          to="/admin/products"
+          className="flex items-center "
+          onClick={clearReducer}
+        >
+          <AiOutlineArrowLeft className="pr-1" fontSize={20} /> Volver
         </Link>
         <button
           className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out self-center justify-end"
@@ -246,20 +307,51 @@ const ProductForm = () => {
           Limpiar formulario
         </button>
       </div>
-      <h2 className="pt-2 h-10 font-semibold text-fontDark underline text-2xl flex self-center w-2/3">
+      <h2 className="pt-2 h-10 font-semibold text-fontDark underline text-2xl flex self-center sm:w-2/3">
         Crear producto:{" "}
       </h2>
+      <form
+        className="form-control w-2/3 gap-4 p-4 text-lg flex flex-col lg:flex-row justify-around items-start lg:items-end"
+        onSubmit={handleImageSubmit}
+      >
+        <div className="flex flex-col w-40 sm:w-full">
+          <label className="label pt-2 pb-0 text-fontDark ">
+            <span>Imagen</span>
+          </label>
+          <input
+            type="file"
+            className="file-input-xs sm:file-input bg-fontGrey w-full text-white"
+            name="image"
+            onChange={handleImageChange}
+            onBlur={validateOnBlur}
+            placeholder="Imagen"
+            ref={fileInputRef}
+          />
+          {errorImage.image ? (
+            <small className="h-6 text-red-600 w-full flex self-start mb-1">
+              {errorImage.image}
+            </small>
+          ) : null}
+        </div>
+        <button
+          type="submit"
+          className="btn mt-1 lg:mt-0  text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+          disabled={isImageDisabled}
+        >
+          Añadir
+        </button>
+      </form>
       <form
         className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col lg:flex-row justify-around items-start lg:items-end"
         onSubmit={handleColorSubmit}
       >
-        <div className="w-full">
+        <div className="flex flex-col w-40 sm:w-full">
           <label className="label pt-2 pb-0">
             <span>Color</span>
           </label>
           <input
             type="text"
-            className="input bg-fontGrey w-2/3"
+            className="input bg-fontGrey w-full"
             name="color"
             value={color}
             onChange={handleColorChange}
@@ -274,16 +366,17 @@ const ProductForm = () => {
         </div>
         <button
           type="submit"
-          className="btn mt-1 lg:mt-0  text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out"
+          className="btn mt-1 lg:mt-0  text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+          disabled={isColorDisabled}
         >
           Añadir
         </button>
       </form>
       <form
-        className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col  justify-between items-start 2xl:flex-row 2xl:items-end"
+        className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start 2xl:flex-row 2xl:items-end"
         onSubmit={handleSizeSubmit}
       >
-        <div>
+        <div className="flex flex-col w-40 sm:w-1/2">
           <label className="label pt-2 pb-0">
             <span>Talle</span>
           </label>
@@ -302,7 +395,7 @@ const ProductForm = () => {
             </small>
           ) : null}
         </div>
-        <div>
+        <div className="flex flex-col w-40 sm:w-1/2">
           <label className="label pt-2 pb-0">
             <span>Cantidad</span>
           </label>
@@ -324,7 +417,8 @@ const ProductForm = () => {
         </div>
         <button
           type="submit"
-          className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out"
+          className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+          disabled={isSizeDisabled}
         >
           Añadir
         </button>
@@ -490,11 +584,13 @@ const ProductForm = () => {
         <button
           type="submit"
           className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
-          disabled={isDisabled}
+          disabled={isFormDisabled}
         >
           Crear producto
         </button>
       </form>
+      {error && <ServerError error={error} />}
+      {success && <ServerSuccess success={success} />}
     </div>
   );
 };

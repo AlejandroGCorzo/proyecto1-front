@@ -1,5 +1,11 @@
 import axios from "axios";
-import { addProduct, setError, setLoading, setProduct } from "./productSlice";
+import {
+  addProduct,
+  setErrorProduct,
+  setSuccessProduct,
+  setLoading,
+  setProduct,
+} from "./productSlice";
 const url = import.meta.env.VITE_REACT_APP_API;
 
 //accion de creacion de producto
@@ -11,7 +17,8 @@ export const getProductAction = () => {
       dispatch(setProduct(res.data));
       dispatch(setLoading(false));
     } catch (error) {
-      dispatch(setError(error.message));
+      dispatch(setErrorProduct(error.response.data.message));
+      dispatch(setLoading(false));
     }
   };
 };
@@ -22,13 +29,16 @@ export const postProductAction = (values, token) => {
       dispatch(setLoading(true));
       const res = await axios.post(`${url}/productos`, values, {
         headers: {
+          "Content-Type": "multipart/form-data",
           authorization: `Bearer ${token}`,
         },
       });
       dispatch(addProduct(res.data));
+      dispatch(setSuccessProduct("Producto creado con exito."));
       dispatch(setLoading(false));
     } catch (error) {
-      dispatch(setError(error.message));
+      dispatch(setErrorProduct(error.response.data.message));
+      dispatch(setLoading(false));
     }
   };
 };
