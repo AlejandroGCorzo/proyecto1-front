@@ -140,7 +140,7 @@ const FooterOptions = () => {
                   </a>
                   <span className="border border-white w-full"></span>
                   <a
-                    href="#"
+                    href="https://autogestion.produccion.gob.ar/consumidores"
                     target="_blank"
                     className="px-3 py-4 h-auto flex justify-center items-center"
                   >
@@ -181,7 +181,11 @@ const FooterOptions = () => {
             <a href="#" target="_blank" className="hover:underline">
               Políticas de cambios
             </a>
-            <a href="#" target="_blank" className="hover:underline">
+            <a
+              href="https://autogestion.produccion.gob.ar/consumidores"
+              target="_blank"
+              className="hover:underline"
+            >
               Defensa del consumidor
             </a>
             <a href="#" target="_blank" className="hover:underline">
