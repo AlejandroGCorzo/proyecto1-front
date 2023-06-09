@@ -7,6 +7,8 @@ import Sales from "./Sales/Sales";
 import Discounts from "./Discount/Discounts";
 import Categories from "./Category/Categories";
 import Products from "./Product/Products";
+import CategoriesForm from "./Category/CategoriesForm";
+import SubCategoriesForm from "./Category/SubCategoriesForm";
 
 const PanelHome = () => {
   return (
@@ -21,6 +23,11 @@ const PanelHome = () => {
             <Route path="/sales" element={<Sales />} />
             <Route path="/discounts" element={<Discounts />} />
             <Route path="/categories" element={<Categories />} />
+            <Route path="/categories/form" element={<CategoriesForm />} />
+            <Route
+              path="/categories/subcategories-form"
+              element={<SubCategoriesForm />}
+            />
           </Routes>
         </aside>
       </div>
