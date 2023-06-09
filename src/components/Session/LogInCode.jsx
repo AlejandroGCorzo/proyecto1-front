@@ -1,13 +1,15 @@
 import { encode } from "js-base64";
 import { useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   logInSetNewCodeAction,
   logInWithCodeAction,
 } from "../../redux/userActions";
+import { setUserError } from "../../redux/userSlice";
 const LogInCode = ({ logInCode, setLogInCode, code, setCode }) => {
   const dispatch = useDispatch();
+  const { userError } = useSelector((state) => state.users);
   const [input, setInput] = useState({
     email: "",
     code: "",
@@ -30,6 +32,7 @@ const LogInCode = ({ logInCode, setLogInCode, code, setCode }) => {
     if (value === "backLogIn") {
       setCode(false);
       setLogInCode(true);
+      dispatch(setUserError(""));
     }
   };
 
@@ -42,10 +45,15 @@ const LogInCode = ({ logInCode, setLogInCode, code, setCode }) => {
       dispatch(logInWithCodeAction({ code: Number(input.code) }));
     }
     if (name === "sendLogInCode") {
-      setLogInCode(false);
-      setCode(true);
-      //conprobar que el usuario exista
       dispatch(logInSetNewCodeAction({ email: encode(input.email) }));
+      if (!userError) {
+        setLogInCode(false);
+        setCode(true);
+      } else {
+        setLogInCode(true);
+        setCode(false);
+      }
+      //conprobar que el usuario exista
     }
   };
   return (

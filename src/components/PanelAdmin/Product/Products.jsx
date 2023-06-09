@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getProductAction } from "../../../redux/productActions";
+import Loading from "../../../utils/Loading";
 const Products = () => {
   const dispatch = useDispatch();
-  const products = useSelector((state) => state.products);
+  const { products, loading } = useSelector((state) => state.products);
   useEffect(() => {
     const getImages = () => {
       dispatch(getProductAction());
@@ -21,8 +22,9 @@ const Products = () => {
       </Link>
 
       <div className="flex flex-wrap w-auto">
-        {products.products &&
-          products.products.map((item, index) => (
+        {loading ? <Loading /> : null}
+        {products &&
+          products.map((item, index) => (
             <div
               key={`${index}card`}
               className="w-auto border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white"

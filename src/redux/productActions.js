@@ -17,8 +17,12 @@ export const getProductAction = () => {
       dispatch(setProduct(res.data));
       dispatch(setLoading(false));
     } catch (error) {
-      dispatch(setErrorProduct(error.response.data.message));
       dispatch(setLoading(false));
+      if (error.response) {
+        dispatch(setErrorProduct(error.response.data?.message));
+      } else {
+        dispatch(setErrorProduct(error.message));
+      }
     }
   };
 };
@@ -37,8 +41,12 @@ export const postProductAction = (values, token) => {
       dispatch(setSuccessProduct("Producto creado con exito."));
       dispatch(setLoading(false));
     } catch (error) {
-      dispatch(setErrorProduct(error.response.data.message));
       dispatch(setLoading(false));
+      if (error.response) {
+        dispatch(setErrorProduct(error.response.data?.message));
+      } else {
+        dispatch(setErrorProduct(error.message));
+      }
     }
   };
 };

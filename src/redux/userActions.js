@@ -8,7 +8,11 @@ export const sendCodeAction = (email) => {
     try {
       const res = await axios.post(`${url}/user`, email);
     } catch (error) {
-      dispatch(setUserError(error.response.data.message));
+      if (error.response) {
+        dispatch(setUserError(error.response.data?.message));
+      } else {
+        dispatch(setUserError(error.message));
+      }
     }
   };
 };
@@ -20,8 +24,12 @@ export const signUpAction = (values) => {
       dispatch(setUser(res.data));
       dispatch(setUserLoading(false));
     } catch (error) {
-      dispatch(setUserError(error.response.data.message));
       dispatch(setUserLoading(false));
+      if (error.response) {
+        dispatch(setUserError(error.response.data?.message));
+      } else {
+        dispatch(setUserError(error.message));
+      }
     }
   };
 };
@@ -35,8 +43,12 @@ export const logInAction = (values) => {
       dispatch(setUser(res.data));
       dispatch(setUserLoading(false));
     } catch (error) {
-      dispatch(setUserError(error.response.data.message));
       dispatch(setUserLoading(false));
+      if (error.response) {
+        dispatch(setUserError(error.response.data?.message));
+      } else {
+        dispatch(setUserError(error.message));
+      }
     }
   };
 };
@@ -46,7 +58,11 @@ export const logInSetNewCodeAction = (email) => {
     try {
       const res = await axios.post(`${url}/user/newCode`, email);
     } catch (error) {
-      dispatch(setUserError(error.response.data.message));
+      if (error.response) {
+        dispatch(setUserError(error.response.data?.message));
+      } else {
+        dispatch(setUserError(error.message));
+      }
     }
   };
 };
@@ -58,8 +74,12 @@ export const logInWithCodeAction = (code) => {
       dispatch(setUser(res.data));
       dispatch(setUserLoading(false));
     } catch (error) {
-      dispatch(setUserError(error.response.data.message));
       dispatch(setUserLoading(false));
+      if (error.response) {
+        dispatch(setUserError(error.response.data?.message));
+      } else {
+        dispatch(setUserError(error.message));
+      }
     }
   };
 };
@@ -70,7 +90,11 @@ export const resetPasswordCodeAction = (values) => {
     try {
       const res = await axios.post(`${url}/user/newCode`, values);
     } catch (error) {
-      dispatch(setUserError(error.response.data.message));
+      if (error.response) {
+        dispatch(setUserError(error.response.data?.message));
+      } else {
+        dispatch(setUserError(error.message));
+      }
     }
   };
 };
@@ -82,8 +106,12 @@ export const resetPasswordAction = (values) => {
       dispatch(setUser(res.data));
       dispatch(setUserLoading(false));
     } catch (error) {
-      dispatch(setUserError(error.response.data.message));
       dispatch(setUserLoading(false));
+      if (error.response) {
+        dispatch(setUserError(error.response.data?.message));
+      } else {
+        dispatch(setUserError(error.message));
+      }
     }
   };
 };
@@ -94,7 +122,11 @@ export const logOutAction = () => {
     try {
       dispatch(logout());
     } catch (error) {
-      dispatch(setUserError(error.response.data.message));
+      if (error.response) {
+        dispatch(setUserError(error.response.data?.message));
+      } else {
+        dispatch(setUserError(error.message));
+      }
     }
   };
 };
