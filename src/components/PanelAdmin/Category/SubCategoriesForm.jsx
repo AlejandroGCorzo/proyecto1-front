@@ -174,10 +174,9 @@ const SubCategoriesForm = () => {
             ref={selectInputRef}
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
+            defaultValue="Elige una categoría"
           >
-            <option disabled selected>
-              Elige una categoría
-            </option>
+            <option disabled>Elige una categoría</option>
             {categoriesNameAndId.map((item) => (
               <option key={item.id} value={item.id}>
                 {item?.name

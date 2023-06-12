@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SideBar from "./SideBar";
 import { Routes, Route } from "react-router-dom";
 import ProductForm from "./Product/ProductForm";
@@ -9,8 +9,26 @@ import Categories from "./Category/Categories";
 import Products from "./Product/Products";
 import CategoriesForm from "./Category/CategoriesForm";
 import SubCategoriesForm from "./Category/SubCategoriesForm";
+import {
+  getCategoriesAction,
+  getSubCategoriesAction,
+} from "../../redux/categoriesActions";
+import { useDispatch, useSelector } from "react-redux";
+import { getProductAction } from "../../redux/productActions";
 
 const PanelHome = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const getCategories = () => {
+      dispatch(getCategoriesAction());
+      dispatch(getSubCategoriesAction());
+    };
+    const getProducts = () => {
+      dispatch(getProductAction());
+    };
+    getProducts();
+    getCategories();
+  }, []);
   return (
     <div className="w-full h-auto flex flex-row justify-center items-center mt-[38%] sm:mt-[21%] md:max-lg:mt-[15.5%] lg:mt-0">
       <div className="w-full xl:w-3/4 h-auto flex">

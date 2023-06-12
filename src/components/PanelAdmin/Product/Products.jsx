@@ -6,12 +6,7 @@ import Loading from "../../../utils/Loading";
 const Products = () => {
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.products);
-  useEffect(() => {
-    const getImages = () => {
-      dispatch(getProductAction());
-    };
-    getImages();
-  }, []);
+
   return (
     <div className="flex flex-col mt-6 w-3/4 max-w-7xl h-full justify-center items-start">
       <Link
@@ -29,8 +24,6 @@ const Products = () => {
               key={`${index}card`}
               className="w-auto border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white"
             >
-              {/* <span className=" absolute text-white bg-header p-1 ">NUEVO</span> */}
-
               <p>
                 {item.marca
                   .slice(0, 1)

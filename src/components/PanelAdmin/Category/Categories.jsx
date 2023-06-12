@@ -1,26 +1,14 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  getCategoriesAction,
-  getSubCategoriesAction,
-} from "../../../redux/categoriesActions";
 import Loading from "../../../utils/Loading";
 
 const Categories = () => {
-  const dispatch = useDispatch();
   const { categories, loading } = useSelector((state) => state.categories);
 
-  useEffect(() => {
-    const getCategories = () => {
-      dispatch(getCategoriesAction());
-      dispatch(getSubCategoriesAction());
-    };
-    getCategories();
-  }, []);
   return (
-    <div className="flex flex-col mt-2 w-full max-w-7xl h-full justify-center items-start">
-      <div className="w-full flex justify-between">
+    <div className="flex flex-col mt-2 w-full max-w-7xl h-full justify-center items-center">
+      <div className="w-2/3 flex justify-between">
         <Link
           to="/admin/categories/form"
           className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out"
@@ -35,10 +23,10 @@ const Categories = () => {
         </Link>
       </div>
 
-      <div className="flex flex-nowrap xl:flex-wrap max-w-[250px] sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-7xl ">
+      <div className="flex flex-nowrap xl:flex-wrap max-w-[250px] sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl ">
         {loading ? <Loading /> : null}
         <div className="overflow-scroll xl:overflow-auto border border-fontDark">
-          <table className="table table-xs lg:table-md xl:table-lg table-pin-rows table-pin-cols bg-grey text-fontDark">
+          <table className="table table-xs lg:table-md table-pin-rows table-pin-cols bg-grey text-fontDark">
             <thead className="bg-grey text-lg text-fontDark">
               <tr className="bg-grey">
                 <th className="bg-grey"></th>

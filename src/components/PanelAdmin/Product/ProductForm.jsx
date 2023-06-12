@@ -47,7 +47,7 @@ function validateSize(input) {
 function validateProduct(input) {
   let errorsProduct = {};
   if (
-    !input.tipo &&
+    input.tipo === "Elige una categoría" &&
     !input.marca &&
     !input.descripcion &&
     !input.colores &&
@@ -58,7 +58,7 @@ function validateProduct(input) {
     !input.proveedor &&
     !input.disciplina
   ) {
-    errorsProduct.tipo = "El campo Tipo no puede estar vacío.";
+    errorsProduct.tipo = "Seleccione una categoría.";
     errorsProduct.marca = "El campo Marca no puede estar vacío.";
     errorsProduct.descripcion = "El campo Descripción no puede estar vacío.";
     errorsProduct.colores = "Añadir al menos un color.";
@@ -70,8 +70,8 @@ function validateProduct(input) {
     errorsProduct.disciplina = "El campo Disciplina no puede estar vacío.";
   }
 
-  if (!input.tipo) {
-    errorsProduct.tipo = "El campo Tipo no puede estar vacío.";
+  if (!input.tipo || input.tipo === "Elige una categorìa") {
+    errorsProduct.tipo = "Seleccione una categoría.";
   }
   if (!input.modelo) {
     errorsProduct.modelo = "El campo Modelo no puede estar vacío.";
@@ -110,8 +110,16 @@ function validateProduct(input) {
 const ProductForm = () => {
   const formData = new FormData();
   const fileInputRef = useRef(null);
+  const selectInputRef = useRef(null);
   const dispatch = useDispatch();
   const { error, success } = useSelector((state) => state.products);
+  const { categories, loading } = useSelector((state) => state.categories);
+  const categoriesNameAndId = categories.map((item) => ({
+    name: item.nombre.toUpperCase(),
+    id: item._id,
+    subcategories: item.subcategorias,
+  }));
+
   const token = localStorage.getItem("token");
   const [image, setImage] = useState([]);
   const [errorImage, setErrorImage] = useState({});
@@ -160,6 +168,9 @@ const ProductForm = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Limpiar el valor del input
     }
+    if (selectInputRef.current) {
+      selectInputRef.current.value = "Elige una categoría"; // Limpiar el valor del input
+    }
     setColor("");
     setImage([]);
     setSize({ talle: "", cantidad: 0 });
@@ -177,6 +188,10 @@ const ProductForm = () => {
       proveedor: "",
       disciplina: "",
     });
+    setErrorColor({});
+    setErrorSize({});
+    setErrorImage({});
+    setErrorsForm({});
     dispatch(setErrorProduct(""));
     dispatch(setSuccessProduct(""));
   };
@@ -286,6 +301,7 @@ const ProductForm = () => {
     Object.values(errorsForm).join("").length
       ? true
       : false;
+  console.log(form);
 
   return (
     <div className="flex flex-col w-full justify-start items-center">
@@ -430,15 +446,23 @@ const ProductForm = () => {
         <label className="label pt-2 pb-0">
           <span>Tipo de producto</span>
         </label>
-        <input
-          type="text"
+        <select
+          ref={selectInputRef}
           className="input bg-fontGrey"
           placeholder="Tipo de producto"
           name="tipo"
-          value={form.tipo}
           onChange={handleChangeForm}
           onBlur={validateOnBlur}
-        />
+        >
+          <option disabled selected>
+            Elige una categoría
+          </option>
+          {categoriesNameAndId.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item?.name?.slice(0, 1).toUpperCase().concat(item.name.slice(1))}
+            </option>
+          ))}
+        </select>{" "}
         {errorsForm.tipo ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorsForm.tipo}
@@ -580,7 +604,6 @@ const ProductForm = () => {
             {errorsForm.disciplina}
           </small>
         ) : null}
-
         <button
           type="submit"
           className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
