@@ -31,6 +31,14 @@ const Sidebar = () => {
         </li>
         <li>
           <Link
+            to="/admin/subcategories"
+            className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
+          >
+            Subcategorías
+          </Link>
+        </li>
+        <li>
+          <Link
             to="/admin/sales"
             className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
           >

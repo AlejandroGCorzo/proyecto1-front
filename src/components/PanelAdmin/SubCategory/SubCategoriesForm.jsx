@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { postSubCategoryAction } from "../../../redux/categoriesActions";
 import { useDispatch, useSelector } from "react-redux";
 import ServerError from "../../../utils/ServerError";
@@ -12,6 +12,7 @@ import {
 
 const SubCategoriesForm = () => {
   const formData = new FormData();
+  const params = useParams();
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const selectInputRef = useRef(null);
@@ -64,7 +65,7 @@ const SubCategoriesForm = () => {
     if (input.name === "nombre") {
       if (subcategoriesNames.includes(input.value.toUpperCase())) {
         error.nombre =
-          "La Categoría ya existente, ingrese un nombre diferente.";
+          "La Subcategoría ya existente, ingrese un nombre diferente.";
       }
       if (!input.value) {
         error.nombre = "El campo Nombre no puede estar vacío.";
@@ -140,7 +141,7 @@ const SubCategoriesForm = () => {
           text-xl text-blue-400 ml-4 mt-4"
       >
         <Link
-          to="/admin/categories"
+          to="/admin/subcategories"
           className="flex items-center "
           onClick={clearReducer}
         >
@@ -186,7 +187,7 @@ const SubCategoriesForm = () => {
               </option>
             ))}
           </select>{" "}
-          {errorName?.categoria ? (
+          {errorName?.categoria?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorName.categoria}
             </small>
@@ -205,7 +206,7 @@ const SubCategoriesForm = () => {
             onBlur={validateOnBlur}
             placeholder="Nombre de la subcategoria"
           />
-          {errorName?.nombre ? (
+          {errorName?.nombre?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorName.nombre}
             </small>
@@ -227,7 +228,7 @@ const SubCategoriesForm = () => {
             * Al agregar una nueva imagen, se reemplazara la imagen agregada
             previamente.
           </small>
-          {errorImage?.image ? (
+          {errorImage?.image?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorImage.image}
             </small>

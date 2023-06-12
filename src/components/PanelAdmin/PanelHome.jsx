@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import SideBar from "./SideBar";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import ProductForm from "./Product/ProductForm";
 import Clients from "./Clients/Clients";
 import Sales from "./Sales/Sales";
@@ -8,27 +8,10 @@ import Discounts from "./Discount/Discounts";
 import Categories from "./Category/Categories";
 import Products from "./Product/Products";
 import CategoriesForm from "./Category/CategoriesForm";
-import SubCategoriesForm from "./Category/SubCategoriesForm";
-import {
-  getCategoriesAction,
-  getSubCategoriesAction,
-} from "../../redux/categoriesActions";
-import { useDispatch, useSelector } from "react-redux";
-import { getProductAction } from "../../redux/productActions";
+import SubCategoriesForm from "./SubCategory/SubCategoriesForm";
+import SubCategories from "./SubCategory/SubCategories";
 
 const PanelHome = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const getCategories = () => {
-      dispatch(getCategoriesAction());
-      dispatch(getSubCategoriesAction());
-    };
-    const getProducts = () => {
-      dispatch(getProductAction());
-    };
-    getProducts();
-    getCategories();
-  }, []);
   return (
     <div className="w-full h-auto flex flex-row justify-center items-center mt-[38%] sm:mt-[21%] md:max-lg:mt-[15.5%] lg:mt-0">
       <div className="w-full xl:w-3/4 h-auto flex">
@@ -41,9 +24,15 @@ const PanelHome = () => {
             <Route path="/sales" element={<Sales />} />
             <Route path="/discounts" element={<Discounts />} />
             <Route path="/categories" element={<Categories />} />
+            <Route path="/subcategories" element={<SubCategories />} />
+            <Route path="/categories/form/:id" element={<CategoriesForm />} />
             <Route path="/categories/form" element={<CategoriesForm />} />
             <Route
-              path="/categories/subcategories-form"
+              path="/subcategories/subcategories-form/:id"
+              element={<SubCategoriesForm />}
+            />
+            <Route
+              path="/subcategories/subcategories-form"
               element={<SubCategoriesForm />}
             />
           </Routes>

@@ -70,14 +70,20 @@ function validateProduct(input) {
     errorsProduct.disciplina = "El campo Disciplina no puede estar vacío.";
   }
 
-  if (!input.tipo || input.tipo === "Elige una categorìa") {
-    errorsProduct.tipo = "Seleccione una categoría.";
+  if (!input.tipo || input.tipo === "Elige un tipo de producto") {
+    errorsProduct.tipo = "Selecciona un tipo de producto.";
   }
   if (!input.modelo) {
     errorsProduct.modelo = "El campo Modelo no puede estar vacío.";
   }
-  if (!input.marca) {
-    errorsProduct.marca = "El campo Marca no puede estar vacío.";
+  /*  if (
+    input.marca === "No existen marcas agregadas a la categoría seleccionada"
+  ) {
+    errorsProduct.marca =
+      "Debe asociar una subcategoría a la categoría seleccionada.";
+  } */
+  if (!input.marca || input.marca === "Elige una marca") {
+    errorsProduct.marca = "Selecciona una marca.";
   }
   if (!input.descripcion) {
     errorsProduct.descripcion = "El campo Descripción no puede estar vacío.";
@@ -110,17 +116,19 @@ function validateProduct(input) {
 const ProductForm = () => {
   const formData = new FormData();
   const fileInputRef = useRef(null);
-  const selectInputRef = useRef(null);
+  const selectInputRefTipo = useRef(null);
+  const selectInputRefMarca = useRef(null);
   const dispatch = useDispatch();
   const { error, success } = useSelector((state) => state.products);
   const { categories, loading } = useSelector((state) => state.categories);
   const categoriesNameAndId = categories.map((item) => ({
-    name: item.nombre.toUpperCase(),
+    nombre: item.nombre.toUpperCase(),
     id: item._id,
-    subcategories: item.subcategorias,
+    subcategorias: item.subcategorias,
   }));
 
   const token = localStorage.getItem("token");
+  const [currentSubcategories, setCurrentSubcategories] = useState([]);
   const [image, setImage] = useState([]);
   const [errorImage, setErrorImage] = useState({});
   const [color, setColor] = useState("");
@@ -168,8 +176,11 @@ const ProductForm = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Limpiar el valor del input
     }
-    if (selectInputRef.current) {
-      selectInputRef.current.value = "Elige una categoría"; // Limpiar el valor del input
+    if (selectInputRefMarca.current) {
+      selectInputRefMarca.current.value = "Selecciona un tipo de producto"; // Limpiar el valor del input
+    }
+    if (selectInputRefTipo.current) {
+      selectInputRefTipo.current.value = "Elige un tipo de producto"; // Limpiar el valor del input
     }
     setColor("");
     setImage([]);
@@ -258,6 +269,13 @@ const ProductForm = () => {
   };
   const handleChangeForm = (e) => {
     const { name, value } = e.target;
+
+    if (name === "tipo") {
+      setCurrentSubcategories(
+        categoriesNameAndId.find((item) => item.nombre === value).subcategorias
+      );
+    }
+
     setForm({
       ...form,
       [name]: value,
@@ -283,6 +301,7 @@ const ProductForm = () => {
     clearForm();
   };
 
+
   let isColorDisabled =
     !color.length || Object.values(errorColor).join("").length ? true : false;
   let isImageDisabled =
@@ -301,7 +320,6 @@ const ProductForm = () => {
     Object.values(errorsForm).join("").length
       ? true
       : false;
-  console.log(form);
 
   return (
     <div className="flex flex-col w-full justify-start items-center">
@@ -343,7 +361,7 @@ const ProductForm = () => {
             placeholder="Imagen"
             ref={fileInputRef}
           />
-          {errorImage.image ? (
+          {errorImage?.image?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorImage.image}
             </small>
@@ -374,7 +392,7 @@ const ProductForm = () => {
             onBlur={validateOnBlur}
             placeholder="Color"
           />
-          {errorColor.color ? (
+          {errorColor?.color?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorColor.color}
             </small>
@@ -405,7 +423,7 @@ const ProductForm = () => {
             onBlur={validateOnBlur}
             placeholder="Talle"
           />
-          {errorSize.talle ? (
+          {errorSize?.talle?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorSize.talle}
             </small>
@@ -425,7 +443,7 @@ const ProductForm = () => {
             onBlur={validateOnBlur}
             placeholder="Cantidad"
           />
-          {errorSize.cantidad ? (
+          {errorSize?.cantidad?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorSize.cantidad}
             </small>
@@ -447,23 +465,24 @@ const ProductForm = () => {
           <span>Tipo de producto</span>
         </label>
         <select
-          ref={selectInputRef}
+          ref={selectInputRefTipo}
           className="input bg-fontGrey"
           placeholder="Tipo de producto"
           name="tipo"
           onChange={handleChangeForm}
           onBlur={validateOnBlur}
+          defaultValue="Elige un tipo de producto"
         >
-          <option disabled selected>
-            Elige una categoría
-          </option>
+          <option disabled>Elige un tipo de producto</option>
           {categoriesNameAndId.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item?.name?.slice(0, 1).toUpperCase().concat(item.name.slice(1))}
+            <option key={item.id} value={item.nombre}>
+              {item?.nombre
+                ?.slice(0, 1)
+                .concat(item.nombre.slice(1).toLowerCase())}
             </option>
           ))}
-        </select>{" "}
-        {errorsForm.tipo ? (
+        </select>
+        {errorsForm?.tipo?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorsForm.tipo}
           </small>
@@ -480,7 +499,7 @@ const ProductForm = () => {
           onChange={handleChangeForm}
           onBlur={validateOnBlur}
         />
-        {errorsForm.modelo ? (
+        {errorsForm?.modelo?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorsForm.modelo}
           </small>
@@ -488,16 +507,38 @@ const ProductForm = () => {
         <label className="label pt-2 pb-0">
           <span>Marca</span>
         </label>
-        <input
-          type="text"
+        <select
+          ref={selectInputRefMarca}
           className="input bg-fontGrey"
+          placeholder="Marca"
           name="marca"
-          value={form.marca}
           onChange={handleChangeForm}
           onBlur={validateOnBlur}
-          placeholder="Marca"
-        />
-        {errorsForm.marca ? (
+          defaultValue="Selecciona un tipo de producto"
+        >
+          {form.tipo.length ? (
+            currentSubcategories.length ? (
+              <>
+                <option disabled>Elige una marca</option>
+                {currentSubcategories.map((item) => (
+                  <option key={item._id} value={item.nombre}>
+                    {item.nombre
+                      ?.slice(0, 1)
+                      .toUpperCase()
+                      .concat(item.nombre.slice(1).toLowerCase())}
+                  </option>
+                ))}
+              </>
+            ) : (
+              <option disabled>
+                No existen marcas agregadas a la categoría seleccionada.
+              </option>
+            )
+          ) : (
+            <option disabled>Selecciona un tipo de producto</option>
+          )}
+        </select>
+        {errorsForm?.marca?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorsForm.marca}
           </small>
@@ -514,7 +555,7 @@ const ProductForm = () => {
           onBlur={validateOnBlur}
           placeholder="Descripción"
         />
-        {errorsForm.descripcion ? (
+        {errorsForm?.descripcion?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorsForm.descripcion}
           </small>
@@ -531,7 +572,7 @@ const ProductForm = () => {
           onBlur={validateOnBlur}
           placeholder="Precio"
         />
-        {errorsForm.precio ? (
+        {errorsForm?.precio?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorsForm.precio}
           </small>
@@ -548,7 +589,7 @@ const ProductForm = () => {
           onBlur={validateOnBlur}
           placeholder="Código"
         />
-        {errorsForm.codigo ? (
+        {errorsForm?.codigo?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorsForm.codigo}
           </small>
@@ -565,7 +606,7 @@ const ProductForm = () => {
           onBlur={validateOnBlur}
           placeholder="Género"
         />
-        {errorsForm.genero ? (
+        {errorsForm?.genero?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorsForm.genero}
           </small>
@@ -582,7 +623,7 @@ const ProductForm = () => {
           onBlur={validateOnBlur}
           placeholder="Proveedor"
         />
-        {errorsForm.proveedor ? (
+        {errorsForm?.proveedor?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorsForm.proveedor}
           </small>
@@ -599,7 +640,7 @@ const ProductForm = () => {
           onBlur={validateOnBlur}
           placeholder="Disciplina"
         />
-        {errorsForm.disciplina ? (
+        {errorsForm?.disciplina?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorsForm.disciplina}
           </small>

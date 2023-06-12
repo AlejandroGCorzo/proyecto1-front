@@ -1,7 +1,10 @@
 import React, { useRef, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import { Link } from "react-router-dom";
-import { postCategoryAction } from "../../../redux/categoriesActions";
+import { Link, useParams } from "react-router-dom";
+import {
+  patchCategoryAction,
+  postCategoryAction,
+} from "../../../redux/categoriesActions";
 import { useDispatch, useSelector } from "react-redux";
 import ServerError from "../../../utils/ServerError";
 import ServerSuccess from "../../../utils/ServerSuccess";
@@ -11,20 +14,22 @@ import {
 } from "../../../redux/categoriesSlice";
 
 const CategoriesForm = () => {
+  const params = useParams();
   const formData = new FormData();
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const { error, success, categories } = useSelector(
     (state) => state.categories
   );
+  const categoryToUpdate = categories.find((item) => item._id === params.id);
   const categoriesNames = categories.map((item) => item.nombre);
   const token = localStorage.getItem("token");
   const [errorName, setErrorName] = useState({});
   const [errorImage, setErrorImage] = useState({});
   const [image, setImage] = useState({});
   const [form, setForm] = useState({
-    nombre: "",
-    imagen: [],
+    nombre: categoryToUpdate?.nombre ? categoryToUpdate.nombre : "",
+    imagen: categoryToUpdate?.imagen ? categoryToUpdate.imagen : [],
   });
 
   const clearReducer = () => {
@@ -45,7 +50,7 @@ const CategoriesForm = () => {
   };
   const validateName = (input) => {
     let error = {};
-    if (categoriesNames.includes(input.nombre)) {
+    if (categoriesNames.includes(input.nombre) && !categoryToUpdate?.nombre) {
       error.nombre = "La Categoría ya existente, ingrese un nombre diferente.";
     }
     if (!input.nombre) {
@@ -57,7 +62,7 @@ const CategoriesForm = () => {
   const validateImage = (input) => {
     let error = {};
 
-    if (!input) {
+    if (!input && !categoryToUpdate.imagen?.length) {
       error.image = "Debe ingresar una imagen";
     }
     return error;
@@ -80,14 +85,18 @@ const CategoriesForm = () => {
     const { name, value, files } = e.target;
     if (files) {
       let file = files[0];
-      if (name === "imagenFile" && file) {
+      if (name === "imagenFile" && file?.name) {
         setImage(file);
         let errorFormValidation = validateImage(file);
         setErrorImage(errorFormValidation);
       }
     }
-    if (name === "nombre") {
+    if (name === "nombre" && !categoryToUpdate?.imagen?.length) {
       setForm({ nombre: value, imagen: [] });
+      let errorFormValidation = validateName({ [name]: value });
+      setErrorName(errorFormValidation);
+    } else if (name === "nombre" && categoryToUpdate?.imagen?.length) {
+      setForm((prev) => ({ ...prev, nombre: value }));
       let errorFormValidation = validateName({ [name]: value });
       setErrorName(errorFormValidation);
     }
@@ -95,9 +104,17 @@ const CategoriesForm = () => {
   const handleSubmitForm = (e) => {
     e.preventDefault();
     async function post() {
+      if (image?.name?.length) {
+        formData.append("files", image);
+      }
       formData.append("data", JSON.stringify(form));
-      formData.append("files", image);
-      await dispatch(postCategoryAction(formData, token));
+      if (categoryToUpdate?._id?.length) {
+        await dispatch(
+          patchCategoryAction(formData, token, categoryToUpdate._id)
+        );
+      } else {
+        await dispatch(postCategoryAction(formData, token));
+      }
     }
     post();
     clearForm();
@@ -132,7 +149,9 @@ const CategoriesForm = () => {
         </button>
       </div>
       <h2 className="pt-2 h-10 font-semibold text-fontDark underline text-xl md:text-2xl flex self-center sm:w-2/3">
-        Crear categoría:{" "}
+        {categoryToUpdate?._id?.length
+          ? "Editar categoría:"
+          : "Crear categoría:"}
       </h2>
       <form
         className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start "
@@ -151,7 +170,7 @@ const CategoriesForm = () => {
             onBlur={validateOnBlur}
             placeholder="Nombre de la categoría"
           />
-          {errorName?.nombre ? (
+          {errorName?.nombre?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorName.nombre}
             </small>
@@ -173,7 +192,7 @@ const CategoriesForm = () => {
             * Al agregar una nueva imagen, se reemplazara la imagen agregada
             previamente.
           </small>
-          {errorImage?.image ? (
+          {errorImage?.image?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorImage.image}
             </small>

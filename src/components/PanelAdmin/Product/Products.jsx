@@ -6,6 +6,13 @@ import Loading from "../../../utils/Loading";
 const Products = () => {
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.products);
+  useEffect(() => {
+    const getProducts = () => {
+      dispatch(getProductAction());
+    };
+
+    getProducts();
+  }, []);
 
   return (
     <div className="flex flex-col mt-6 w-3/4 max-w-7xl h-full justify-center items-start">
