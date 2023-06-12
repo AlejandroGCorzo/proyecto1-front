@@ -207,7 +207,6 @@ const UserDropdown = () => {
                     Entrar con e-mail y contraseña
                   </button>
                 </li>
-                {userError && <ServerError error={userError} />}
               </>
             ) : !register &&
               !logIn &&
