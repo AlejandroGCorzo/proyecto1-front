@@ -70,7 +70,7 @@ export const logInWithCodeAction = (code) => {
   return async function (dispatch) {
     try {
       dispatch(setUserLoading(true));
-      const res = await axios.post(`${url}/user/loginWithCode`, Number(code));
+      const res = await axios.post(`${url}/user/loginWithCode`, code);
       dispatch(setUser(res.data));
       dispatch(setUserLoading(false));
     } catch (error) {

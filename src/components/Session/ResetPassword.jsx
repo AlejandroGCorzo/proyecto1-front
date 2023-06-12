@@ -79,7 +79,7 @@ const ResetPassword = ({
     dispatch(
       resetPasswordAction({
         password: encriptedPassword,
-        code: inputReset.code,
+        code: Number(inputReset.code),
       })
     );
   };
