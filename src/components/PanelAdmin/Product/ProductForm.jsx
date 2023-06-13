@@ -301,7 +301,6 @@ const ProductForm = () => {
     clearForm();
   };
 
-
   let isColorDisabled =
     !color.length || Object.values(errorColor).join("").length ? true : false;
   let isImageDisabled =
@@ -323,336 +322,338 @@ const ProductForm = () => {
 
   return (
     <div className="flex flex-col w-full justify-start items-center">
-      <div
-        className="w-full p-2 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between sm:mt-0
+      <>
+        <div
+          className="w-full p-2 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between sm:mt-0
         text-xl text-blue-400 ml-4 mt-4"
-      >
-        <Link
-          to="/admin/products"
-          className="flex items-center "
-          onClick={clearReducer}
         >
-          <AiOutlineArrowLeft className="pr-1" fontSize={20} /> Volver
-        </Link>
-        <button
-          className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out self-center justify-end"
-          onClick={clearForm}
-        >
-          Limpiar formulario
-        </button>
-      </div>
-      <h2 className="pt-2 h-10 font-semibold text-fontDark underline text-2xl flex self-center sm:w-2/3">
-        Crear producto:{" "}
-      </h2>
-      <form
-        className="form-control w-2/3 gap-4 p-4 text-lg flex flex-col lg:flex-row justify-around items-start lg:items-end"
-        onSubmit={handleImageSubmit}
-      >
-        <div className="flex flex-col w-40 sm:w-full">
-          <label className="label pt-2 pb-0 text-fontDark ">
-            <span>Imagen</span>
-          </label>
-          <input
-            type="file"
-            className="file-input-xs sm:file-input bg-fontGrey w-full text-white"
-            name="image"
-            onChange={handleImageChange}
-            onBlur={validateOnBlur}
-            placeholder="Imagen"
-            ref={fileInputRef}
-          />
-          {errorImage?.image?.length ? (
-            <small className="h-6 text-red-600 w-full flex self-start mb-1">
-              {errorImage.image}
-            </small>
-          ) : null}
+          <Link
+            to="/admin/products"
+            className="flex items-center "
+            onClick={clearReducer}
+          >
+            <AiOutlineArrowLeft className="pr-1" fontSize={20} /> Volver
+          </Link>
+          <button
+            className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out self-center justify-end"
+            onClick={clearForm}
+          >
+            Limpiar formulario
+          </button>
         </div>
-        <button
-          type="submit"
-          className="btn mt-1 lg:mt-0  text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
-          disabled={isImageDisabled}
+        <h2 className="pt-2 h-10 font-semibold text-fontDark underline text-2xl flex self-center sm:w-2/3">
+          Crear producto:{" "}
+        </h2>
+        <form
+          className="form-control w-2/3 gap-4 p-4 text-lg flex flex-col lg:flex-row justify-around items-start lg:items-end"
+          onSubmit={handleImageSubmit}
         >
-          Añadir
-        </button>
-      </form>
-      <form
-        className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col lg:flex-row justify-around items-start lg:items-end"
-        onSubmit={handleColorSubmit}
-      >
-        <div className="flex flex-col w-40 sm:w-full">
-          <label className="label pt-2 pb-0">
-            <span>Color</span>
-          </label>
-          <input
-            type="text"
-            className="input bg-fontGrey w-full"
-            name="color"
-            value={color}
-            onChange={handleColorChange}
-            onBlur={validateOnBlur}
-            placeholder="Color"
-          />
-          {errorColor?.color?.length ? (
-            <small className="h-6 text-red-600 w-full flex self-start mb-1">
-              {errorColor.color}
-            </small>
-          ) : null}
-        </div>
-        <button
-          type="submit"
-          className="btn mt-1 lg:mt-0  text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
-          disabled={isColorDisabled}
+          <div className="flex flex-col w-40 sm:w-full">
+            <label className="label pt-2 pb-0 text-fontDark ">
+              <span>Imagen</span>
+            </label>
+            <input
+              type="file"
+              className="file-input-xs sm:file-input bg-fontGrey w-full text-white"
+              name="image"
+              onChange={handleImageChange}
+              onBlur={validateOnBlur}
+              placeholder="Imagen"
+              ref={fileInputRef}
+            />
+            {errorImage?.image?.length ? (
+              <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                {errorImage.image}
+              </small>
+            ) : null}
+          </div>
+          <button
+            type="submit"
+            className="btn mt-1 lg:mt-0  text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+            disabled={isImageDisabled}
+          >
+            Añadir
+          </button>
+        </form>
+        <form
+          className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col lg:flex-row justify-around items-start lg:items-end"
+          onSubmit={handleColorSubmit}
         >
-          Añadir
-        </button>
-      </form>
-      <form
-        className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start 2xl:flex-row 2xl:items-end"
-        onSubmit={handleSizeSubmit}
-      >
-        <div className="flex flex-col w-40 sm:w-1/2">
+          <div className="flex flex-col w-40 sm:w-full">
+            <label className="label pt-2 pb-0">
+              <span>Color</span>
+            </label>
+            <input
+              type="text"
+              className="input bg-fontGrey w-full"
+              name="color"
+              value={color}
+              onChange={handleColorChange}
+              onBlur={validateOnBlur}
+              placeholder="Color"
+            />
+            {errorColor?.color?.length ? (
+              <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                {errorColor.color}
+              </small>
+            ) : null}
+          </div>
+          <button
+            type="submit"
+            className="btn mt-1 lg:mt-0  text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+            disabled={isColorDisabled}
+          >
+            Añadir
+          </button>
+        </form>
+        <form
+          className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start 2xl:flex-row 2xl:items-end"
+          onSubmit={handleSizeSubmit}
+        >
+          <div className="flex flex-col w-40 sm:w-1/2">
+            <label className="label pt-2 pb-0">
+              <span>Talle</span>
+            </label>
+            <input
+              type="text"
+              className="input bg-fontGrey"
+              name="talle"
+              value={size.talle}
+              onChange={handleSizeChange}
+              onBlur={validateOnBlur}
+              placeholder="Talle"
+            />
+            {errorSize?.talle?.length ? (
+              <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                {errorSize.talle}
+              </small>
+            ) : null}
+          </div>
+          <div className="flex flex-col w-40 sm:w-1/2">
+            <label className="label pt-2 pb-0">
+              <span>Cantidad</span>
+            </label>
+            <input
+              type="number"
+              className="input bg-fontGrey"
+              name="cantidad"
+              min={1}
+              value={size.cantidad}
+              onChange={handleSizeChange}
+              onBlur={validateOnBlur}
+              placeholder="Cantidad"
+            />
+            {errorSize?.cantidad?.length ? (
+              <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                {errorSize.cantidad}
+              </small>
+            ) : null}
+          </div>
+          <button
+            type="submit"
+            className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+            disabled={isSizeDisabled}
+          >
+            Añadir
+          </button>
+        </form>
+        <form
+          className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg"
+          onSubmit={handleFormSubmit}
+        >
           <label className="label pt-2 pb-0">
-            <span>Talle</span>
+            <span>Tipo de producto</span>
           </label>
-          <input
-            type="text"
+          <select
+            ref={selectInputRefTipo}
             className="input bg-fontGrey"
-            name="talle"
-            value={size.talle}
-            onChange={handleSizeChange}
+            placeholder="Tipo de producto"
+            name="tipo"
+            onChange={handleChangeForm}
             onBlur={validateOnBlur}
-            placeholder="Talle"
-          />
-          {errorSize?.talle?.length ? (
-            <small className="h-6 text-red-600 w-full flex self-start mb-1">
-              {errorSize.talle}
-            </small>
-          ) : null}
-        </div>
-        <div className="flex flex-col w-40 sm:w-1/2">
-          <label className="label pt-2 pb-0">
-            <span>Cantidad</span>
-          </label>
-          <input
-            type="number"
-            className="input bg-fontGrey"
-            name="cantidad"
-            min={1}
-            value={size.cantidad}
-            onChange={handleSizeChange}
-            onBlur={validateOnBlur}
-            placeholder="Cantidad"
-          />
-          {errorSize?.cantidad?.length ? (
-            <small className="h-6 text-red-600 w-full flex self-start mb-1">
-              {errorSize.cantidad}
-            </small>
-          ) : null}
-        </div>
-        <button
-          type="submit"
-          className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
-          disabled={isSizeDisabled}
-        >
-          Añadir
-        </button>
-      </form>
-      <form
-        className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg"
-        onSubmit={handleFormSubmit}
-      >
-        <label className="label pt-2 pb-0">
-          <span>Tipo de producto</span>
-        </label>
-        <select
-          ref={selectInputRefTipo}
-          className="input bg-fontGrey"
-          placeholder="Tipo de producto"
-          name="tipo"
-          onChange={handleChangeForm}
-          onBlur={validateOnBlur}
-          defaultValue="Elige un tipo de producto"
-        >
-          <option disabled>Elige un tipo de producto</option>
-          {categoriesNameAndId.map((item) => (
-            <option key={item.id} value={item.nombre}>
-              {item?.nombre
-                ?.slice(0, 1)
-                .concat(item.nombre.slice(1).toLowerCase())}
-            </option>
-          ))}
-        </select>
-        {errorsForm?.tipo?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorsForm.tipo}
-          </small>
-        ) : null}
-        <label className="label pt-2 pb-0">
-          <span>Modelo</span>
-        </label>
-        <input
-          type="text"
-          className="input bg-fontGrey"
-          placeholder="Modelo"
-          name="modelo"
-          value={form.modelo}
-          onChange={handleChangeForm}
-          onBlur={validateOnBlur}
-        />
-        {errorsForm?.modelo?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorsForm.modelo}
-          </small>
-        ) : null}
-        <label className="label pt-2 pb-0">
-          <span>Marca</span>
-        </label>
-        <select
-          ref={selectInputRefMarca}
-          className="input bg-fontGrey"
-          placeholder="Marca"
-          name="marca"
-          onChange={handleChangeForm}
-          onBlur={validateOnBlur}
-          defaultValue="Selecciona un tipo de producto"
-        >
-          {form.tipo.length ? (
-            currentSubcategories.length ? (
-              <>
-                <option disabled>Elige una marca</option>
-                {currentSubcategories.map((item) => (
-                  <option key={item._id} value={item.nombre}>
-                    {item.nombre
-                      ?.slice(0, 1)
-                      .toUpperCase()
-                      .concat(item.nombre.slice(1).toLowerCase())}
-                  </option>
-                ))}
-              </>
-            ) : (
-              <option disabled>
-                No existen marcas agregadas a la categoría seleccionada.
+            defaultValue="Elige un tipo de producto"
+          >
+            <option disabled>Elige un tipo de producto</option>
+            {categoriesNameAndId.map((item) => (
+              <option key={item.id} value={item.nombre}>
+                {item?.nombre
+                  ?.slice(0, 1)
+                  .concat(item.nombre.slice(1).toLowerCase())}
               </option>
-            )
-          ) : (
-            <option disabled>Selecciona un tipo de producto</option>
-          )}
-        </select>
-        {errorsForm?.marca?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorsForm.marca}
-          </small>
-        ) : null}
-        <label className="label pt-2 pb-0">
-          <span>Descripción</span>
-        </label>
-        <input
-          type="text"
-          className="textarea h-20 bg-fontGrey"
-          name="descripcion"
-          value={form.descripcion}
-          onChange={handleChangeForm}
-          onBlur={validateOnBlur}
-          placeholder="Descripción"
-        />
-        {errorsForm?.descripcion?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorsForm.descripcion}
-          </small>
-        ) : null}
-        <label className="label pt-2 pb-0">
-          <span>Precio</span>
-        </label>
-        <input
-          type="text"
-          className="input bg-fontGrey"
-          name="precio"
-          value={form.precio}
-          onChange={handleChangeForm}
-          onBlur={validateOnBlur}
-          placeholder="Precio"
-        />
-        {errorsForm?.precio?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorsForm.precio}
-          </small>
-        ) : null}
-        <label className="label pt-2 pb-0">
-          <span>Código</span>
-        </label>
-        <input
-          type="text"
-          className="input bg-fontGrey"
-          name="codigo"
-          value={form.codigo}
-          onChange={handleChangeForm}
-          onBlur={validateOnBlur}
-          placeholder="Código"
-        />
-        {errorsForm?.codigo?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorsForm.codigo}
-          </small>
-        ) : null}
-        <label className="label pt-2 pb-0">
-          <span>Género</span>
-        </label>
-        <input
-          type="text"
-          className="input bg-fontGrey"
-          name="genero"
-          value={form.genero}
-          onChange={handleChangeForm}
-          onBlur={validateOnBlur}
-          placeholder="Género"
-        />
-        {errorsForm?.genero?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorsForm.genero}
-          </small>
-        ) : null}
-        <label className="label pt-2 pb-0">
-          <span>Proveedor</span>
-        </label>
-        <input
-          type="text"
-          className="input bg-fontGrey"
-          name="proveedor"
-          value={form.proveedor}
-          onChange={handleChangeForm}
-          onBlur={validateOnBlur}
-          placeholder="Proveedor"
-        />
-        {errorsForm?.proveedor?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorsForm.proveedor}
-          </small>
-        ) : null}
-        <label className="label pt-2 pb-0">
-          <span>Disciplina</span>
-        </label>
-        <input
-          type="text"
-          className="input bg-fontGrey mb-4"
-          name="disciplina"
-          value={form.disciplina}
-          onChange={handleChangeForm}
-          onBlur={validateOnBlur}
-          placeholder="Disciplina"
-        />
-        {errorsForm?.disciplina?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorsForm.disciplina}
-          </small>
-        ) : null}
-        <button
-          type="submit"
-          className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
-          disabled={isFormDisabled}
-        >
-          Crear producto
-        </button>
-      </form>
+            ))}
+          </select>
+          {errorsForm?.tipo?.length ? (
+            <small className="h-6 text-red-600 w-full flex self-start mb-1">
+              {errorsForm.tipo}
+            </small>
+          ) : null}
+          <label className="label pt-2 pb-0">
+            <span>Modelo</span>
+          </label>
+          <input
+            type="text"
+            className="input bg-fontGrey"
+            placeholder="Modelo"
+            name="modelo"
+            value={form.modelo}
+            onChange={handleChangeForm}
+            onBlur={validateOnBlur}
+          />
+          {errorsForm?.modelo?.length ? (
+            <small className="h-6 text-red-600 w-full flex self-start mb-1">
+              {errorsForm.modelo}
+            </small>
+          ) : null}
+          <label className="label pt-2 pb-0">
+            <span>Marca</span>
+          </label>
+          <select
+            ref={selectInputRefMarca}
+            className="input bg-fontGrey"
+            placeholder="Marca"
+            name="marca"
+            onChange={handleChangeForm}
+            onBlur={validateOnBlur}
+            defaultValue="Selecciona un tipo de producto"
+          >
+            {form.tipo.length ? (
+              currentSubcategories.length ? (
+                <>
+                  <option disabled>Elige una marca</option>
+                  {currentSubcategories.map((item) => (
+                    <option key={item._id} value={item.nombre}>
+                      {item.nombre
+                        ?.slice(0, 1)
+                        .toUpperCase()
+                        .concat(item.nombre.slice(1).toLowerCase())}
+                    </option>
+                  ))}
+                </>
+              ) : (
+                <option disabled>
+                  No existen marcas agregadas a la categoría seleccionada.
+                </option>
+              )
+            ) : (
+              <option disabled>Selecciona un tipo de producto</option>
+            )}
+          </select>
+          {errorsForm?.marca?.length ? (
+            <small className="h-6 text-red-600 w-full flex self-start mb-1">
+              {errorsForm.marca}
+            </small>
+          ) : null}
+          <label className="label pt-2 pb-0">
+            <span>Descripción</span>
+          </label>
+          <input
+            type="text"
+            className="textarea h-20 bg-fontGrey"
+            name="descripcion"
+            value={form.descripcion}
+            onChange={handleChangeForm}
+            onBlur={validateOnBlur}
+            placeholder="Descripción"
+          />
+          {errorsForm?.descripcion?.length ? (
+            <small className="h-6 text-red-600 w-full flex self-start mb-1">
+              {errorsForm.descripcion}
+            </small>
+          ) : null}
+          <label className="label pt-2 pb-0">
+            <span>Precio</span>
+          </label>
+          <input
+            type="text"
+            className="input bg-fontGrey"
+            name="precio"
+            value={form.precio}
+            onChange={handleChangeForm}
+            onBlur={validateOnBlur}
+            placeholder="Precio"
+          />
+          {errorsForm?.precio?.length ? (
+            <small className="h-6 text-red-600 w-full flex self-start mb-1">
+              {errorsForm.precio}
+            </small>
+          ) : null}
+          <label className="label pt-2 pb-0">
+            <span>Código</span>
+          </label>
+          <input
+            type="text"
+            className="input bg-fontGrey"
+            name="codigo"
+            value={form.codigo}
+            onChange={handleChangeForm}
+            onBlur={validateOnBlur}
+            placeholder="Código"
+          />
+          {errorsForm?.codigo?.length ? (
+            <small className="h-6 text-red-600 w-full flex self-start mb-1">
+              {errorsForm.codigo}
+            </small>
+          ) : null}
+          <label className="label pt-2 pb-0">
+            <span>Género</span>
+          </label>
+          <input
+            type="text"
+            className="input bg-fontGrey"
+            name="genero"
+            value={form.genero}
+            onChange={handleChangeForm}
+            onBlur={validateOnBlur}
+            placeholder="Género"
+          />
+          {errorsForm?.genero?.length ? (
+            <small className="h-6 text-red-600 w-full flex self-start mb-1">
+              {errorsForm.genero}
+            </small>
+          ) : null}
+          <label className="label pt-2 pb-0">
+            <span>Proveedor</span>
+          </label>
+          <input
+            type="text"
+            className="input bg-fontGrey"
+            name="proveedor"
+            value={form.proveedor}
+            onChange={handleChangeForm}
+            onBlur={validateOnBlur}
+            placeholder="Proveedor"
+          />
+          {errorsForm?.proveedor?.length ? (
+            <small className="h-6 text-red-600 w-full flex self-start mb-1">
+              {errorsForm.proveedor}
+            </small>
+          ) : null}
+          <label className="label pt-2 pb-0">
+            <span>Disciplina</span>
+          </label>
+          <input
+            type="text"
+            className="input bg-fontGrey mb-4"
+            name="disciplina"
+            value={form.disciplina}
+            onChange={handleChangeForm}
+            onBlur={validateOnBlur}
+            placeholder="Disciplina"
+          />
+          {errorsForm?.disciplina?.length ? (
+            <small className="h-6 text-red-600 w-full flex self-start mb-1">
+              {errorsForm.disciplina}
+            </small>
+          ) : null}
+          <button
+            type="submit"
+            className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+            disabled={isFormDisabled}
+          >
+            Crear producto
+          </button>
+        </form>
+      </>
       {error && <ServerError error={error} />}
       {success && <ServerSuccess success={success} />}
     </div>

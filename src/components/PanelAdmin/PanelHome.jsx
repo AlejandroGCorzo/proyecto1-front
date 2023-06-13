@@ -8,13 +8,11 @@ import Discounts from "./Discount/Discounts";
 import Categories from "./Category/Categories";
 import Products from "./Product/Products";
 import CategoriesForm from "./Category/CategoriesForm";
-import SubCategoriesForm from "./SubCategory/SubCategoriesForm";
-import SubCategories from "./SubCategory/SubCategories";
 
 const PanelHome = () => {
   return (
-    <div className="w-full h-auto flex flex-row justify-center items-center mt-[38%] sm:mt-[21%] md:max-lg:mt-[15.5%] lg:mt-0">
-      <div className="w-full xl:w-3/4 h-auto flex">
+    <div className="w-full h-auto flex flex-row justify-center items-center mt-[40%] sm:mt-[21%] md:max-lg:mt-[15.5%] lg:mt-0">
+      <div className="w-full xl:w-4/5 h-auto flex justify-between">
         <SideBar />
         <aside className="flex w-full justify-center items-center">
           <Routes>
@@ -24,17 +22,8 @@ const PanelHome = () => {
             <Route path="/sales" element={<Sales />} />
             <Route path="/discounts" element={<Discounts />} />
             <Route path="/categories" element={<Categories />} />
-            <Route path="/subcategories" element={<SubCategories />} />
             <Route path="/categories/form/:id" element={<CategoriesForm />} />
             <Route path="/categories/form" element={<CategoriesForm />} />
-            <Route
-              path="/subcategories/subcategories-form/:id"
-              element={<SubCategoriesForm />}
-            />
-            <Route
-              path="/subcategories/subcategories-form"
-              element={<SubCategoriesForm />}
-            />
           </Routes>
         </aside>
       </div>

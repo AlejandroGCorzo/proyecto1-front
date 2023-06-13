@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   return (
-    <nav className="w-1/4 h-full p-5 min-w-[150px]">
+    <nav className="w-1/4 h-full p-2 md:p-5 min-w-[150px]">
       <section className="flex flex-row items-center justify-start gap-4 py-6">
         <img
           src="/avatar.jpg"
@@ -29,14 +29,7 @@ const Sidebar = () => {
             Categorías
           </Link>
         </li>
-        <li>
-          <Link
-            to="/admin/subcategories"
-            className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
-          >
-            Subcategorías
-          </Link>
-        </li>
+
         <li>
           <Link
             to="/admin/sales"
