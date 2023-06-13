@@ -5,6 +5,7 @@ import Footer from "./components/Footer.jsx/Footer";
 import UserDropdown from "./components/Header/UserDropdown";
 import PanelHome from "./components/PanelAdmin/PanelHome";
 import PrivateRoutes from "./utils/PrivateRoutes";
+import Profile from "./components/Session/Profile";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/login" element={<UserDropdown />} />
         <Route element={<PrivateRoutes />}>
           <Route path="/admin/*" element={<PanelHome />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
       <Footer />
