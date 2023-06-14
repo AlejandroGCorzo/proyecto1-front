@@ -21,6 +21,7 @@ const Categories = () => {
   const { categories, loading } = useSelector((state) => state.categories);
   const [onDelete, setOnDelete] = useState(null);
   const [itemToDelete, setItemToDelete] = useState({ nombre: "", id: "" });
+  const [section, setSection] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   useEffect(() => {
     const getCategories = () => {
@@ -38,10 +39,9 @@ const Categories = () => {
       setConfirmed(false);
     }
   };
-
   return (
-    <div className="flex flex-col mt-6 w-full max-w-full h-full justify-center items-center p-6">
-      <div className="w-full flex justify-start mb-2">
+    <div className="flex flex-col mt-6 w-full max-w-full h-full justify-center items-center p-2">
+      <div className="w-full max-w-[350px] sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-start mb-2">
         <Link
           to="/admin/categories/form"
           className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out"
@@ -50,7 +50,7 @@ const Categories = () => {
         </Link>
       </div>
 
-      <div className="flex flex-nowrap w-full xl:flex-wrap max-w-[350px] sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto">
+      <div className="flex flex-nowrap w-full xl:flex-wrap max-w-[400px] sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto">
         {loading ? (
           <Loading />
         ) : (
@@ -59,34 +59,39 @@ const Categories = () => {
               categories.map((item, index) => (
                 <div
                   key={item._id}
-                  className="bg-grey flex flex-row justify-center items-center md:text-lg border w-max md:w-full"
+                  className="bg-grey flex flex-row justify-start items-start md:text-lg border w-full"
                 >
                   <div className="collapse p-2">
                     <input type="checkbox" />
-                    <div className="collapse-title font-medium flex flex-row justify-start md:justify-between items-center text-fontDark w-full p-4 pr-4">
-                      <div className="text-fontDark bg-grey w-10">
-                        <p>{index + 1}</p>
+                    <div className="collapse-title font-medium  text-fontDark w-full p-4 pr-4">
+                      <div className="flex flex-row justify-start items-center w-full">
+                        <div className="text-fontDark bg-grey w-10">
+                          <p>{index + 1}</p>
+                        </div>
+                        <div className="max-w-[100px] w-24 sm:max-w-full sm:w-full">
+                          <p className="overflow-ellipsis">
+                            {item.nombre
+                              ?.slice(0, 1)
+                              .toUpperCase()
+                              .concat(item.nombre.slice(1))}
+                          </p>
+                        </div>
                       </div>
-                      <div className="w-52 max-w-xs">
-                        <p>
-                          {item.nombre
-                            ?.slice(0, 1)
-                            .toUpperCase()
-                            .concat(item.nombre.slice(1))}
-                        </p>
-                      </div>
-                      <div className="w-80 overflow-hidden flex justify-start items-center">
+                    </div>
+                    <div className="collapse-content flex flex-col text-fontDark items-start justify-center w-full">
+                      <div className=" md:max-w-full overflow-hidden flex flex-col justify-center items-start w-full">
+                        <h2 className="underline py-1">Imagen:</h2>
                         {item.imagen.length ? (
                           <a href={item.imagen[0]} target="_blank" className="">
                             {item.imagen[0]}
                           </a>
                         ) : (
-                          <p>No hay una imagen agregada.</p>
+                          <p className="text-center">
+                            No hay una imagen agregada.
+                          </p>
                         )}
                       </div>
-                    </div>
-                    <div className="collapse-content flex flex-col text-fontDark ">
-                      <div className="flex w-full justify-center items-center">
+                      <div className="flex w-full justify-start items-center pt-2">
                         <Link
                           name="deleteSub"
                           className=" p-1 flex justify-center items-center text-fontDark text-lg ml-1 w-8 h-8"
@@ -95,10 +100,13 @@ const Categories = () => {
                         </Link>
                         <h2 className="underline py-1">Subcategorías:</h2>
                       </div>
-                      <div className="flex flex-col justify-center items-center">
+                      <div className="flex flex-col justify-center items-center w-full">
                         {item.subcategorias.length ? (
                           item.subcategorias.map((sub) => (
-                            <div className="flex flex-row justify-between w-2/3 items-start px-2 py-2 border-y">
+                            <div
+                              className="flex flex-row justify-between w-full  items-start px-2 py-2 border-y"
+                              key={sub._id}
+                            >
                               <p>
                                 {sub.nombre
                                   ?.slice(0, 1)
@@ -107,10 +115,28 @@ const Categories = () => {
                               </p>
                               <button
                                 name="deleteSub"
-                                value={`categoriaId: ${item._id}, subcategoriaId: ${sub._id}`}
-                                className=" p-1 flex justify-center items-center text-fontDark text-lg ml-1 w-8 h-8"
+                                className=" md:p-1 flex justify-center items-center text-fontDark text-lg ml-1 w-8 h-8"
+                                onClick={toggleModal}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    toggleDropdown();
+                                  }
+                                }}
                               >
-                                <MdDeleteOutline className="w-full h-full" />
+                                <MdDeleteOutline
+                                  className="w-full h-full"
+                                  fontSize={16}
+                                  onClick={() => {
+                                    setItemToDelete({
+                                      nombre: sub.nombre,
+                                      categoriaId: item._id,
+                                      id: sub._id,
+                                    });
+                                    setSection(
+                                      `las Subcategorías de ${item.nombre}`
+                                    );
+                                  }}
+                                />
                               </button>
                             </div>
                           ))
@@ -140,43 +166,42 @@ const Categories = () => {
                       name="deleteCategory"
                       className=" flex justify-center items-center text-fontDark text-lg ml-2 w-8 h-8 "
                       onClick={toggleModal}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          toggleDropdown();
-                        }
-                      }}
                     >
                       <MdDeleteOutline
                         className="w-full h-full"
                         fontSize={16}
-                        onClick={() =>
-                          setItemToDelete({ nombre: item.nombre, id: item._id })
-                        }
+                        onClick={() => {
+                          setItemToDelete({
+                            nombre: item.nombre,
+                            id: item._id,
+                          });
+                          setSection("Categorías");
+                        }}
                       />
                     </button>
-                    <dialog ref={modalRef} className="modal bg-grey/40">
-                      <div className="modal-box bg-grey">
-                        <button
-                          className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
-                          onClick={toggleModal}
-                        >
-                          ✕
-                        </button>
-
-                        <ConfirmationComponent
-                          onDelete={onDelete}
-                          toggleModal={toggleModal}
-                          confirmed={confirmed}
-                          setConfirmed={setConfirmed}
-                          itemToDelete={itemToDelete}
-                          setItemToDelete={setItemToDelete}
-                          section={"Categorías"}
-                        />
-                      </div>
-                    </dialog>
                   </div>
                 </div>
               ))}
+            <dialog ref={modalRef} className="modal bg-grey/40">
+              <div className="modal-box bg-grey">
+                <button
+                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+                  onClick={toggleModal}
+                >
+                  ✕
+                </button>
+
+                <ConfirmationComponent
+                  onDelete={onDelete}
+                  toggleModal={toggleModal}
+                  confirmed={confirmed}
+                  setConfirmed={setConfirmed}
+                  itemToDelete={itemToDelete}
+                  setItemToDelete={setItemToDelete}
+                  section={section}
+                />
+              </div>
+            </dialog>
           </div>
         )}
       </div>

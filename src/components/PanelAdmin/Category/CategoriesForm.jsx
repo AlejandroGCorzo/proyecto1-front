@@ -12,24 +12,41 @@ import {
   setErrorCategory,
   setSuccessCategory,
 } from "../../../redux/categoriesSlice";
+import SubCategoriesForm from "../SubCategory/SubCategoriesForm";
 
 const CategoriesForm = () => {
   const params = useParams();
   const formData = new FormData();
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
-  const { error, success, categories } = useSelector(
+  const selectInputRef = useRef(null);
+  const { error, success, categories, subcategorias } = useSelector(
     (state) => state.categories
   );
   const categoryToUpdate = categories.find((item) => item._id === params.id);
   const categoriesNames = categories.map((item) => item.nombre);
+  const subcategoriesNames =
+    categoryToUpdate?.subcategorias?.length > 0
+      ? subcategorias.filter((subcategoria) => {
+          return !categoryToUpdate.subcategorias.some(
+            (elem) => elem._id === subcategoria._id
+          );
+        })
+      : subcategorias.map((item) => ({
+          nombre: item.nombre,
+          _id: item._id,
+        }));
+
   const token = localStorage.getItem("token");
   const [errorName, setErrorName] = useState({});
   const [errorImage, setErrorImage] = useState({});
   const [image, setImage] = useState({});
   const [form, setForm] = useState({
-    nombre: categoryToUpdate?.nombre ? categoryToUpdate.nombre : "",
-    imagen: categoryToUpdate?.imagen ? categoryToUpdate.imagen : [],
+    nombre: categoryToUpdate?.nombre?.length ? categoryToUpdate.nombre : "",
+    imagen: categoryToUpdate?.imagen?.length ? categoryToUpdate.imagen : [],
+    subcategorias: categoryToUpdate?.subcategorias?.length
+      ? categoryToUpdate.subcategorias
+      : [],
   });
 
   const clearReducer = () => {
@@ -40,10 +57,16 @@ const CategoriesForm = () => {
     setForm({
       nombre: "",
       imagen: [],
+      subcategorias: [],
     });
     setImage({});
+    setErrorName({});
+    setErrorImage({});
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Limpiar el valor del input
+    }
+    if (selectInputRef.current) {
+      selectInputRef.current.value = "Elige una Subcategoría"; // Limpiar el valor del input
     }
     dispatch(setErrorCategory(""));
     dispatch(setSuccessCategory(""));
@@ -61,8 +84,11 @@ const CategoriesForm = () => {
 
   const validateImage = (input) => {
     let error = {};
-
-    if (!input && !categoryToUpdate.imagen?.length) {
+    if (categoryToUpdate?.nombre?.length) {
+      if (!input && !categoryToUpdate?.imagen?.length) {
+        error.image = "Debe ingresar una imagen";
+      }
+    } else if (!input) {
       error.image = "Debe ingresar una imagen";
     }
     return error;
@@ -92,13 +118,23 @@ const CategoriesForm = () => {
       }
     }
     if (name === "nombre" && !categoryToUpdate?.imagen?.length) {
-      setForm({ nombre: value, imagen: [] });
+      setForm((prev) => ({ ...prev, nombre: value }));
       let errorFormValidation = validateName({ [name]: value });
       setErrorName(errorFormValidation);
     } else if (name === "nombre" && categoryToUpdate?.imagen?.length) {
       setForm((prev) => ({ ...prev, nombre: value }));
       let errorFormValidation = validateName({ [name]: value });
       setErrorName(errorFormValidation);
+    }
+    if (name === "subcategoria") {
+      if (form.subcategorias.length) {
+        setForm((prev) => ({
+          ...prev,
+          subcategorias: [...prev.subcategorias, value],
+        }));
+      } else {
+        setForm((prev) => ({ ...prev, subcategorias: [value] }));
+      }
     }
   };
   const handleSubmitForm = (e) => {
@@ -122,7 +158,7 @@ const CategoriesForm = () => {
 
   let isFormDisabled =
     !Object.values(form).join("").length ||
-    !image ||
+    !image?.name?.length ||
     Object.values(errorName).join("").length ||
     Object.values(errorImage).join("").length
       ? true
@@ -148,6 +184,8 @@ const CategoriesForm = () => {
           Limpiar formulario
         </button>
       </div>
+      {error.length > 0 && <ServerError error={error} />}
+      {success.length > 0 && <ServerSuccess success={success} />}
       <h2 className="pt-2 h-10 font-semibold text-fontDark underline text-xl md:text-2xl flex self-center sm:w-2/3">
         {categoryToUpdate?._id?.length
           ? "Editar categoría:"
@@ -157,6 +195,33 @@ const CategoriesForm = () => {
         className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start "
         onSubmit={handleSubmitForm}
       >
+        <div className="flex flex-col w-40 sm:w-full ">
+          <label className="label">
+            <span>Subcategorías</span>
+          </label>
+          <small className="h-auto text-gray-500 w-full flex self-start mb-1">
+            * Al seleccionar una subcategoría, la misma se guardara dentro de la
+            categoría creada.
+          </small>
+          <select
+            className="select select-bordered bg-fontGrey"
+            name="subcategoria"
+            ref={selectInputRef}
+            onChange={handleChangeForm}
+            onBlur={validateOnBlur}
+            defaultValue="Elige una Subcategoría"
+          >
+            <option disabled>Elige una Subcategoría</option>
+            {subcategoriesNames.map((item) => (
+              <option key={item._id} value={item.nombre}>
+                {item?.nombre
+                  ?.slice(0, 1)
+                  .toUpperCase()
+                  .concat(item.nombre.slice(1))}
+              </option>
+            ))}
+          </select>{" "}
+        </div>
         <div className="flex flex-col w-40 sm:w-full">
           <label className="label pt-2 pb-0">
             <span>Categoría</span>
@@ -174,12 +239,22 @@ const CategoriesForm = () => {
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorName.nombre}
             </small>
-          ) : null}
+          ) : (
+            form.nombre.length === 0 && (
+              <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                * Campo requerido
+              </small>
+            )
+          )}
         </div>
         <div className="flex flex-col w-40 sm:w-full">
           <label className="label pt-2 pb-0">
             <span>Imagen</span>
           </label>
+          <small className="h-auto text-gray-500 w-full flex self-start mb-1">
+            * Al agregar una nueva imagen, se reemplazara la imagen agregada
+            previamente.
+          </small>
           <input
             ref={fileInputRef}
             type="file"
@@ -188,15 +263,17 @@ const CategoriesForm = () => {
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
           />
-          <small className="h-auto text-gray-500 w-full flex self-start mb-1">
-            * Al agregar una nueva imagen, se reemplazara la imagen agregada
-            previamente.
-          </small>
           {errorImage?.image?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorImage.image}
             </small>
-          ) : null}
+          ) : (
+            !image.name && (
+              <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                * Campo requerido
+              </small>
+            )
+          )}
         </div>
         <button
           type="submit"
@@ -206,8 +283,7 @@ const CategoriesForm = () => {
           Añadir
         </button>
       </form>
-      {error && <ServerError error={error} />}
-      {success && <ServerSuccess success={success} />}
+      <SubCategoriesForm />
     </div>
   );
 };

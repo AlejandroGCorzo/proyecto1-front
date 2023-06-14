@@ -1,22 +1,19 @@
 import React, { useRef, useState } from "react";
-import { AiOutlineArrowLeft } from "react-icons/ai";
-import { Link, useParams } from "react-router-dom";
 import { postSubCategoryAction } from "../../../redux/categoriesActions";
 import { useDispatch, useSelector } from "react-redux";
 import ServerError from "../../../utils/ServerError";
 import ServerSuccess from "../../../utils/ServerSuccess";
 import {
-  setErrorCategory,
-  setSuccessCategory,
+  setErrorSubCategory,
+  setSuccessSubCategory,
 } from "../../../redux/categoriesSlice";
 
 const SubCategoriesForm = () => {
   const formData = new FormData();
-  const params = useParams();
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const selectInputRef = useRef(null);
-  const { error, success, categories, subcategorias } = useSelector(
+  const { errorSub, successSub, categories, subcategorias } = useSelector(
     (state) => state.categories
   );
   const categoriesNameAndId = categories.map((item) => ({
@@ -37,10 +34,6 @@ const SubCategoriesForm = () => {
     imagen: [],
   });
 
-  const clearReducer = () => {
-    dispatch(setErrorCategory(""));
-    dispatch(setSuccessCategory(""));
-  };
   const clearForm = () => {
     setErrorName({});
     setErrorImage({});
@@ -56,8 +49,8 @@ const SubCategoriesForm = () => {
     if (selectInputRef.current) {
       selectInputRef.current.value = "Elige una categoría"; // Limpiar el valor del input
     }
-    dispatch(setErrorCategory(""));
-    dispatch(setSuccessCategory(""));
+    dispatch(setErrorSubCategory(""));
+    dispatch(setSuccessSubCategory(""));
   };
   const validateName = (input) => {
     let error = {};
@@ -69,6 +62,11 @@ const SubCategoriesForm = () => {
       }
       if (!input.value) {
         error.nombre = "El campo Nombre no puede estar vacío.";
+      }
+    }
+    if (input.name === "categoria") {
+      if (input.value === "Elige una categoría" || !input.value) {
+        error.categoria = "Debe seleccionar una categoría.";
       }
     }
     return error;
@@ -109,9 +107,9 @@ const SubCategoriesForm = () => {
 
     if (name === "nombre" || name === "categoria") {
       setForm((prev) => ({ ...prev, [name]: value }));
-
       let errorFormValidation = validateName(e.target);
       setErrorName(errorFormValidation);
+  
     }
   };
   const handleSubmitForm = (e) => {
@@ -128,6 +126,7 @@ const SubCategoriesForm = () => {
 
   let isFormDisabled =
     !Object.values(form).join("").length ||
+    !form?.categoria?.length ||
     !image?.name?.length ||
     Object.values(errorName).join("").length ||
     Object.values(errorImage).join("").length
@@ -137,16 +136,9 @@ const SubCategoriesForm = () => {
   return (
     <div className="flex flex-col w-full justify-start items-center">
       <div
-        className="w-full p-2 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between sm:mt-0
+        className="w-full p-2 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-end sm:mt-0
           text-xl text-blue-400 ml-4 mt-4"
       >
-        <Link
-          to="/admin/subcategories"
-          className="flex items-center "
-          onClick={clearReducer}
-        >
-          <AiOutlineArrowLeft className="pr-1" fontSize={20} /> Volver
-        </Link>
         <button
           className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out self-center justify-end"
           onClick={clearForm}
@@ -154,6 +146,8 @@ const SubCategoriesForm = () => {
           Limpiar formulario
         </button>
       </div>
+      {errorSub.length > 0 && <ServerError error={errorSub} />}
+      {successSub.length > 0 && <ServerSuccess success={successSub} />}
       <h2 className="pt-2 h-10 font-semibold text-fontDark underline text-xl md:text-2xl flex self-center sm:w-2/3">
         Crear Subcategoría:{" "}
       </h2>
@@ -191,7 +185,13 @@ const SubCategoriesForm = () => {
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorName.categoria}
             </small>
-          ) : null}
+          ) : (
+            form?.categoria?.length === 0 && (
+              <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                * Campo requerido
+              </small>
+            )
+          )}
         </div>
         <div className="flex flex-col w-40 sm:w-full">
           <label className="label pt-2 pb-0">
@@ -210,12 +210,22 @@ const SubCategoriesForm = () => {
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorName.nombre}
             </small>
-          ) : null}
+          ) : (
+            form?.nombre?.length === 0 && (
+              <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                * Campo requerido
+              </small>
+            )
+          )}
         </div>
         <div className="flex flex-col w-40 sm:w-full">
           <label className="label pt-2 pb-0">
             <span>Imagen</span>
           </label>
+          <small className="h-auto text-gray-500 w-full flex self-start mb-1">
+            * Al agregar una nueva imagen, se reemplazara la imagen agregada
+            previamente.
+          </small>
           <input
             ref={fileInputRef}
             type="file"
@@ -224,15 +234,17 @@ const SubCategoriesForm = () => {
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
           />
-          <small className="h-auto text-gray-500 w-full flex self-start mb-1">
-            * Al agregar una nueva imagen, se reemplazara la imagen agregada
-            previamente.
-          </small>
           {errorImage?.image?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorImage.image}
             </small>
-          ) : null}
+          ) : (
+            !image.name && (
+              <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                * Campo requerido
+              </small>
+            )
+          )}
         </div>
         <button
           type="submit"
@@ -242,8 +254,6 @@ const SubCategoriesForm = () => {
           Añadir
         </button>
       </form>
-      {error && <ServerError error={error} />}
-      {success && <ServerSuccess success={success} />}
     </div>
   );
 };

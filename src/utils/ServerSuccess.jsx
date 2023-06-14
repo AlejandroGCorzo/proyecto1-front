@@ -2,7 +2,7 @@ import React from "react";
 
 const ServerSuccess = ({ success }) => {
   return (
-    <div className="alert alert-success p-2">
+    <div className="alert alert-success p-2 max-w-2xl">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="stroke-current shrink-0 h-6 w-6"

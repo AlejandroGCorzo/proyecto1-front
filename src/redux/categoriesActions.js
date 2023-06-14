@@ -2,6 +2,8 @@ import axios from "axios";
 import {
   setErrorCategory,
   setSuccessCategory,
+  setErrorSubCategory,
+  setSuccessSubCategory,
   setLoading,
   addCategory,
   setCategory,
@@ -81,11 +83,15 @@ export const patchCategoryAction = (values, token, id) => {
   };
 };
 //accion para eliminar las categorias
-export const deleteCategoriesAction = (id) => {
+export const deleteCategoriesAction = (id, token) => {
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
-      const res = await axios.delete(`${url}/categorias/${id}`);
+      const res = await axios.delete(`${url}/categorias/${id}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
       dispatch(deleteCategory(res.data));
       dispatch(setLoading(false));
     } catch (error) {
@@ -99,14 +105,16 @@ export const deleteCategoriesAction = (id) => {
   };
 };
 //accion para eliminar las subcategorias de una categoria
-export const deleteCategoriesSubCategoryAction = (values) => {
+export const deleteCategoriesSubCategoryAction = (values, token) => {
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
-      const res = await axios.delete(
-        `${url}/categorias/removeSubcategory`,
-        values
-      );
+      const res = await axios.delete(`${url}/categorias/removeSubcategory`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+          body: values,
+        },
+      });
       dispatch(deleteCategory(res.data));
       dispatch(setLoading(false));
     } catch (error) {
@@ -131,9 +139,9 @@ export const getSubCategoriesAction = () => {
     } catch (error) {
       dispatch(setLoading(false));
       if (error.response) {
-        dispatch(setErrorCategory(error.response.data?.message));
+        dispatch(setErrorSubCategory(error.response.data?.message));
       } else {
-        dispatch(setErrorCategory(error.message));
+        dispatch(setErrorSubCategory(error.message));
       }
     }
   };
@@ -152,57 +160,40 @@ export const postSubCategoryAction = (values, token) => {
       });
       dispatch(addSubCategory(res.data));
       dispatch(setLoading(false));
-      dispatch(setSuccessCategory("Subcategoría creada con exito."));
+      dispatch(setSuccessSubCategory("Subcategoría creada con exito."));
     } catch (error) {
       dispatch(setLoading(false));
       if (error.response) {
-        dispatch(setErrorCategory(error.response.data?.message));
+        dispatch(setErrorSubCategory(error.response.data?.message));
       } else {
-        dispatch(setErrorCategory(error.message));
+        dispatch(setErrorSubCategory(error.message));
       }
     }
   };
 };
-//accion de edicion de subcategorias
-export const patchSubCategoryAction = (values, token, id) => {
-  return async function (dispatch) {
-    try {
-      dispatch(setLoading(true));
-      const res = await axios.patch(`${url}/categorias/${id}`, values, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          authorization: `Bearer ${token}`,
-        },
-      });
-      dispatch(updateSubCategory(res.data));
-      dispatch(setLoading(false));
-      dispatch(setSuccessCategory("Categoría actualizada con exito."));
-    } catch (error) {
-      dispatch(setLoading(false));
-      if (error.response) {
-        dispatch(setErrorCategory(error.response.data?.message));
-      } else {
-        dispatch(setErrorCategory(error.message));
-      }
-    }
-  };
-};
+
 //accion para eliminar las subcategorias
-export const deleteSubCategoriesAction = (id) => {
+export const deleteSubCategoriesAction = (id, token) => {
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
       const res = await axios.delete(
-        `${url}/categorias/sub/Subcategoria/${id}`
+        `${url}/categorias/sub/Subcategoria/${id}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       dispatch(deleteSubCategory(res.data));
       dispatch(setLoading(false));
     } catch (error) {
       dispatch(setLoading(false));
       if (error.response) {
-        dispatch(setErrorCategory(error.response.data?.message));
+        dispatch(setErrorSubCategory(error.response.data?.message));
       } else {
-        dispatch(setErrorCategory(error.message));
+        dispatch(setErrorSubCategory(error.message));
       }
     }
   };

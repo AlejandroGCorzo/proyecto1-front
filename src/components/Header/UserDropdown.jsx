@@ -331,7 +331,7 @@ const UserDropdown = () => {
               isLoggedIn ? (
               <Session handleLogOut={handleLogOut} userRole={userRole} />
             ) : null}
-            {userError && <ServerError error={userError} />}
+            {userError.length > 0 && <ServerError error={userError} />}
           </ul>
         </div>
       )}

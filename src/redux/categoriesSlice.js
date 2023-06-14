@@ -6,6 +6,8 @@ const initialState = {
   loading: false,
   success: "",
   error: "",
+  successSub: "",
+  errorSub: "",
 };
 
 const categoriesSlice = createSlice({
@@ -55,16 +57,22 @@ const categoriesSlice = createSlice({
       }
     },
     deleteSubCategory: (state, action) => {
-      let filteredSubcategorias = state.subcategorias.filter(
+      /* let filteredSubcategorias = state.subcategorias.filter(
         (item) => item._id !== action.payload._id
       );
-      state.subcategorias = filteredSubcategorias;
+      state.subcategorias = filteredSubcategorias; */
     },
     setErrorCategory: (state, action) => {
       state.error = action.payload;
     },
     setSuccessCategory: (state, action) => {
       state.success = action.payload;
+    },
+    setErrorSubCategory: (state, action) => {
+      state.errorSub = action.payload;
+    },
+    setSuccessSubCategory: (state, action) => {
+      state.successSub = action.payload;
     },
   },
 });
@@ -81,6 +89,8 @@ export const {
   deleteSubCategory,
   setErrorCategory,
   setSuccessCategory,
+  setErrorSubCategory,
+  setSuccessSubCategory,
 } = categoriesSlice.actions;
 
 export default categoriesSlice.reducer;

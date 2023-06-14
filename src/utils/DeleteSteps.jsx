@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import {
   deleteCategoriesAction,
+  deleteCategoriesSubCategoryAction,
   deleteSubCategoriesAction,
 } from "../redux/categoriesActions";
 import { useDispatch } from "react-redux";
+import { deleteProductAction } from "../redux/productActions";
 
 export const ConfirmationComponent = ({
   onDelete,
@@ -68,6 +70,7 @@ export const DeleteComponent = ({
   setItemToDelete,
 }) => {
   const dispatch = useDispatch();
+  const token = localStorage.getItem("token");
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
   const validateName = (input) => {
@@ -101,9 +104,21 @@ export const DeleteComponent = ({
       itemToDelete?.id?.length
     ) {
       if (section === "Categorías") {
-        await dispatch(deleteCategoriesAction(itemToDelete.id));
-      } else if (section === "Subcategorías") {
-        await dispatch(deleteSubCategoriesAction(itemToDelete.id));
+        dispatch(deleteCategoriesAction(itemToDelete.id, token));
+      } else if (section.includes("Subcategorías")) {
+        console.log("subcategorias");
+        /* dispatch(
+          deleteCategoriesSubCategoryAction(
+            {
+              categoriaId: itemToDelete.categoriaId,
+              subcategoriaId: itemToDelete.id,
+            },
+            token
+          )
+        ); */
+        /*  dispatch(deleteSubCategoriesAction(itemToDelete.id)); */
+      } else if (section === "Productos") {
+        dispatch(deleteProductAction(itemToDelete.id, token));
       }
       setItemToDelete({ nombre: "", id: "" });
     }
