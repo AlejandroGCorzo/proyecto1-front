@@ -6,6 +6,18 @@ import {
   resetPasswordCodeAction,
 } from "../../redux/userActions";
 import { useDispatch } from "react-redux";
+
+function validateEmail(input) {
+  let errors = {};
+  if (input.email.length && !/\S+@\S+\.\S+/.test(input.email)) {
+    errors.email = "Ingresa un email valido, por ejemplo: nombre@ejemplo.com";
+  }
+  if (!input.email) {
+    errors.email = "Email requerido";
+  }
+  return errors;
+}
+
 const ResetPassword = ({
   resetPass,
   setResetPass,
@@ -21,6 +33,7 @@ const ResetPassword = ({
     password: "",
     confirmPassword: "",
   });
+  let [errorEmail, setErrorEmail] = useState({ email: "" });
   let [errorReset, setErrorReset] = useState({
     upperCase: "",
     lowerCase: "",
@@ -34,6 +47,17 @@ const ResetPassword = ({
     },
   });
 
+  const validateOnBlur = (e) => {
+    const { name, value } = e.target;
+    if (name === "email" && !inputReset.email.length) {
+      setInputReset((prev) => ({ ...prev, [name]: value }));
+      let errorObjEmail = validateEmail({
+        [name]: value,
+      });
+      setErrorEmail((prev) => ({ ...prev, ...errorObjEmail }));
+    }
+  };
+
   const handleGoBack = (e) => {
     e.preventDefault();
     setResetPass(false);
@@ -42,12 +66,19 @@ const ResetPassword = ({
   const handleInputChangeReset = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
+    if (name === "email") {
+      setInputReset((prev) => ({ ...prev, [name]: value }));
+      let errorObjEmail = validateEmail({
+        [name]: value,
+      });
+      setErrorEmail(errorObjEmail);
+    }
     setInputReset((prev) => ({ ...prev, [name]: value }));
     let errorObj = validatePassword({
       ...inputReset,
       [name]: value,
     });
-    setErrorReset(errorObj);
+    setErrorReset((prev) => ({ ...prev, ...errorObj }));
   };
   const handleCodeReset = (e) => {
     e.preventDefault();
@@ -83,6 +114,21 @@ const ResetPassword = ({
       })
     );
   };
+  let isDisabled =
+    !errorEmail?.email?.length && inputReset.email?.length ? false : true;
+  let isCreateDisabled =
+    !Object.values(inputReset).length ||
+    errorReset.lowerCase?.length ||
+    errorReset.upperCase?.length ||
+    errorReset.number?.length ||
+    errorReset.passwordLength?.length ||
+    errorReset.confirmPassword?.lowerCase.length ||
+    errorReset.confirmPassword?.upperCase.length ||
+    errorReset.confirmPassword?.number.length ||
+    errorReset.confirmPassword?.passwordLength.length
+      ? true
+      : false;
+
   return (
     <div className="flex flex-col justify-center items-center w-full px-8">
       <span className="py-4 font-semibold">Elija una opción para ingresar</span>
@@ -108,22 +154,22 @@ const ResetPassword = ({
               appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
             onChange={handleInputChangeReset}
           />
-          {errorReset.upperCase ? (
+          {errorReset.upperCase?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorReset.upperCase}
             </small>
           ) : null}
-          {errorReset.lowerCase ? (
+          {errorReset.lowerCase?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorReset.lowerCase}
             </small>
           ) : null}
-          {errorReset.number ? (
+          {errorReset.number?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorReset.number}
             </small>
           ) : null}
-          {errorReset.passwordLength ? (
+          {errorReset.passwordLength?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorReset.passwordLength}
             </small>
@@ -138,22 +184,22 @@ const ResetPassword = ({
               appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
             onChange={handleInputChangeReset}
           />
-          {errorReset.confirmPassword.upperCase ? (
+          {errorReset.confirmPassword.upperCase?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorReset.confirmPassword.upperCase}
             </small>
           ) : null}
-          {errorReset.confirmPassword.lowerCase ? (
+          {errorReset.confirmPassword.lowerCase?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorReset.confirmPassword.lowerCase}
             </small>
           ) : null}
-          {errorReset.confirmPassword.number ? (
+          {errorReset.confirmPassword.number?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorReset.confirmPassword.number}
             </small>
           ) : null}
-          {errorReset.confirmPassword.passwordLength ? (
+          {errorReset.confirmPassword.passwordLength?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorReset.confirmPassword.passwordLength}
             </small>
@@ -161,7 +207,8 @@ const ResetPassword = ({
           <button
             type="submit"
             className="w-full border border-header bg-header 
-            text-white hover:bg-white hover:text-nav transition-all ease-in-out duration-300 h-10 rounded"
+              text-white hover:bg-white  transition-all ease-in-out duration-300 h-10 rounded hover:text-fontDark  disabled:bg-header/80 disabled:text-fontLigth"
+            disabled={isCreateDisabled}
           >
             Crear
           </button>
@@ -190,11 +237,18 @@ const ResetPassword = ({
               appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
               value={inputReset.email}
               onChange={handleInputChangeReset}
+              onBlur={validateOnBlur}
             />
+            {errorEmail?.email?.length ? (
+              <small className="h-auto text-red-600 w-full flex self-start mb-2">
+                {errorEmail.email}
+              </small>
+            ) : null}
             <button
               type="submit"
               className="w-full border border-header bg-header 
-            text-white hover:bg-white hover:text-nav transition-all ease-in-out duration-300 h-10 rounded"
+              text-white hover:bg-white  transition-all ease-in-out duration-300 h-10 rounded hover:text-fontDark  disabled:bg-header/80 disabled:text-fontLigth"
+              disabled={isDisabled}
             >
               Enviar
             </button>

@@ -59,7 +59,7 @@ function validateProduct(input) {
     !input.disciplina
   ) {
     errorsProduct.tipo = "Seleccione una categoría.";
-    errorsProduct.marca = "El campo Marca no puede estar vacío.";
+    errorsProduct.marca = "Seleccione una subcategoría.";
     errorsProduct.descripcion = "El campo Descripción no puede estar vacío.";
     errorsProduct.colores = "Añadir al menos un color.";
     errorsProduct.talle = "Añadir al menos un Talle y una Cantidad.";
@@ -71,19 +71,14 @@ function validateProduct(input) {
   }
 
   if (!input.tipo || input.tipo === "Elige un tipo de producto") {
-    errorsProduct.tipo = "Selecciona un tipo de producto.";
+    errorsProduct.tipo = "Seleccione un tipo de producto.";
   }
   if (!input.modelo) {
     errorsProduct.modelo = "El campo Modelo no puede estar vacío.";
   }
-  /*  if (
-    input.marca === "No existen marcas agregadas a la categoría seleccionada"
-  ) {
-    errorsProduct.marca =
-      "Debe asociar una subcategoría a la categoría seleccionada.";
-  } */
+
   if (!input.marca || input.marca === "Elige una marca") {
-    errorsProduct.marca = "Selecciona una marca.";
+    errorsProduct.marca = "Seleccione una marca.";
   }
   if (!input.descripcion) {
     errorsProduct.descripcion = "El campo Descripción no puede estar vacío.";
@@ -177,7 +172,7 @@ const ProductForm = () => {
       fileInputRef.current.value = ""; // Limpiar el valor del input
     }
     if (selectInputRefMarca.current) {
-      selectInputRefMarca.current.value = "Selecciona un tipo de producto"; // Limpiar el valor del input
+      selectInputRefMarca.current.value = "Seleccione un tipo de producto"; // Limpiar el valor del input
     }
     if (selectInputRefTipo.current) {
       selectInputRefTipo.current.value = "Elige un tipo de producto"; // Limpiar el valor del input
@@ -300,7 +295,6 @@ const ProductForm = () => {
     post();
     clearForm();
   };
-
   let isColorDisabled =
     !color.length || Object.values(errorColor).join("").length ? true : false;
   let isImageDisabled =
@@ -514,7 +508,7 @@ const ProductForm = () => {
             name="marca"
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
-            defaultValue="Selecciona un tipo de producto"
+            defaultValue="Seleccione un tipo de producto"
           >
             {form.tipo.length ? (
               currentSubcategories.length ? (
@@ -535,7 +529,7 @@ const ProductForm = () => {
                 </option>
               )
             ) : (
-              <option disabled>Selecciona un tipo de producto</option>
+              <option disabled>Seleccione un tipo de producto</option>
             )}
           </select>
           {errorsForm?.marca?.length ? (

@@ -20,6 +20,12 @@ const productSlice = createSlice({
     addProduct: (state, action) => {
       state.products = [...state.products, action.payload];
     },
+    deleteProduct: (state, action) => {
+      let filteredProducts = state.products.filter(
+        (item) => item._id !== action.payload._id
+      );
+      state.products = filteredProducts;
+    },
     setErrorProduct: (state, action) => {
       state.error = action.payload;
     },
@@ -32,6 +38,7 @@ const productSlice = createSlice({
 export const {
   setLoading,
   addProduct,
+  deleteProduct,
   setProduct,
   setErrorProduct,
   setSuccessProduct,
