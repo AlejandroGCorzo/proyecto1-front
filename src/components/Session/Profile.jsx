@@ -1,81 +1,54 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { updateUserAction, resetPasswordAction } from "../../redux/userActions";
 
 function Profile() {
-  const navigate = useNavigate;
+  const navigate = useNavigate();
+  const usuario = useSelector((state) => state.users);
+  const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [showFullContent, setShowFullContent] = useState(false);
-  const [contrasena, setContrasena] = useState("");
-  const [nombre, setNombre] = useState("");
-  const [apellido, setApellido] = useState("");
-  const [dni, setDNI] = useState("");
-  const [telefono, setTelefono] = useState("");
-  const [genero, setGenero] = useState("");
-  const [fechaNacimiento, setFechaNacimiento] = useState("");
-  const [nombreCorporativo, setNombreCorporativo] = useState("");
-  const [nombreComercial, setNombreComercial] = useState("");
-  const [cuit, setCuit] = useState("");
-  const [telefonoCorporativo, setTelefonoCorporativo] = useState("");
+  const [nombre, setNombre] = useState(usuario.name || "");
+  const [apellido, setApellido] = useState(usuario.lastName || "");
+  const [dni, setDNI] = useState(usuario.dni || "");
+  const [telefono, setTelefono] = useState(usuario.phone || "");
   const [showCamposCorporativos, setShowCamposCorporativos] = useState(false);
-  const [pais, setPais] = useState("");
-  const [codigoPostal, setCodigoPostal] = useState("");
-  const [calle, setCalle] = useState("");
-  const [numero, setNumero] = useState("");
-  const [ciudad, setCiudad] = useState("");
   const [showAddressFields, setShowAddressFields] = useState(false);
   const [formData, setFormData] = useState({});
+  const [showForm, setShowForm] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [showForm, setShowForm] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
 
-  // Objeto usuario
-  const usuario = {
-    nombre: nombre,
-    contrasena: contrasena,
-    apellido: apellido,
-    dni: dni,
-    telefonoPersonal: telefono,
-    genero: genero,
-    fechaNacimiento: fechaNacimiento,
-    camposCorporativos: {
-      nombreCorporativo: nombreCorporativo,
-      nombreComercial: nombreComercial,
-      cuit: cuit,
-      telefonoCorporativo: telefonoCorporativo,
-    },
-    direcciones: {
-      pais: pais,
-      codigoPostal: codigoPostal,
-      calle: calle,
-      numero: numero,
-      ciudad: ciudad,
-    },
-    pedidos: {},
+  const handleSaveChanges = () => {
+    const updatedUser = {
+      ...usuario,
+      name: nombre,
+      lastName: apellido,
+      dni: dni,
+      phone: telefono,
+    };
+    console.log(updatedUser);
+    dispatch(updateUserAction(usuario.userId, updatedUser)); 
+    setEditMode(false);
   };
-  const [user, setUser] = useState(usuario);
 
-  const updatePassword = (e) => {
+  const handleApellidoChange = (e) => {
+    console.log("Nuevo valor de apellido:", e.target.value);
+    setApellido(e.target.value);
+  };
+
+  const updatePassword = async (e) => {
     e.preventDefault();
+    const passwordData = {
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    };
 
-    // Obtener el valor de la contraseña actual desde el estado
-    const currentPasswordValue = currentPassword;
+    dispatch(resetPasswordAction(passwordData));
 
-    // Obtener el valor de la nueva contraseña desde el estado
-    const newPasswordValue = newPassword;
-
-    // Realizar la lógica para actualizar la contraseña en el backend
-    // ...
-
-    // Actualizar la contraseña en el estado user si es necesario
-    if (currentPasswordValue === usuario.contrasena) {
-      const nuevoUsuario = {
-        ...usuario,
-        contrasena: newPasswordValue,
-      };
-
-      setUser(nuevoUsuario);
-    }
     setCurrentPassword("");
     setNewPassword("");
   };
@@ -84,7 +57,7 @@ function Profile() {
     // Realiza cualquier lógica necesaria para cerrar la sesión o limpiar los datos del usuario
 
     // Navega al componente Home
-    navigate("/home");
+    navigate("/");
   };
 
   const handleInputChange = (e) => {
@@ -184,7 +157,9 @@ function Profile() {
               src="https://cdn-icons-png.flaticon.com/128/149/149071.png"
               alt="Imagen Usuario"
             />
-            <p className="ml-2 font-bold text-lg">Hola {usuario.nombre}!</p>
+            <p className="ml-2 font-bold text-lg">
+              Hola {usuario.name || usuario.email}!
+            </p>
           </div>
           <ul className="mt-12">
             <li
@@ -235,7 +210,10 @@ function Profile() {
               className={`flex w-full justify-between ${
                 selectedOption === "salir" ? "text-black" : "text-gray-600"
               } hover:text-gray-500 cursor-pointer items-center mb-6`}
-              onClick={() => handleOptionClick("salir")}
+              onClick={() => {
+                handleOptionClick("salir");
+                handleLogout();
+              }}
             >
               <div className="flex items-center">
                 <span className="text-sm  ml-2">Salir</span>
@@ -260,18 +238,21 @@ function Profile() {
                   <span className="text-gray-700">Nombre:</span>
                   <input
                     type="text"
-                    className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
-                    value={usuario.nombre}
+                    name="name"
+                    value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
+                    className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
                   />
                 </label>
                 <label className="block mb-4">
                   <span className="text-gray-700">Apellido:</span>
                   <input
                     type="text"
-                    className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+                    name="lastname"
                     value={apellido}
-                    onChange={(e) => setApellido(e.target.value)}
+                    // onChange={(e) => setApellido(e.target.value)}
+                    onChange={handleApellidoChange}
+                    className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
                   />
                 </label>
                 <label className="block mb-4">
@@ -279,6 +260,7 @@ function Profile() {
                   <input
                     type="text"
                     className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+                    name="dni"
                     value={dni}
                     onChange={(e) => setDNI(e.target.value)}
                   />
@@ -288,33 +270,16 @@ function Profile() {
                   <input
                     type="text"
                     className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+                    name="phone"
                     value={telefono}
                     onChange={(e) => setTelefono(e.target.value)}
-                  />
-                </label>
-                <label className="block mb-4">
-                  <span className="text-gray-700">Género:</span>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
-                    value={genero}
-                    onChange={(e) => setGenero(e.target.value)}
-                  />
-                </label>
-                <label className="block mb-4">
-                  <span className="text-gray-700">Fecha de nacimiento:</span>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
-                    value={fechaNacimiento}
-                    onChange={(e) => setFechaNacimiento(e.target.value)}
                   />
                 </label>
 
                 {showCamposCorporativos && (
                   <>
                     <div>
-                      <label className="block mb-4">
+                      {/* <label className="block mb-4">
                         <span className="text-gray-700">
                           Nombre corporativo:
                         </span>
@@ -358,7 +323,7 @@ function Profile() {
                             setTelefonoCorporativo(e.target.value)
                           }
                         />
-                      </label>
+                      </label> */}
                     </div>
                   </>
                 )}
@@ -373,7 +338,7 @@ function Profile() {
 
                 <button
                   className="bg-black w-full hover:bg-white hover:text-black  text-white font-bold py-2 px-4 rounded"
-                  onClick={guardarCambios}
+                  onClick={handleSaveChanges}
                 >
                   GUARDAR CAMBIOS
                 </button>
@@ -382,14 +347,18 @@ function Profile() {
               <div className="w-full bg-gray border border-gray-400 rounded-lg shadow p-2 mx-auto mt-4 md:flex md:flex-wrap md:justify-start md:mx-1 md:p-5 md:w-3/4 lg:flex lg:w-3/4 lg:flex-wrap lg:justify-start lg:mx-1 lg:p-5 xl:flex xl:w-3/4 xl:flex-wrap xl:justify-start xl:mx-1 xl:p-5">
                 <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
                   <p className="ml-0 py-4 px-0">Nombre:</p>
-                  <p className="ml-0 py-1 px-1 text-gray-400">
-                    {usuario.nombre}
-                  </p>
+                  <p className="ml-0 py-1 px-1 text-gray-400">{usuario.name}</p>
                 </div>
                 <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
                   <p className="ml-0 py-4 px-0">Apellido:</p>
                   <p className="ml-0 py-1 px-1 text-gray-400">
-                    {usuario.apellido}
+                    {usuario.lastName}
+                  </p>
+                </div>
+                <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
+                  <p className="ml-0 py-4 px-0">Email:</p>
+                  <p className="ml-0 py-1 px-1 text-gray-400">
+                    {usuario.email}
                   </p>
                 </div>
                 <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
@@ -399,23 +368,11 @@ function Profile() {
                 <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
                   <p className="ml-0 py-4 px-0">Teléfono personal:</p>
                   <p className="ml-0 py-1 px-1 text-gray-400">
-                    {usuario.telefonoPersonal}
+                    {usuario.phone}
                   </p>
                 </div>
-                <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
-                  <p className="ml-0 py-4 px-0">Género:</p>
-                  <p className="ml-0 py-1 px-1 text-gray-400">
-                    {" "}
-                    {usuario.genero}
-                  </p>
-                </div>
-                <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
-                  <p className="ml-0 py-4 px-0">Fecha de nacimiento:</p>
-                  <p className="ml-0 py-1 px-1 text-gray-400">
-                    {usuario.fechaNacimiento}
-                  </p>
-                </div>
-                {usuario.camposCorporativos &&
+
+                {/* {usuario.camposCorporativos &&
                   Object.keys(usuario.camposCorporativos).length > 0 && (
                     <>
                       {usuario.camposCorporativos.nombreCorporativo && (
@@ -453,7 +410,7 @@ function Profile() {
                         </div>
                       )}
                     </>
-                  )}
+                  )} */}
 
                 <button
                   className="bg-white mr-3 hover:bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded mt-4"
@@ -470,7 +427,12 @@ function Profile() {
             <h1 className="flex justify-center px-5 py-5 md:justify-start lg:justify-start xl:justify-start text-sm font-bold font-sans">
               DIRECCIONES
             </h1>
-            {editMode ? (
+            <div className="flex flex-col items-center">
+              <p className="text-center">
+                Usted no tiene direcciones cargadas.
+              </p>
+            </div>
+            {/* {editMode ? (
               <div className="w-full h-full rounded border-solid border-2 border-gray-300 p-4 sm:mt-14 md:w-3/4 lg:w-1/2 xl:mt-0 xl:w-1/2">
                 <form className="w-full h-full" onSubmit={agregarDireccion}>
                   <div className="mb-4">
@@ -600,35 +562,35 @@ function Profile() {
               </div>
             ) : (
               <div className="w-full ">
-                {Object.keys(usuario.direcciones).length > 0 ? (
-                  <div className="w-full bg-gray border border-gray-400 rounded-lg shadow p-2 mx-auto mt-4 md:flex md:flex-wrap md:justify-start md:mx-1 md:p-5 md:w-3/4 lg:flex lg:w-3/4 lg:flex-wrap lg:justify-start lg:mx-1 lg:p-5 xl:flex xl:w-3/4 xl:flex-wrap xl:justify-start xl:mx-1 xl:p-5">
+                {Object.keys(usuario).length > 0 ? (
+                  <div className="w-full bg-gray border border-gray-400 rounded-lg shadow p-2 mx-auto mt-4 md:flex md:flex-wrap md:justify-start md:mx-1 md:p-5 md:w-3/4 lg:flex lg:w-3/4 lg:flex-wrap lg:justify-start lg:mx-1 lg:p-5 xl:flex xl:w-3/4 xl:flex-wrap xl:justify-start xl:mx-1 xl:p-5"> 
                     <>
-                      <div className="flex flex-col w-full my-2 mx-3 items-center">
+                       <div className="flex flex-col w-full my-2 mx-3 items-center">
                         <h3 className="font-bold w-full mx-3">Código Postal</h3>
                         <p className=" w-full my-2 mx-3">
-                          {usuario.direcciones.codigoPostal}
+                          {usuario}
                         </p>
                       </div>
                       <div className="flex flex-col w-full items-center">
                         <h3 className="font-bold w-full mx-3">Calle</h3>
                         <p className=" w-full my-2 mx-3">
-                          {usuario.direcciones.calle}
+                          {usuario}
                         </p>
                       </div>
                       <div className="flex flex-col w-full items-center">
                         <h3 className="font-bold w-full mx-3">Ciudad</h3>
                         <p className=" w-full my-2 mx-3">
-                          {usuario.direcciones.ciudad}
+                          {usuario}
                         </p>
                       </div>
                       <div className="flex flex-col w-full items-center">
                         <h3 className="font-bold w-full mx-3">Destinatario</h3>
                         <p className=" w-full my-2 mx-3">
-                          {usuario.direcciones.destinatario}
+                          {usuario}
                         </p>
-                      </div>
+                      </div> 
                     </>
-                    <button
+                     <button
                       className="bg-white mr-3 hover:bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded mt-4"
                       onClick={handleToggleEditMode}
                     >
@@ -643,7 +605,7 @@ function Profile() {
                   </div>
                 )}
               </div>
-            )}
+            )} */}
           </section>
         )}
         {selectedOption === "pedidos" && (
@@ -651,43 +613,38 @@ function Profile() {
             <h1 className="flex justify-center px-5 py-5 md:justify-start lg:justify-start xl:justify-start text-sm font-bold font-sans">
               PEDIDOS
             </h1>
-            {Object.keys(usuario.pedidos).length > 0 ? (
-              // Si el usuario tiene pedidos
-              <div>{/* Renderizar los pedidos */}</div>
-            ) : (
-              <div className="flex flex-col items-center">
-                <p className="text-center">
-                  Usted no tiene pedidos pendientes.
-                </p>
-              </div>
-            )}
+            <div className="flex flex-col items-center">
+              <p className="text-center">Usted no tiene pedidos pendientes.</p>
+            </div>
           </div>
         )}
         {selectedOption === "autenticacion" && (
-          <div className="w-full">
-            <h1 className="flex justify-center">AUTENTICACIÓN</h1>
-            <div className="flex flex-col items-center mt-4">
+          <div className="w-full h-full ">
+            <h1 className="flex justify-center px-5 py-5 md:justify-start lg:justify-start xl:justify-start text-sm font-bold font-sans">
+              AUTENTICACIÓN
+            </h1>
+            <div className="flex flex-col items-center">
               <h2 className="text-lg font-bold">Contraseña</h2>
               {showForm ? (
                 <form onSubmit={updatePassword}>
-                  <label className="mt-2">
-                    Contraseña actual:
-                    <input
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                    />
-                  </label>
-                  <label className="mt-2">
-                    Nueva contraseña:
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                    />
-                  </label>
+                  <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Contraseña actual"
+                    className="bg-white border w-full h-10 focus:outline-none appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
+                  />
+
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Nueva contraseña"
+                    className="bg-white border w-full h-10 focus:outline-none appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
+                  />
+
                   <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
+                    className="bg-white mr-3 hover:bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded mt-4"
                     type="submit"
                   >
                     Guardar cambios
@@ -701,7 +658,7 @@ function Profile() {
                 </form>
               ) : (
                 <>
-                  <p>{"*".repeat(user.contrasena.length)}</p>
+                  <p>{"*".repeat(currentPassword.length)}</p>
                   <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
                     onClick={() => setShowForm(true)}
@@ -711,17 +668,6 @@ function Profile() {
                 </>
               )}
             </div>
-          </div>
-        )}
-        {selectedOption === "salir" && (
-          <div className="w-full">
-            <h1 className="flex justify-center">SALIR</h1>
-            <button
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-2"
-              onClick={handleLogout}
-            >
-              Salir
-            </button>
           </div>
         )}
       </main>

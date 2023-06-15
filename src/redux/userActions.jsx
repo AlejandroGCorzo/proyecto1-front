@@ -75,6 +75,19 @@ export const resetPasswordAction = (values) => {
     }
   };
 };
+// Acción para actualizar el usuario
+export const updateUserAction = (userId, updatedUser) => {
+  return async function (dispatch) {
+    try {
+      const res = await axios.patch(`${url}/user/${userId}`, updatedUser);
+      dispatch(setUser(res.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+
 
 //accion de cerrar sesion
 export const logOutAction = () => {
