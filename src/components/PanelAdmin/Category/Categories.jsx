@@ -52,7 +52,10 @@ const Categories = () => {
   const toggleModalAddSub = (e) => {
     modalRefSub.current.classList.toggle("modal-open");
     document.activeElement.blur();
-    setSubForm((prev) => ({ ...prev, subcategoriaId: "" }));
+    setSubForm({
+      categoriaId: e.target.value,
+      subcategoriaId: "",
+    });
     setErrorSub({ subcategoria: "" });
   };
   return (
@@ -95,22 +98,25 @@ const Categories = () => {
                       </div>
                     </div>
                     <div className="collapse-content flex flex-col text-fontDark items-start justify-center w-full">
-                      <div className=" md:max-w-full overflow-hidden flex flex-col justify-center items-start w-full">
+                      <div className=" md:max-w-full overflow-hidden flex flex-col justify-center items-center md:items-start w-full">
                         <h2 className="underline py-1">Imagen:</h2>
                         {item.imagen.length ? (
-                          <a href={item.imagen[0]} target="_blank" className="">
-                            {item.imagen[0]}
-                          </a>
+                          <img
+                            src={item.imagen[0]}
+                            className="w-full md:w-1/3"
+                          />
                         ) : (
                           <p className="text-center">
                             No hay una imagen agregada.
                           </p>
                         )}
                       </div>
-                      <div className="flex w-full justify-start items-center pt-2">
+                      <div className="flex flex-col md:flex-row w-full justify-between items-center py-2">
+                        <h2 className="underline px-2 py-1">Subcategorías:</h2>
                         <button
                           name="addSub"
-                          className=" md:p-1 flex justify-center items-center text-fontDark text-lg ml-1 w-8 h-8"
+                          className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out"
+                          value={item._id}
                           onClick={toggleModalAddSub}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
@@ -118,18 +124,8 @@ const Categories = () => {
                             }
                           }}
                         >
-                          <MdOutlineAddCircleOutline
-                            className="w-8 h-8"
-                            onClick={() =>
-                              setSubForm({
-                                categoriaId: item._id,
-                                subcategoriaId: "",
-                              })
-                            }
-                          />
+                          Añadir Subcategoria
                         </button>
-
-                        <h2 className="underline px-2 py-1">Subcategorías:</h2>
                       </div>
                       <div className="flex flex-col justify-center items-center w-full">
                         {item?.subcategorias?.length ? (
