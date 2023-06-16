@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import { encode } from "js-base64";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { updateUserAction, resetPasswordAction } from "../../redux/userActions";
+import { updateUserAction, resetPasswordAction, resetPasswordCodeAction } from "../../redux/userActions";
 
 function Profile() {
   const navigate = useNavigate();
@@ -18,9 +19,12 @@ function Profile() {
   const [showAddressFields, setShowAddressFields] = useState(false);
   const [formData, setFormData] = useState({});
   const [showForm, setShowForm] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
   const [showResetPassword, setShowResetPassword] = useState(false);
+  const [Password, setPassword] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSaveChanges = () => {
     const updatedUser = {
@@ -30,7 +34,6 @@ function Profile() {
       dni: dni,
       phone: telefono,
     };
-    console.log(updatedUser);
     dispatch(updateUserAction(usuario.userId, updatedUser)); 
     setEditMode(false);
   };
@@ -40,18 +43,43 @@ function Profile() {
     setApellido(e.target.value);
   };
 
-  const updatePassword = async (e) => {
-    e.preventDefault();
-    const passwordData = {
-      currentPassword: currentPassword,
-      newPassword: newPassword,
-    };
-
-    dispatch(resetPasswordAction(passwordData));
-
-    setCurrentPassword("");
-    setNewPassword("");
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
+
+  const sendVerificationCode = () => {
+    try {
+      const encryptedEmail = encode(usuario.email);
+      dispatch(resetPasswordCodeAction({ email: encryptedEmail }));
+      // Mostrar mensaje o tomar alguna acción adicional después de enviar el código de verificación
+    } catch (error) {
+      console.log(error);
+      // Manejar el error de manera adecuada, mostrar mensaje de error, etc.
+    }
+  };
+  
+  const updatePassword = (e) => {
+    e.preventDefault();
+  
+    try {
+      const encryptedPassword = encode(Password);
+  
+       dispatch(resetPasswordAction({
+        password: encryptedPassword,
+        code: +verificationCode,
+      }));
+  
+      // Si la acción se ejecuta correctamente, aquí puedes realizar acciones adicionales
+      setPassword("");
+      setVerificationCode(0);
+      setErrorMessage(""); // Limpiar el mensaje de error en caso de que haya uno previo
+    } catch (error) {
+      // Si ocurre un error, aquí puedes manejarlo y mostrar un mensaje de error al usuario
+      setErrorMessage("Error al modificar la contraseña.");
+      setSuccessMessage("¡La contraseña se cambió con éxito!"); // Establecer el mensaje de éxito
+    }
+  };
+  
 
   const handleLogout = () => {
     // Realiza cualquier lógica necesaria para cerrar la sesión o limpiar los datos del usuario
@@ -627,21 +655,30 @@ function Profile() {
               <h2 className="text-lg font-bold">Contraseña</h2>
               {showForm ? (
                 <form onSubmit={updatePassword}>
+                  <p>
+                    Por favor, revise su casilla de correo para encontrar el
+                    código de verificación.
+                  </p>
                   <input
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Contraseña actual"
+                    type="number" // Dependiendo de cómo quieras que sea el código de verificación, puedes ajustar el tipo de entrada
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                    placeholder="Código de verificación"
                     className="bg-white border w-full h-10 focus:outline-none appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
                   />
-
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Nueva contraseña"
-                    className="bg-white border w-full h-10 focus:outline-none appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
-                  />
+                  <p>Por favor, introduzca su nueva contraseña</p>
+                  <div>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={Password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Nueva contraseña"
+                      className="bg-white border w-full h-10 focus:outline-none appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
+                    />
+                    <button onClick={togglePasswordVisibility}>
+                      {showPassword ? "Ocultar" : "Mostrar"}
+                    </button>
+                  </div>
 
                   <button
                     className="bg-white mr-3 hover:bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded mt-4"
@@ -655,13 +692,18 @@ function Profile() {
                   >
                     Cancelar
                   </button>
+                  {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Mostrar el mensaje de error */}
+                  {successMessage && <p className="success-message">{successMessage}</p>} {/* Mostrar el mensaje de éxito */}
                 </form>
               ) : (
                 <>
-                  <p>{"*".repeat(currentPassword.length)}</p>
+                  <p>{"*".repeat(usuario.email.length)}</p>
                   <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
-                    onClick={() => setShowForm(true)}
+                    onClick={() => {
+                      setShowForm(true);
+                      sendVerificationCode(); // Llama a la función para enviar el código de verificación al usuario
+                    }}
                   >
                     Modificar contraseña
                   </button>
