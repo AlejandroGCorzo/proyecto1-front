@@ -24,7 +24,7 @@ const CategoriesForm = () => {
     (state) => state.categories
   );
   const categoryToUpdate = categories.find((item) => item._id === params.id);
-  const categoriesNames = categories.map((item) => item.nombre);
+  const categoriesNames = categories.map((item) => item.nombre.toUpperCase());
   const subcategoriesNames =
     categoryToUpdate?.subcategorias?.length > 0
       ? subcategorias.filter((subcategoria) => {
@@ -45,7 +45,7 @@ const CategoriesForm = () => {
     nombre: categoryToUpdate?.nombre?.length ? categoryToUpdate.nombre : "",
     imagen: categoryToUpdate?.imagen?.length ? categoryToUpdate.imagen : [],
     subcategorias: categoryToUpdate?.subcategorias?.length
-      ? categoryToUpdate.subcategorias
+      ? categoryToUpdate.subcategorias.map((sub) => sub._id)
       : [],
   });
 
@@ -73,10 +73,13 @@ const CategoriesForm = () => {
   };
   const validateName = (input) => {
     let error = {};
-    if (categoriesNames.includes(input.nombre) && !categoryToUpdate?.nombre) {
+    if (
+      categoriesNames?.length &&
+      categoriesNames?.includes(input.nombre?.toUpperCase())
+    ) {
       error.nombre = "La Categoría ya existente, ingrese un nombre diferente.";
     }
-    if (!input.nombre) {
+    if (!input.nombre && !categoryToUpdate?.nombre?.length) {
       error.nombre = "El campo Nombre no puede estar vacío.";
     }
     return error;
@@ -117,25 +120,24 @@ const CategoriesForm = () => {
         setErrorImage(errorFormValidation);
       }
     }
-    if (name === "nombre" && !categoryToUpdate?.imagen?.length) {
-      setForm((prev) => ({ ...prev, nombre: value }));
-      let errorFormValidation = validateName({ [name]: value });
-      setErrorName(errorFormValidation);
-    } else if (name === "nombre" && categoryToUpdate?.imagen?.length) {
+    if (name === "nombre") {
       setForm((prev) => ({ ...prev, nombre: value }));
       let errorFormValidation = validateName({ [name]: value });
       setErrorName(errorFormValidation);
     }
-    if (name === "subcategoria") {
+    /*  if (name === "subcategoria") {
       if (form.subcategorias.length) {
         setForm((prev) => ({
           ...prev,
           subcategorias: [...prev.subcategorias, value],
         }));
       } else {
-        setForm((prev) => ({ ...prev, subcategorias: [value] }));
+        setForm((prev) => ({
+          ...prev,
+          subcategorias: [value],
+        }));
       }
-    }
+    } */
   };
   const handleSubmitForm = (e) => {
     e.preventDefault();
@@ -158,16 +160,15 @@ const CategoriesForm = () => {
 
   let isFormDisabled =
     !Object.values(form).join("").length ||
-    !image?.name?.length ||
+    (!image?.name?.length && !categoryToUpdate?.imagen?.length) ||
     Object.values(errorName).join("").length ||
     Object.values(errorImage).join("").length
       ? true
       : false;
-
   return (
     <div className="flex flex-col w-full justify-start items-center">
       <div
-        className="w-full p-2 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between sm:mt-0
+        className="w-full py-2 px-8 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between sm:mt-0
         text-xl text-blue-400 ml-4 mt-4"
       >
         <Link
@@ -195,33 +196,35 @@ const CategoriesForm = () => {
         className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start "
         onSubmit={handleSubmitForm}
       >
-        <div className="flex flex-col w-40 sm:w-full ">
-          <label className="label">
-            <span>Subcategorías</span>
-          </label>
-          <small className="h-auto text-gray-500 w-full flex self-start mb-1">
-            * Al seleccionar una subcategoría, la misma se guardara dentro de la
-            categoría creada.
-          </small>
-          <select
-            className="select select-bordered bg-fontGrey"
-            name="subcategoria"
-            ref={selectInputRef}
-            onChange={handleChangeForm}
-            onBlur={validateOnBlur}
-            defaultValue="Elige una Subcategoría"
-          >
-            <option disabled>Elige una Subcategoría</option>
-            {subcategoriesNames.map((item) => (
-              <option key={item._id} value={item.nombre}>
-                {item?.nombre
-                  ?.slice(0, 1)
-                  .toUpperCase()
-                  .concat(item.nombre.slice(1))}
-              </option>
-            ))}
-          </select>{" "}
-        </div>
+        {/*  {!categoryToUpdate?._id?.length && (
+          <div className="flex flex-col w-40 sm:w-full ">
+            <label className="label">
+              <span>Subcategorías</span>
+            </label>
+            <small className="h-auto text-gray-500 w-full flex self-start mb-1">
+              * Al seleccionar una subcategoría, la misma se guardara dentro de
+              la categoría creada.
+            </small>
+            <select
+              className="select select-bordered bg-fontGrey"
+              name="subcategoria"
+              ref={selectInputRef}
+              onChange={handleChangeForm}
+              onBlur={validateOnBlur}
+              defaultValue="Elige una Subcategoría"
+            >
+              <option disabled>Elige una Subcategoría</option>
+              {subcategoriesNames.map((item) => (
+                <option key={item._id} value={item._id}>
+                  {item?.nombre
+                    ?.slice(0, 1)
+                    .toUpperCase()
+                    .concat(item.nombre.slice(1))}
+                </option>
+              ))}
+            </select>{" "}
+          </div>
+        )} */}
         <div className="flex flex-col w-40 sm:w-full">
           <label className="label pt-2 pb-0">
             <span>Categoría</span>

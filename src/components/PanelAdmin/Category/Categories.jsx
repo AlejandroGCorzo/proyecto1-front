@@ -14,11 +14,21 @@ import {
   getSubCategoriesAction,
 } from "../../../redux/categoriesActions";
 import { ConfirmationComponent } from "../../../utils/DeleteSteps";
+import AddSubcategory from "./AddSubcategory";
 
 const Categories = () => {
   const dispatch = useDispatch();
   const modalRef = useRef(null);
+  const modalRefSub = useRef(null);
   const { categories, loading } = useSelector((state) => state.categories);
+  const sortedCategories = [...categories].sort((a, b) =>
+    a.nombre.localeCompare(b.nombre)
+  );
+  const [subForm, setSubForm] = useState({
+    categoriaId: "",
+    subcategoriaId: "",
+  });
+  const [errorSub, setErrorSub] = useState({ subcategoria: "" });
   const [onDelete, setOnDelete] = useState(null);
   const [itemToDelete, setItemToDelete] = useState({ nombre: "", id: "" });
   const [section, setSection] = useState("");
@@ -39,6 +49,12 @@ const Categories = () => {
       setConfirmed(false);
     }
   };
+  const toggleModalAddSub = (e) => {
+    modalRefSub.current.classList.toggle("modal-open");
+    document.activeElement.blur();
+    setSubForm((prev) => ({ ...prev, subcategoriaId: "" }));
+    setErrorSub({ subcategoria: "" });
+  };
   return (
     <div className="flex flex-col mt-6 w-full max-w-full h-full justify-center items-center p-2">
       <div className="w-full max-w-[350px] sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-start mb-2">
@@ -55,8 +71,8 @@ const Categories = () => {
           <Loading />
         ) : (
           <div className="overflow-x-auto w-full flex-col flex px-4">
-            {categories.length > 0 &&
-              categories.map((item, index) => (
+            {sortedCategories.length > 0 &&
+              sortedCategories.map((item, index) => (
                 <div
                   key={item._id}
                   className="bg-grey flex flex-row justify-start items-start md:text-lg border w-full"
@@ -92,26 +108,41 @@ const Categories = () => {
                         )}
                       </div>
                       <div className="flex w-full justify-start items-center pt-2">
-                        <Link
-                          name="deleteSub"
-                          className=" p-1 flex justify-center items-center text-fontDark text-lg ml-1 w-8 h-8"
+                        <button
+                          name="addSub"
+                          className=" md:p-1 flex justify-center items-center text-fontDark text-lg ml-1 w-8 h-8"
+                          onClick={toggleModalAddSub}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              toggleDropdown();
+                            }
+                          }}
                         >
-                          <MdOutlineAddCircleOutline className="w-full h-full" />
-                        </Link>
-                        <h2 className="underline py-1">Subcategorías:</h2>
+                          <MdOutlineAddCircleOutline
+                            className="w-8 h-8"
+                            onClick={() =>
+                              setSubForm({
+                                categoriaId: item._id,
+                                subcategoriaId: "",
+                              })
+                            }
+                          />
+                        </button>
+
+                        <h2 className="underline px-2 py-1">Subcategorías:</h2>
                       </div>
                       <div className="flex flex-col justify-center items-center w-full">
-                        {item.subcategorias.length ? (
+                        {item?.subcategorias?.length ? (
                           item.subcategorias.map((sub) => (
                             <div
                               className="flex flex-row justify-between w-full  items-start px-2 py-2 border-y"
-                              key={sub._id}
+                              key={sub?._id}
                             >
                               <p>
-                                {sub.nombre
+                                {sub?.nombre
                                   ?.slice(0, 1)
                                   .toUpperCase()
-                                  .concat(sub.nombre.slice(1))}
+                                  .concat(sub?.nombre.slice(1))}
                               </p>
                               <button
                                 name="deleteSub"
@@ -131,6 +162,7 @@ const Categories = () => {
                                       nombre: sub.nombre,
                                       categoriaId: item._id,
                                       id: sub._id,
+                                      categorias: categories,
                                     });
                                     setSection(
                                       `las Subcategorías de ${item.nombre}`
@@ -199,6 +231,23 @@ const Categories = () => {
                   itemToDelete={itemToDelete}
                   setItemToDelete={setItemToDelete}
                   section={section}
+                />
+              </div>
+            </dialog>
+            <dialog ref={modalRefSub} className="modal bg-grey/40">
+              <div className="modal-box bg-grey">
+                <button
+                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+                  onClick={toggleModalAddSub}
+                >
+                  ✕
+                </button>
+
+                <AddSubcategory
+                  subForm={subForm}
+                  setSubForm={setSubForm}
+                  errorSub={errorSub}
+                  setErrorSub={setErrorSub}
                 />
               </div>
             </dialog>

@@ -109,7 +109,13 @@ export const DeleteComponent = ({
       if (section === "Categorías") {
         dispatch(deleteCategoriesAction(itemToDelete.id, token));
       } else if (section.includes("Subcategorías")) {
-        console.log("subcategorias", itemToDelete);
+        let isInMoreThanOneCat = itemToDelete.categorias.map((item) =>
+          item.subcategorias.filter((item) => item._id === itemToDelete.id)
+        );
+        isInMoreThanOneCat = [
+          ...isInMoreThanOneCat.filter((item) => item.length).flat(Infinity),
+        ];
+
         dispatch(
           deleteCategoriesSubCategoryAction(
             {
@@ -119,7 +125,10 @@ export const DeleteComponent = ({
             token
           )
         );
-        /*  dispatch(deleteSubCategoriesAction(itemToDelete.id)); */
+
+        if (isInMoreThanOneCat.length === 1) {
+          dispatch(deleteSubCategoriesAction(itemToDelete.id));
+        }
       } else if (section === "Productos") {
         dispatch(deleteProductAction(itemToDelete.id, token));
       }

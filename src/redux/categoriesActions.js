@@ -8,11 +8,13 @@ import {
   addCategory,
   setCategory,
   updateCategory,
+  deleteSubFromCategories,
   deleteCategory,
   addSubCategory,
   setSubCategory,
   updateSubCategory,
   deleteSubCategory,
+  addSubToCategory,
 } from "./categoriesSlice";
 const url = import.meta.env.VITE_REACT_APP_API;
 
@@ -46,6 +48,34 @@ export const postCategoryAction = (values, token) => {
         },
       });
       dispatch(addCategory(res.data));
+      dispatch(setLoading(false));
+      dispatch(setSuccessCategory("Categoría creada con exito."));
+    } catch (error) {
+      dispatch(setLoading(false));
+      if (error.response) {
+        dispatch(setErrorCategory(error.response.data?.message));
+      } else {
+        dispatch(setErrorCategory(error.message));
+      }
+    }
+  };
+};
+//accion de agregar subcategorias
+export const postSubToCategoryAction = (values, token) => {
+  return async function (dispatch) {
+    try {
+      dispatch(setLoading(true));
+      const res = await axios.post(
+        `${url}/categorias/addSubcategoria`,
+        values /* {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        data: values,
+      } */
+      );
+
+      dispatch(addSubToCategory(res.data));
       dispatch(setLoading(false));
       dispatch(setSuccessCategory("Categoría creada con exito."));
     } catch (error) {
@@ -109,13 +139,17 @@ export const deleteCategoriesSubCategoryAction = (values, token) => {
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
-      const res = await axios.delete(`${url}/categorias/removeSubcategory`, {
-        headers: {
-          authorization: `Bearer ${token}`,
-          body: values,
-        },
-      });
-      dispatch(deleteCategory(res.data));
+      const res = await axios.delete(
+        `${url}/categorias/removeSubcategory`,
+
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          data: values,
+        }
+      );
+      dispatch(deleteSubFromCategories(res.data));
       dispatch(setLoading(false));
     } catch (error) {
       dispatch(setLoading(false));
@@ -185,7 +219,6 @@ export const deleteSubCategoriesAction = (id, token) => {
           },
         }
       );
-
       dispatch(deleteSubCategory(res.data));
       dispatch(setLoading(false));
     } catch (error) {
