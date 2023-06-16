@@ -4,7 +4,7 @@ import { GrInstagram } from "react-icons/gr";
 import FooterOptions from "./FooterOptions";
 const Footer = () => {
   return (
-    <div className="w-full h-auto mt-10 lg:mt-18 text-fontGrey text-sm self-end justify-end flex bg-header">
+    <div className="w-full h-auto mt-10 lg:mt-18 text-fontGrey text-sm items-end justify-end flex bg-header">
       <div className="h-auto lg:h-[420px] w-full flex flex-col justify-end items-center">
         <div className="w-full h-auto lg:h-36 bg-grid flex flex-row justify-center items-center py-2">
           <div className="h-full w-3/4 flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">

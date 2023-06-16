@@ -121,7 +121,7 @@ const UserDropdown = () => {
   return (
     <>
       {condition ? (
-        <div className="flex flex-col justify-center items-center mt-52 bg-grey">
+        <div className="flex flex-col justify-center items-center mt-52 bg-grey flex-1 md:flex-auto">
           {condition && isLoggedIn && <Navigate to="/" replace={true} />}
           <ul
             className={` text-nav w-96 font-medium flex flex-col justify-center items-center p-4 text-base ${

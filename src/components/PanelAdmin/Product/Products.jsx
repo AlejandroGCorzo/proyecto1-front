@@ -26,14 +26,13 @@ const Products = () => {
     const getProducts = () => {
       dispatch(getProductAction());
     };
+    getProducts();
     const getCategories = () => {
       dispatch(getCategoriesAction());
       dispatch(getSubCategoriesAction());
     };
 
     getCategories();
-
-    getProducts();
   }, []);
   const toggleModal = (e) => {
     modalProductRef.current.classList.toggle("modal-open");
@@ -47,7 +46,7 @@ const Products = () => {
   return (
     <>
       <div className="flex flex-col mt-6 w-full max-w-full h-full justify-center items-center p-6">
-        <div className="w-full max-w-[350px] sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-start mb-2">
+        <div className="w-full max-w-[350px] sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-start mb-2 ">
           <Link
             to="/admin/products/form"
             className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out"
@@ -75,17 +74,26 @@ const Products = () => {
                           </div>
                           <div className="max-w-[100px] w-20 sm:max-w-full sm:w-full">
                             <p className="overflow-ellipsis">
-                              {item.descripcion
+                              {item.modelo
                                 ?.slice(0, 1)
                                 .toUpperCase()
-                                .concat(item.descripcion.slice(1))}
+                                .concat(item.modelo.slice(1))}
                             </p>
                           </div>
                         </div>
                       </div>
                       <div className="collapse-content text-fontDark">
                         {/*  */}
-                        <div className="flex flex-col lg:flex-row flex-wrap lg:gap-6 justify-center items-start w-full">
+                        <div className="flex flex-col lg:flex-row flex-wrap lg:gap-10 justify-center items-start w-full">
+                          <div className="flex flex-col w-full lg:w-auto lg:h-full justify-start items-start lg:items-center border-y lg:border-none py-2">
+                            <h2 className="underline py-1">ID:</h2>
+                            <p className="overflow-ellipsis">
+                              {item._id
+                                ?.slice(0, 1)
+                                .toUpperCase()
+                                .concat(item._id.slice(1))}
+                            </p>
+                          </div>
                           <div className="flex flex-col w-full lg:w-auto lg:h-full justify-start items-start lg:items-center border-y lg:border-none py-2">
                             <h2 className="underline py-1">Imagenes:</h2>
 
@@ -141,9 +149,12 @@ const Products = () => {
                             <h2 className="underline py-1">Talles:</h2>
                             {item.talle.length > 0 ? (
                               item.talle.map((talle, index) => (
-                                <div key={index + "talles"}>
+                                <div
+                                  key={index + "talles"}
+                                  className="flex flex-row w-full justify-between gap-2"
+                                >
                                   <p>{talle.talle}</p>
-                                  <p>{talle.cantidad}</p>
+                                  <p>Cantidad: {talle.cantidad}</p>
                                 </div>
                               ))
                             ) : (

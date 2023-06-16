@@ -31,15 +31,18 @@ const FooterOptions = () => {
     <>
       {viewportSize.width < 1026 ? (
         <>
-          <div className="h-10 w-full bg-grey text-header font-semibold text-base flex justify-center items-center">
-            <span className="px-2">Más información</span>
+          <div
+            className="h-10 w-full bg-grey text-header font-semibold text-base flex justify-center items-center"
+            onClick={() => setMoreInfo(!moreInfo)}
+          >
+            <span className="px-2 w-2/3 text-center">Más información</span>
             {moreInfo ? (
-              <button onClick={() => setMoreInfo(false)}>
+              <button>
                 {" "}
                 <MdKeyboardArrowRight />
               </button>
             ) : (
-              <button onClick={() => setMoreInfo(true)}>
+              <button>
                 <MdKeyboardArrowDown />
               </button>
             )}
@@ -56,10 +59,10 @@ const FooterOptions = () => {
                   }
                 }}
               >
-                <div className="collapse-title text-lg border-t border-t-white">
+                <div className="collapse-title text-lg border-t border-t-white rounded-none">
                   grid
                 </div>
-                <div className="collapse-content flex flex-col justify-start items-start bg-grey text-nav text-base px-0 pb-0">
+                <div className="collapse-content rounded-none flex flex-col justify-start items-start bg-grey text-nav text-base px-0 pb-0">
                   <a
                     href="#"
                     target="_blank"
@@ -95,10 +98,10 @@ const FooterOptions = () => {
                   }
                 }}
               >
-                <div className="collapse-title text-lg border-t border-t-white">
+                <div className="collapse-title text-lg border-t border-t-white rounded-none">
                   Compras online
                 </div>
-                <div className="collapse-content flex flex-col justify-start items-start bg-grey text-nav text-base px-0 pb-0">
+                <div className="collapse-content rounded-none flex flex-col justify-start items-start bg-grey text-nav text-base px-0 pb-0">
                   <a
                     href="#"
                     target="_blank"
@@ -151,7 +154,7 @@ const FooterOptions = () => {
               <a
                 href="https://wa.me/5491133130958/?text=Hola"
                 target="_blank"
-                className="collapse-title collapse text-lg text-white font-medium border-y border-y-white"
+                className="collapse-title collapse text-lg text-white font-medium border-y border-y-white rounded-none"
               >
                 Contacto
               </a>

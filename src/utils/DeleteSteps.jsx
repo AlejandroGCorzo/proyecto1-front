@@ -38,7 +38,10 @@ export const ConfirmationComponent = ({
         />
       ) : (
         <div className="flex flex-col items-center justify-center w-2/3">
-          <h1 className="text-xl text-center text-fontDark font-semibold mb-4">
+          <h1
+            className="text-xl text-center text-fontDark font-semibold mb-4"
+            style={{ userSelect: "none" }}
+          >
             {`¿Estás seguro que desea eliminar ${itemToDelete?.nombre} de ${section}?`}
           </h1>
           <div className="w-full flex justify-between">
@@ -106,8 +109,8 @@ export const DeleteComponent = ({
       if (section === "Categorías") {
         dispatch(deleteCategoriesAction(itemToDelete.id, token));
       } else if (section.includes("Subcategorías")) {
-        console.log("subcategorias");
-        /* dispatch(
+        console.log("subcategorias", itemToDelete);
+        dispatch(
           deleteCategoriesSubCategoryAction(
             {
               categoriaId: itemToDelete.categoriaId,
@@ -115,7 +118,7 @@ export const DeleteComponent = ({
             },
             token
           )
-        ); */
+        );
         /*  dispatch(deleteSubCategoriesAction(itemToDelete.id)); */
       } else if (section === "Productos") {
         dispatch(deleteProductAction(itemToDelete.id, token));
@@ -129,7 +132,10 @@ export const DeleteComponent = ({
   return (
     <div className="flex flex-col items-center justify-center p-4">
       <form onSubmit={handleDelete}>
-        <h1 className="text-2xl text-fontDark font-semibold mb-4 ">
+        <h1
+          className="text-2xl text-fontDark font-semibold mb-4 "
+          style={{ userSelect: "none" }}
+        >
           {`Eliminar ${itemToDelete?.nombre} de ${section}:`}
         </h1>
         <small
