@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { encode } from "js-base64";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -25,6 +26,12 @@ function Profile() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorPassword, setErrorPassword] = useState({
+    upperCase: "",
+    lowerCase: "",
+    number: "",
+    passwordLength: ""
+  });
 
   const handleSaveChanges = () => {
     const updatedUser = {
@@ -47,38 +54,101 @@ function Profile() {
     setShowPassword(!showPassword);
   };
 
+  const validatePassword = (value) => {
+    // Realiza tus validaciones de contraseña aquí y actualiza el estado de errorPassword en consecuencia
+    const errors = {
+      upperCase: "", // Error de mayúsculas
+      lowerCase: "", // Error de minúsculas
+      number: "", // Error de números
+      passwordLength: "" // Error de longitud
+    };
+
+    // Ejemplo de validación de mayúsculas
+    if (!/[A-Z]/.test(value)) {
+      errors.upperCase = "La contraseña debe contener al menos una letra mayúscula.";
+    }
+
+    // Ejemplo de validación de minúsculas
+    if (!/[a-z]/.test(value)) {
+      errors.lowerCase = "La contraseña debe contener al menos una letra minúscula.";
+    }
+
+    // Ejemplo de validación de números
+    if (!/\d/.test(value)) {
+      errors.number = "La contraseña debe contener al menos un número.";
+    }
+
+    // Ejemplo de validación de longitud
+    if (value.length < 8) {
+      errors.passwordLength = "La contraseña debe tener al menos 8 caracteres.";
+    }
+
+    setErrorPassword(errors);
+  };
+
   const sendVerificationCode = () => {
     try {
       const encryptedEmail = encode(usuario.email);
       dispatch(resetPasswordCodeAction({ email: encryptedEmail }));
-      // Mostrar mensaje o tomar alguna acción adicional después de enviar el código de verificación
+      setErrorMessage(""); // Limpiar el mensaje de error en caso de que haya uno previo
+    setSuccessMessage("¡Se envió el código de verificación a su correo electrónico!");
     } catch (error) {
-      console.log(error);
-      // Manejar el error de manera adecuada, mostrar mensaje de error, etc.
+      setErrorMessage("Error al enviar el código de verificación. Por favor, inténtelo nuevamente.");
+    setSuccessMessage(""); // Limpiar el mensaje de éxito en caso de que haya uno previo
     }
   };
   
-  const updatePassword = (e) => {
+  const updatePassword = async (e) => {
     e.preventDefault();
   
     try {
+      // Validar campos antes de la llamada a la acción
+      if (!verificationCode || !Password) {
+        setErrorMessage("Por favor, complete todos los campos.");
+        setSuccessMessage("");
+        return;
+      }
+  
+      // Validar longitud del código de verificación
+      if (verificationCode.length !== 6) {
+        setErrorMessage("El código de verificación debe tener 6 cifras.");
+        setSuccessMessage("");
+        return;
+      }
+  
       const encryptedPassword = encode(Password);
   
-       dispatch(resetPasswordAction({
-        password: encryptedPassword,
-        code: +verificationCode,
-      }));
+      dispatch(
+        resetPasswordAction({
+          password: encryptedPassword,
+          code: +verificationCode,
+        })
+      );
   
       // Si la acción se ejecuta correctamente, aquí puedes realizar acciones adicionales
       setPassword("");
-      setVerificationCode(0);
+      setVerificationCode("");
       setErrorMessage(""); // Limpiar el mensaje de error en caso de que haya uno previo
+      setSuccessMessage("¡La contraseña se cambió con éxito!");
+
+      setTimeout(() => {
+        setShowForm(false);
+        alert("¡La contraseña se cambió con éxito!");
+      }, 3000); 
+  
+      // Volver a la primera pestaña de modificar contraseña
+      
     } catch (error) {
-      // Si ocurre un error, aquí puedes manejarlo y mostrar un mensaje de error al usuario
-      setErrorMessage("Error al modificar la contraseña.");
-      setSuccessMessage("¡La contraseña se cambió con éxito!"); // Establecer el mensaje de éxito
+      // Mostrar mensajes de error específicos según el tipo de error
+      if (error.code === "INVALID_VERIFICATION_CODE") {
+        setErrorMessage("El código de verificación es inválido. Por favor, verifíquelo nuevamente.");
+      } else {
+        setErrorMessage("Error al modificar la contraseña.");
+      }
+      setSuccessMessage(""); // Limpiar el mensaje de éxito en caso de que haya uno previo
     }
   };
+  
   
 
   const handleLogout = () => {
@@ -146,7 +216,7 @@ function Profile() {
       numero: formData.numero,
       ciudad: formData.ciudad,
       destinatario: formData.destinatario,
-      // Agrega los campos adicionales de dirección aquí según corresponda
+      
     };
 
     const nuevoUsuario = {
@@ -667,19 +737,34 @@ function Profile() {
                     className="bg-white border w-full h-10 focus:outline-none appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
                   />
                   <p>Por favor, introduzca su nueva contraseña</p>
-                  <div>
+                  <div className="grid grid-cols-2">
                     <input
                       type={showPassword ? "text" : "password"}
                       value={Password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        validatePassword(e.target.value);
+                      }}
                       placeholder="Nueva contraseña"
-                      className="bg-white border w-full h-10 focus:outline-none appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
+                      className="bg-white border w-full h-10 focus:outline-none appearance-none py-2 px-5 text-start"
                     />
-                    <button onClick={togglePasswordVisibility}>
-                      {showPassword ? "Ocultar" : "Mostrar"}
-                    </button>
+                    <div
+                      onClick={togglePasswordVisibility}
+                      className="self-center cursor-pointer"
+                    >
+                      {showPassword ? (
+                        <AiFillEyeInvisible className="w-5 h-5 text-gray-500" />
+                      ) : (
+                        <AiFillEye className="w-5 h-5 text-gray-500" />
+                      )}
+                    </div>
                   </div>
-
+                  {errorPassword.upperCase && <p className="text-red-500">{errorPassword.upperCase}</p>}
+                  {errorPassword.lowerCase && <p className="text-red-500">{errorPassword.lowerCase}</p>}
+                  {errorPassword.number && <p className="text-red-500">{errorPassword.number}</p>}
+                  {errorPassword.passwordLength && (
+                    <p className="text-red-500">{errorPassword.passwordLength}</p>
+                  )}
                   <button
                     className="bg-white mr-3 hover:bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded mt-4"
                     type="submit"
@@ -692,8 +777,16 @@ function Profile() {
                   >
                     Cancelar
                   </button>
-                  {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Mostrar el mensaje de error */}
-                  {successMessage && <p className="success-message">{successMessage}</p>} {/* Mostrar el mensaje de éxito */}
+                  {errorMessage && (
+                    <p className="bg-red-500  text-white px-4 py-2 mb-4 mt-4 rounded">
+                      {errorMessage}
+                    </p>
+                  )}
+                  {successMessage && (
+                    <div className="bg-green-500 text-white px-4 py-2 mb-4 mt-4 rounded">
+                      {successMessage}
+                    </div>
+                  )}
                 </form>
               ) : (
                 <>
