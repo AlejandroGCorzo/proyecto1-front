@@ -34,7 +34,7 @@ export const postProductAction = (values, token) => {
       dispatch(setLoading(true));
       const res = await axios.post(`${url}/productos`, values, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           authorization: `Bearer ${token}`,
         },
       });

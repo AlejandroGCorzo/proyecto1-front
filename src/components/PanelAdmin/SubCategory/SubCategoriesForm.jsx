@@ -109,7 +109,6 @@ const SubCategoriesForm = () => {
       setForm((prev) => ({ ...prev, [name]: value }));
       let errorFormValidation = validateName(e.target);
       setErrorName(errorFormValidation);
-  
     }
   };
   const handleSubmitForm = (e) => {
@@ -173,7 +172,7 @@ const SubCategoriesForm = () => {
           >
             <option disabled>Elige una categoría</option>
             {categoriesNameAndId.map((item) => (
-              <option key={item.id} value={item.id}>
+              <option key={item.id + "subForm"} value={item.id}>
                 {item?.name
                   ?.slice(0, 1)
                   .toUpperCase()

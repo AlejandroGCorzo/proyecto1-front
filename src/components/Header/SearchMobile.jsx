@@ -4,7 +4,7 @@ import { IoIosSearch } from "react-icons/io";
 const SearchBar = ({ isSearchOpen, toggleSearchBar }) => {
   return (
     <div
-      className={`fixed inset-0 flex flex-1 z-50 justify-center lg:hidden ${
+      className={`fixed inset-0 flex flex-1 z-[9999] justify-center lg:hidden ${
         isSearchOpen ? "flex" : "hidden"
       }`}
     >
@@ -25,11 +25,11 @@ const SearchBar = ({ isSearchOpen, toggleSearchBar }) => {
             />
           </svg>
         </button>
-        <div className="flex bg-nav w-1/2 pr-2">
+        <div className="flex bg-nav w-2/3 pr-2">
           <input
             type="text"
             name="search"
-            id="search"
+            id="searchMobile"
             className="bg-nav text-white w-full p-2 border-nav focus:border-nav
               focus:outline-none
               appearance-none

@@ -24,7 +24,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/detail" element={<ProductDetail />} />
+        <Route path="/detail/:id" element={<ProductDetail />} />
         <Route path="/login" element={<UserDropdown />} />
         <Route element={<PrivateRoutes />}>
           <Route path="/admin/*" element={<PanelHome />} />

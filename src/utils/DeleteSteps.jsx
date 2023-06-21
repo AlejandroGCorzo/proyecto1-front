@@ -4,7 +4,7 @@ import {
   deleteCategoriesSubCategoryAction,
   deleteSubCategoriesAction,
 } from "../redux/categoriesActions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteProductAction } from "../redux/productActions";
 
 export const ConfirmationComponent = ({
@@ -73,6 +73,7 @@ export const DeleteComponent = ({
   setItemToDelete,
 }) => {
   const dispatch = useDispatch();
+  const { categories, loading } = useSelector((state) => state.categories);
   const token = localStorage.getItem("token");
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
@@ -107,9 +108,42 @@ export const DeleteComponent = ({
       itemToDelete?.id?.length
     ) {
       if (section === "Categorías") {
+        let isInOneCat = [];
+        let subs = [];
+
+        let categoryToDelete = categories.find(
+          (category) => category._id === itemToDelete.id
+        );
+
+        if (categoryToDelete.subcategorias.length) {
+          categories.forEach((item) => {
+            if (item.subcategorias.length) {
+              subs.push(...item.subcategorias);
+            }
+          });
+
+          let subsCountMap = new Map();
+
+          subs.forEach((item) => {
+            subsCountMap.set(item._id, (subsCountMap.get(item._id) || 0) + 1);
+          });
+
+          categoryToDelete.subcategorias.forEach((subcat) => {
+            if (subsCountMap.get(subcat._id) === 1) {
+              isInOneCat.push(subcat);
+            }
+          });
+        }
+
+        if (isInOneCat.length) {
+          isInOneCat.forEach((sub) =>
+            dispatch(deleteSubCategoriesAction(sub._id))
+          );
+        }
+
         dispatch(deleteCategoriesAction(itemToDelete.id, token));
       } else if (section.includes("Subcategorías")) {
-        let isInMoreThanOneCat = itemToDelete.categorias.map((item) =>
+        let isInMoreThanOneCat = categories.map((item) =>
           item.subcategorias.filter((item) => item._id === itemToDelete.id)
         );
         isInMoreThanOneCat = [

@@ -36,7 +36,6 @@ const AddSubcategory = ({ subForm, setSubForm, errorSub, setErrorSub }) => {
     setErrorSub(errorSub);
   };
   const validateOnBlur = (e) => {
-
     const { value, name } = e.target;
     if (value === "Elige una Subcategoría") {
       let errorSub = validate(value);
@@ -53,14 +52,12 @@ const AddSubcategory = ({ subForm, setSubForm, errorSub, setErrorSub }) => {
       subcategoriaId: "",
     });
     setErrorSub({ subcategoria: "" });
-  
   };
   let isFormDisabled =
     Object.values(errorSub).length || Object.values(subForm).length !== 2
       ? true
       : false;
 
- 
   return (
     <>
       <form onSubmit={handleSubmit} className="flex flex-col">
@@ -82,7 +79,7 @@ const AddSubcategory = ({ subForm, setSubForm, errorSub, setErrorSub }) => {
           >
             <option disabled>Elige una Subcategoría</option>
             {subcategorias.map((item) => (
-              <option key={item._id} value={item._id}>
+              <option key={item._id + "addSub"} value={item._id}>
                 {item?.nombre
                   ?.slice(0, 1)
                   .toUpperCase()

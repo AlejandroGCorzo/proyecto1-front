@@ -97,82 +97,82 @@ const Categories = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="collapse-content flex flex-col text-fontDark items-start justify-center w-full">
-                      <div className=" md:max-w-full overflow-hidden flex flex-col justify-center items-center md:items-start w-full">
-                        <h2 className="underline py-1">Imagen:</h2>
-                        {item.imagen.length ? (
-                          <img
-                            src={item.imagen[0]}
-                            className="w-full md:w-1/3"
-                          />
-                        ) : (
-                          <p className="text-center">
-                            No hay una imagen agregada.
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex flex-col md:flex-row w-full justify-between items-center py-2">
-                        <h2 className="underline px-2 py-1">Subcategorías:</h2>
-                        <button
-                          name="addSub"
-                          className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out"
-                          value={item._id}
-                          onClick={toggleModalAddSub}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              toggleDropdown();
-                            }
-                          }}
-                        >
-                          Añadir Subcategoria
-                        </button>
-                      </div>
-                      <div className="flex flex-col justify-center items-center w-full">
-                        {item?.subcategorias?.length ? (
-                          item.subcategorias.map((sub) => (
-                            <div
-                              className="flex flex-row justify-between w-full  items-start px-2 py-2 border-y"
-                              key={sub?._id}
-                            >
-                              <p>
-                                {sub?.nombre
-                                  ?.slice(0, 1)
-                                  .toUpperCase()
-                                  .concat(sub?.nombre.slice(1))}
-                              </p>
-                              <button
-                                name="deleteSub"
-                                className=" md:p-1 flex justify-center items-center text-fontDark text-lg ml-1 w-8 h-8"
-                                onClick={toggleModal}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" || e.key === " ") {
-                                    toggleDropdown();
-                                  }
-                                }}
+                    <div className="collapse-content ">
+                      <div className="flex flex-col text-fontDark items-start justify-center w-full">
+                        <div className=" overflow-hidden flex flex-col justify-center items-center md:items-start w-full">
+                          <h2 className="underline py-1">Imagen:</h2>
+                          {item.imagen.length ? (
+                            <img src={item.imagen[0]} className="w-16" />
+                          ) : (
+                            <p className="text-center">
+                              No hay una imagen agregada.
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex flex-col md:flex-row w-full justify-between items-center py-2">
+                          <h2 className="underline px-2 py-1">
+                            Subcategorías:
+                          </h2>
+                          <button
+                            name="addSub"
+                            className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out"
+                            value={item._id}
+                            onClick={toggleModalAddSub}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                toggleDropdown();
+                              }
+                            }}
+                          >
+                            Añadir Subcategoria
+                          </button>
+                        </div>
+                        <div className="flex flex-col justify-center items-center w-full">
+                          {item?.subcategorias?.length ? (
+                            item.subcategorias.map((sub) => (
+                              <div
+                                className="flex flex-row justify-between w-full  items-start px-2 py-2 border-y"
+                                key={sub?._id}
                               >
-                                <MdDeleteOutline
-                                  className="w-full h-full"
-                                  fontSize={16}
-                                  onClick={() => {
-                                    setItemToDelete({
-                                      nombre: sub.nombre,
-                                      categoriaId: item._id,
-                                      id: sub._id,
-                                      categorias: categories,
-                                    });
-                                    setSection(
-                                      `las Subcategorías de ${item.nombre}`
-                                    );
+                                <p>
+                                  {sub?.nombre
+                                    ?.slice(0, 1)
+                                    .toUpperCase()
+                                    .concat(sub?.nombre.slice(1))}
+                                </p>
+                                <button
+                                  name="deleteSub"
+                                  className=" md:p-1 flex justify-center items-center text-fontDark text-lg ml-1 w-8 h-8"
+                                  onClick={toggleModal}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                      toggleDropdown();
+                                    }
                                   }}
-                                />
-                              </button>
+                                >
+                                  <MdDeleteOutline
+                                    className="w-full h-full"
+                                    fontSize={16}
+                                    onClick={() => {
+                                      setItemToDelete({
+                                        nombre: sub.nombre,
+                                        categoriaId: item._id,
+                                        id: sub._id,
+                                      });
+                                      setSection(
+                                        `las Subcategorías de ${item.nombre}`
+                                      );
+                                    }}
+                                  />
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-base">
+                              <p>No existe subcategoría asignada</p>
                             </div>
-                          ))
-                        ) : (
-                          <div className="text-base">
-                            <p>No existe subcategoría asignada</p>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
