@@ -14,40 +14,28 @@ import {
 } from "../../../redux/categoriesSlice";
 import SubCategoriesForm from "../SubCategory/SubCategoriesForm";
 
+import { toBase64 } from "../../../utils/FileToBase64";
+
 const CategoriesForm = () => {
   const params = useParams();
-  const formData = new FormData();
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const selectInputRef = useRef(null);
-  const { error, success, categories, subcategorias } = useSelector(
+  const { error, success, categories } = useSelector(
     (state) => state.categories
   );
   const categoryToUpdate = categories.find((item) => item._id === params.id);
   const categoriesNames = categories.map((item) => item.nombre.toUpperCase());
-  const subcategoriesNames =
-    categoryToUpdate?.subcategorias?.length > 0
-      ? subcategorias.filter((subcategoria) => {
-          return !categoryToUpdate.subcategorias.some(
-            (elem) => elem._id === subcategoria._id
-          );
-        })
-      : subcategorias.map((item) => ({
-          nombre: item.nombre,
-          _id: item._id,
-        }));
 
   const token = localStorage.getItem("token");
   const [errorName, setErrorName] = useState({});
   const [errorImage, setErrorImage] = useState({});
   const [image, setImage] = useState({});
   const [form, setForm] = useState({
-    nombre: categoryToUpdate?.nombre?.length ? categoryToUpdate.nombre : "",
-    imagen: categoryToUpdate?.imagen?.length ? categoryToUpdate.imagen : [],
-    subcategorias: categoryToUpdate?.subcategorias?.length
-      ? categoryToUpdate.subcategorias.map((sub) => sub._id)
-      : [],
+    nombre: "",
+    imagen: [],
   });
+  const [formUpdate, setFormUpdate] = useState({});
 
   const clearReducer = () => {
     dispatch(setErrorCategory(""));
@@ -57,9 +45,11 @@ const CategoriesForm = () => {
     setForm({
       nombre: "",
       imagen: [],
-      subcategorias: [],
     });
     setImage({});
+    if (Object.values(formUpdate).length) {
+      setFormUpdate({});
+    }
     setErrorName({});
     setErrorImage({});
     if (fileInputRef.current) {
@@ -112,55 +102,69 @@ const CategoriesForm = () => {
   const handleChangeForm = (e) => {
     e.preventDefault();
     const { name, value, files } = e.target;
-    if (files) {
-      let file = files[0];
-      if (name === "imagenFile" && file?.name) {
-        setImage(file);
-        let errorFormValidation = validateImage(file);
-        setErrorImage(errorFormValidation);
+    if (files?.length) {
+      let eventualState = [];
+      const previewFiles = [];
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          if (typeof reader.result === "string") {
+            previewFiles.push(reader.result);
+            if (previewFiles.length === files.length) {
+              setImage(reader.result);
+            }
+          }
+        };
+        toBase64(files[i])
+          .then((res) => eventualState.push(res))
+          .catch((e) => console.log(e));
+        reader.readAsDataURL(files[i]);
+      }
+      if (!params?.id?.length) {
+        setForm((prev) => ({ ...prev, imagen: eventualState }));
+      } else {
+        setFormUpdate((prev) => ({ ...prev, imagen: eventualState }));
       }
     }
+
     if (name === "nombre") {
-      setForm((prev) => ({ ...prev, nombre: value }));
+      if (!params?.id?.length) {
+        setForm((prev) => ({ ...prev, nombre: value }));
+      } else {
+        setFormUpdate((prev) => ({ ...prev, nombre: value }));
+      }
       let errorFormValidation = validateName({ [name]: value });
       setErrorName(errorFormValidation);
     }
-    /*  if (name === "subcategoria") {
-      if (form.subcategorias.length) {
-        setForm((prev) => ({
-          ...prev,
-          subcategorias: [...prev.subcategorias, value],
-        }));
-      } else {
-        setForm((prev) => ({
-          ...prev,
-          subcategorias: [value],
-        }));
-      }
-    } */
   };
   const handleSubmitForm = (e) => {
     e.preventDefault();
     async function post() {
-      if (image?.name?.length) {
-        formData.append("files", image);
-      }
-      formData.append("data", JSON.stringify(form));
       if (categoryToUpdate?._id?.length) {
         await dispatch(
-          patchCategoryAction(formData, token, categoryToUpdate._id)
+          patchCategoryAction(formUpdate, token, categoryToUpdate._id)
         );
       } else {
-        await dispatch(postCategoryAction(formData, token));
+        await dispatch(postCategoryAction(form, token));
       }
     }
+
     post();
     clearForm();
   };
+  
 
   let isFormDisabled =
     !Object.values(form).join("").length ||
-    (!image?.name?.length && !categoryToUpdate?.imagen?.length) ||
+    !image.length ||
+    Object.values(errorName).join("").length ||
+    Object.values(errorImage).join("").length
+      ? true
+      : false;
+  let isFormUpdateDisabled =
+    !Object.values(form).join("").length ||
+    (!image.length && !categoryToUpdate?.imagen?.length) ||
     Object.values(errorName).join("").length ||
     Object.values(errorImage).join("").length
       ? true
@@ -196,35 +200,6 @@ const CategoriesForm = () => {
         className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start "
         onSubmit={handleSubmitForm}
       >
-        {/*  {!categoryToUpdate?._id?.length && (
-          <div className="flex flex-col w-40 sm:w-full ">
-            <label className="label">
-              <span>Subcategorías</span>
-            </label>
-            <small className="h-auto text-gray-500 w-full flex self-start mb-1">
-              * Al seleccionar una subcategoría, la misma se guardara dentro de
-              la categoría creada.
-            </small>
-            <select
-              className="select select-bordered bg-fontGrey"
-              name="subcategoria"
-              ref={selectInputRef}
-              onChange={handleChangeForm}
-              onBlur={validateOnBlur}
-              defaultValue="Elige una Subcategoría"
-            >
-              <option disabled>Elige una Subcategoría</option>
-              {subcategoriesNames.map((item) => (
-                <option key={item._id} value={item._id}>
-                  {item?.nombre
-                    ?.slice(0, 1)
-                    .toUpperCase()
-                    .concat(item.nombre.slice(1))}
-                </option>
-              ))}
-            </select>{" "}
-          </div>
-        )} */}
         <div className="flex flex-col w-40 sm:w-full">
           <label className="label pt-2 pb-0">
             <span>Categoría</span>
@@ -233,7 +208,9 @@ const CategoriesForm = () => {
             type="text"
             className="input bg-fontGrey"
             name="nombre"
-            value={form.nombre}
+            value={
+              categoryToUpdate?._id?.length ? formUpdate.nombre : form.nombre
+            }
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
             placeholder="Nombre de la categoría"
@@ -271,7 +248,7 @@ const CategoriesForm = () => {
               {errorImage.image}
             </small>
           ) : (
-            !image.name && (
+            !image.length && (
               <small className="h-6 text-red-600 w-full flex self-start mb-1">
                 * Campo requerido
               </small>
@@ -281,12 +258,12 @@ const CategoriesForm = () => {
         <button
           type="submit"
           className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
-          disabled={isFormDisabled}
+          disabled={params?.id?.length ? isFormUpdateDisabled : isFormDisabled}
         >
           Añadir
         </button>
       </form>
-      <SubCategoriesForm />
+      {!params?.id.length && <SubCategoriesForm />}
     </div>
   );
 };

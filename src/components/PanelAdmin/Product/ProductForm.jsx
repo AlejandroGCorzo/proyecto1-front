@@ -1,14 +1,16 @@
 import React, { useRef, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { postProductAction } from "../../../redux/productActions";
+import { patchProductAction, postProductAction } from "../../../redux/productActions";
 import {
   setErrorProduct,
   setSuccessProduct,
 } from "../../../redux/productSlice";
 import ServerError from "../../../utils/ServerError";
 import ServerSuccess from "../../../utils/ServerSuccess";
+import { MdOutlineClose } from "react-icons/md";
+import { toBase64 } from "../../../utils/FileToBase64";
 
 function validateImage(input) {
   let errorsImage = {};
@@ -28,13 +30,16 @@ function validateColor(input) {
 
   return errorsColor;
 }
-function validateSize(input) {
+function validateSize(input, form = null) {
   let errorsSize = {};
   if (!input.talle && !input.cantidad) {
     errorsSize.talle = "El campo Talle no puede estar vacío.";
     errorsSize.cantidad = "El campo Cantidad no puede estar vacío.";
   }
 
+  if (form && form.talle.map((item) => item.talle).includes(input.talle)) {
+    errorsSize.talle = "El Talle ya existe, ingrese un valor diferente.";
+  }
   if (!input.talle) {
     errorsSize.talle = "El campo Talle no puede estar vacío.";
   }
@@ -44,7 +49,7 @@ function validateSize(input) {
 
   return errorsSize;
 }
-function validateProduct(input) {
+function validateProduct(input, products) {
   let errorsProduct = {};
   if (
     input.tipo === "Elige una categoría" &&
@@ -52,6 +57,7 @@ function validateProduct(input) {
     !input.descripcion &&
     !input.colores &&
     !input.talle &&
+    !input.modelo &&
     !input.precio &&
     !input.codigo &&
     !input.genero &&
@@ -63,6 +69,7 @@ function validateProduct(input) {
     errorsProduct.descripcion = "El campo Descripción no puede estar vacío.";
     errorsProduct.colores = "Añadir al menos un color.";
     errorsProduct.talle = "Añadir al menos un Talle y una Cantidad.";
+    errorsProduct.modelo = "El campo Modelo no puede estar vacío.";
     errorsProduct.precio = "El campo Precio no puede estar vacío.";
     errorsProduct.codigo = "El campo Código no puede estar vacío.";
     errorsProduct.genero = "El campo Género no puede estar vacío.";
@@ -72,6 +79,9 @@ function validateProduct(input) {
 
   if (!input.tipo || input.tipo === "Elige un tipo de producto") {
     errorsProduct.tipo = "Seleccione un tipo de producto.";
+  }
+  if (products.map((item) => item.modelo).includes(input.modelo)) {
+    errorsProduct.modelo = "El Modelo ya existe, ingrese un valor diferente.";
   }
   if (!input.modelo) {
     errorsProduct.modelo = "El campo Modelo no puede estar vacío.";
@@ -109,26 +119,26 @@ function validateProduct(input) {
   return errorsProduct;
 }
 const ProductForm = () => {
-  const formData = new FormData();
+  const params = useParams();
   const fileInputRef = useRef(null);
   const selectInputRefTipo = useRef(null);
   const selectInputRefMarca = useRef(null);
   const dispatch = useDispatch();
-  const { error, success } = useSelector((state) => state.products);
+  const { error, success, products } = useSelector((state) => state.products);
   const { categories, loading } = useSelector((state) => state.categories);
   const categoriesNameAndId = categories.map((item) => ({
-    nombre: item.nombre.toUpperCase(),
+    nombre: item.nombre,
     id: item._id,
     subcategorias: item.subcategorias,
   }));
-
+  const productToUpdate = products.find((item) => item._id === params.id);
   const token = localStorage.getItem("token");
   const [currentSubcategories, setCurrentSubcategories] = useState([]);
   const [image, setImage] = useState([]);
   const [errorImage, setErrorImage] = useState({});
   const [color, setColor] = useState("");
   const [errorColor, setErrorColor] = useState({});
-  const [size, setSize] = useState({ talle: "", cantidad: 0 });
+  const [size, setSize] = useState({ talle: "", cantidad: "" });
   const [errorSize, setErrorSize] = useState({ talle: "", cantidad: "" });
   const [form, setForm] = useState({
     imagenes: [],
@@ -144,23 +154,43 @@ const ProductForm = () => {
     proveedor: "",
     disciplina: "",
   });
+  const [formUpdate, setFormUpdate] = useState({
+    talle: productToUpdate?.talle?.length
+      ? productToUpdate.talle.map((item) => ({
+          talle: item.talle,
+          cantidad: Number(item.cantidad),
+        }))
+      : [],
+    imagenes: productToUpdate?.imagenes?.length ? productToUpdate.imagenes : [],
+  });
   const [errorsForm, setErrorsForm] = useState({});
 
   const validateOnBlur = (e) => {
     const { value, name, files } = e.target;
+    if (!params?.id?.length) {
+      if (name === "color") {
+        let errorColorValidation = validateColor(color);
+        setErrorColor(errorColorValidation);
+      } else if (name === "talle" || name === "cantidad") {
+        let errorSizeValidation = validateSize({ ...size, [name]: value });
+        setErrorSize(errorSizeValidation);
+      } else if (name === "image") {
+        let validatedImage = validateImage(files[0]);
+        setErrorImage(validatedImage);
+      } else {
+        let errorFormValidation = validateProduct(form, products);
+        setErrorsForm(errorFormValidation);
+      }
+    }
+    if (name === "talle" || name === "cantidad") {
+      let errorSizeValidation = validateSize({ ...size, [name]: value });
+      setErrorSize(errorSizeValidation);
+    }
     if (name === "color") {
       let errorColorValidation = validateColor(color);
       setErrorColor(errorColorValidation);
-    } else if (name === "talle" || name === "cantidad") {
-      let errorSizeValidation = validateSize(size);
-      setErrorSize(errorSizeValidation);
-    } else if (name === "image") {
-      let validatedImage = validateImage(files[0]);
-      setErrorImage(validatedImage);
-    } else {
-      let errorFormValidation = validateProduct(form);
-      setErrorsForm(errorFormValidation);
     }
+    return;
   };
 
   const clearReducer = () => {
@@ -179,7 +209,7 @@ const ProductForm = () => {
     }
     setColor("");
     setImage([]);
-    setSize({ talle: "", cantidad: 0 });
+    setSize({ talle: "", cantidad: "" });
     setForm({
       imagenes: [],
       tipo: "",
@@ -202,31 +232,65 @@ const ProductForm = () => {
     dispatch(setSuccessProduct(""));
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const { files, name } = e.target;
-    let file = files[0];
-    if (file) {
-      if (image.length) {
-        setImage((prev) => [...prev, file]);
+
+    let eventualState = [];
+    const previewFiles = [];
+
+    if (!files.length) return;
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          previewFiles.push(reader.result);
+          if (previewFiles.length === files.length) {
+            setImage((prev) => [...prev, reader.result]);
+          }
+        }
+      };
+      try {
+        const res = await toBase64(files[i]);
+        eventualState = [...eventualState, res];
+      } catch (e) {
+        console.log(e);
+      }
+      reader.readAsDataURL(files[i]);
+    }
+   
+
+    if (!params?.id?.length) {
+      let validatedImage = validateImage(files);
+      setErrorImage(validatedImage);
+      if (!form.imagenes.length) {
+        setForm((prev) => ({ ...prev, imagenes: eventualState }));
       } else {
-        setImage([file]);
+        setForm((prev) => ({
+          ...prev,
+          imagenes: [...prev.imagenes, ...eventualState],
+        }));
+      }
+    } else {
+      if (!formUpdate?.imagenes?.length) {
+        setFormUpdate((prev) => ({ ...prev, imagenes: eventualState }));
+      } else {
+        setFormUpdate((prev) => ({
+          ...prev,
+          imagenes: [...prev.imagenes, ...eventualState],
+        }));
       }
     }
-    let validatedImage = validateImage(file);
-    setErrorImage(validatedImage);
   };
-  const handleImageSubmit = (e) => {
-    e.preventDefault();
-    for (let index = 0; index < image.length; index++) {
-      formData.append("files", image[index]);
-    }
-  };
+
   const handleColorChange = (e) => {
     e.preventDefault();
     const { value, name } = e.target;
     setColor(value);
-    let errorColorValidation = validateColor(color);
-    setErrorColor(errorColorValidation);
+    if (!productToUpdate?.colores?.length) {
+      let errorColorValidation = validateColor(color);
+      setErrorColor(errorColorValidation);
+    }
     if (color) {
       setErrorColor({ color: "" });
     }
@@ -234,10 +298,21 @@ const ProductForm = () => {
   const handleColorSubmit = (e) => {
     e.preventDefault();
 
-    if (!form.colores.length) {
-      setForm((prev) => ({ ...prev, colores: [color] }));
+    if (!params?.id?.length) {
+      if (!form.colores.length) {
+        setForm((prev) => ({ ...prev, colores: [color] }));
+      } else {
+        setForm((prev) => ({ ...prev, colores: [...prev.colores, color] }));
+      }
     } else {
-      setForm((prev) => ({ ...prev, colores: [...prev.colores, color] }));
+      if (!formUpdate?.imagenes?.length) {
+        setFormUpdate((prev) => ({ ...prev, colores: [color] }));
+      } else {
+        setFormUpdate((prev) => ({
+          ...prev,
+          colores: [...prev.colores, color],
+        }));
+      }
     }
     setColor("");
   };
@@ -245,56 +320,112 @@ const ProductForm = () => {
   const handleSizeChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setSize((prev) => ({ ...prev, [name]: value }));
-    let errorSizeValidation = validateSize(size);
+    if (name === "cantidad") {
+      setSize((prev) => ({ ...prev, cantidad: Number(value) }));
+    }
+    if (name === "talle") {
+      setSize((prev) => ({ ...prev, talle: value }));
+    }
+    let currentForm = params?.id?.length ? formUpdate : form;
+    let errorSizeValidation = validateSize(
+      { ...size, [name]: value },
+      currentForm
+    );
     setErrorSize(errorSizeValidation);
+
     if (size.talle && size.cantidad) {
       setErrorSize({ talle: "", cantidad: "" });
     }
   };
 
+  const handleSizeEdition = (e) => {
+    e.preventDefault();
+    const arr = e.target.value.split(",");
+    const obj = arr.reduce((acc, item) => {
+      const [key, value] = item.split(":");
+      acc[key.trim()] = value.trim();
+      return acc;
+    }, {});
+    let filteredSize;
+
+    if (!params?.id?.length) {
+      filteredSize = form.talle.filter((item) => item.talle !== obj.talle);
+      setForm((prev) => ({ ...prev, talle: filteredSize }));
+    } else if (formUpdate?.talle?.length) {
+      filteredSize = formUpdate.talle.filter(
+        (item) => item.talle !== obj.talle
+      );
+      setFormUpdate((prev) => ({ ...prev, talle: filteredSize }));
+    }
+  };
+
   const handleSizeSubmit = (e) => {
     e.preventDefault();
-    if (!form.talle.length) {
-      setForm((prev) => ({ ...prev, talle: [size] }));
+
+    if (!params?.id?.length) {
+      if (!form.talle.length) {
+        setForm((prev) => ({ ...prev, talle: [size] }));
+      } else {
+        setForm((prev) => ({ ...prev, talle: [...prev.talle, size] }));
+      }
     } else {
-      setForm((prev) => ({ ...prev, talle: [...prev.talle, size] }));
+      if (!formUpdate?.talle?.length) {
+        setFormUpdate((prev) => ({ ...prev, talle: [size] }));
+      } else {
+        setFormUpdate((prev) => ({ ...prev, talle: [...prev.talle, size] }));
+      }
     }
-    setSize({ talle: "", cantidad: 0 });
+    setSize({ talle: "", cantidad: "" });
   };
   const handleChangeForm = (e) => {
     const { name, value } = e.target;
-
     if (name === "tipo") {
       setCurrentSubcategories(
-        categoriesNameAndId.find((item) => item.nombre === value).subcategorias
+        categoriesNameAndId.find(
+          (category) => category.nombre.toLowerCase() === value.toLowerCase()
+        )
       );
     }
 
-    setForm({
-      ...form,
-      [name]: value,
-    });
-    let errorObj = validateProduct({
-      ...form,
-      [name]: value,
-    });
-    setErrorsForm(errorObj);
+    if (params?.id?.length) {
+      setFormUpdate((prev) => ({ ...prev, [name]: value }));
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      let errorObj = validateProduct(
+        {
+          ...form,
+          [name]: value,
+        },
+        products
+      );
+      setErrorsForm(errorObj);
+    }
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    let formToSubmit =
+      productToUpdate?._id?.length && formUpdate?.precio?.length
+        ? { ...formUpdate, precio: Number(formUpdate.precio) }
+        : { ...form, precio: Number(form.precio) };
     async function post() {
-      formData.append("data", JSON.stringify(form));
-      for (let index = 0; index < image.length; index++) {
-        formData.append("files", image[index]);
-      }
-
-      await dispatch(postProductAction(formData, token));
+      await dispatch(postProductAction(formToSubmit, token));
     }
-    post();
+
+    async function patch() {
+      await dispatch(patchProductAction(formToSubmit, token));
+    }
+     if (productToUpdate?._id?.length) {
+      patch();
+    } else {
+      post();
+    }
     clearForm();
   };
+
   let isColorDisabled =
     !color.length || Object.values(errorColor).join("").length ? true : false;
   let isImageDisabled =
@@ -313,12 +444,19 @@ const ProductForm = () => {
     Object.values(errorsForm).join("").length
       ? true
       : false;
+  let isFormUpdateDisabled =
+    !Object.values(formUpdate).join("").length ||
+    Object.values(errorColor).join("").length ||
+    Object.values(errorSize).join("").length ||
+    Object.values(errorsForm).join("").length
+      ? true
+      : false;
 
   return (
     <div className="flex flex-col w-full justify-start items-center">
       <>
         <div
-          className="w-full p-2 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between sm:mt-0
+          className="w-full py-2 px-8 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between sm:mt-0
         text-xl text-blue-400 ml-4 mt-4"
         >
           <Link
@@ -336,39 +474,11 @@ const ProductForm = () => {
           </button>
         </div>
         <h2 className="pt-2 h-10 font-semibold text-fontDark underline text-2xl flex self-center sm:w-2/3">
-          Crear producto:{" "}
+          {productToUpdate?._id?.length
+            ? "Editar producto:"
+            : "Crear producto:"}
         </h2>
-        <form
-          className="form-control w-2/3 gap-4 p-4 text-lg flex flex-col lg:flex-row justify-around items-start lg:items-end"
-          onSubmit={handleImageSubmit}
-        >
-          <div className="flex flex-col w-40 sm:w-full">
-            <label className="label pt-2 pb-0 text-fontDark ">
-              <span>Imagen</span>
-            </label>
-            <input
-              type="file"
-              className="file-input-xs sm:file-input bg-fontGrey w-full text-white"
-              name="image"
-              onChange={handleImageChange}
-              onBlur={validateOnBlur}
-              placeholder="Imagen"
-              ref={fileInputRef}
-            />
-            {errorImage?.image?.length ? (
-              <small className="h-6 text-red-600 w-full flex self-start mb-1">
-                {errorImage.image}
-              </small>
-            ) : null}
-          </div>
-          <button
-            type="submit"
-            className="btn mt-1 lg:mt-0  text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
-            disabled={isImageDisabled}
-          >
-            Añadir
-          </button>
-        </form>
+
         <form
           className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col lg:flex-row justify-around items-start lg:items-end"
           onSubmit={handleColorSubmit}
@@ -428,10 +538,9 @@ const ProductForm = () => {
               <span>Cantidad</span>
             </label>
             <input
-              type="number"
+              type="text"
               className="input bg-fontGrey"
               name="cantidad"
-              min={1}
               value={size.cantidad}
               onChange={handleSizeChange}
               onBlur={validateOnBlur}
@@ -451,10 +560,71 @@ const ProductForm = () => {
             Añadir
           </button>
         </form>
+        <div className="flex flex-col w-2/3 justify-center items-center">
+          {form?.talle?.length > 0 &&
+            form.talle.map((item, index) => (
+              <div
+                className="w-2/3 flex justify-center items-center border rounded p-4"
+                key={index + "talle"}
+              >
+                <div className="w-full flex items-center justify-around text-lg text-fontDark">
+                  {" "}
+                  <span>Talle: {item.talle}</span>{" "}
+                  <span>Cantidad: {item.cantidad}</span>
+                </div>
+                <button
+                  className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
+                  onClick={handleSizeEdition}
+                  value={`talle: ${item.talle}, cantidad: ${item.cantidad}`}
+                >
+                  x
+                </button>
+              </div>
+            ))}
+          {formUpdate?.talle?.length > 0 &&
+            formUpdate.talle.map((item, index) => (
+              <div
+                className="w-2/3 flex justify-between items-center border rounded p-2"
+                key={index + "talle"}
+              >
+                <div className="w-2/3 flex items-center justify-between px-4 text-lg text-fontDark">
+                  {" "}
+                  <span>Talle: {item.talle}</span>{" "}
+                  <span>Cantidad: {item.cantidad}</span>
+                </div>
+                <button
+                  className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
+                  onClick={handleSizeEdition}
+                  value={`talle: ${item.talle}, cantidad: ${item.cantidad}`}
+                >
+                  x
+                </button>
+              </div>
+            ))}
+        </div>
         <form
           className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg"
           onSubmit={handleFormSubmit}
         >
+          <div className="flex flex-col w-40 sm:w-full">
+            <label className="label  text-fontDark ">
+              <span>Imagen</span>
+            </label>
+            <input
+              type="file"
+              className="file-input-xs sm:file-input bg-fontGrey w-full text-white"
+              name="image"
+              onChange={handleImageChange}
+              onBlur={validateOnBlur}
+              placeholder="Imagen"
+              ref={fileInputRef}
+            />
+            {errorImage?.image?.length ? (
+              <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                {errorImage.image}
+              </small>
+            ) : null}
+          </div>
           <label className="label pt-2 pb-0">
             <span>Tipo de producto</span>
           </label>
@@ -469,9 +639,10 @@ const ProductForm = () => {
           >
             <option disabled>Elige un tipo de producto</option>
             {categoriesNameAndId.map((item) => (
-              <option key={item.id} value={item.nombre}>
+              <option key={item.id + "productForm"} value={item._id}>
                 {item?.nombre
                   ?.slice(0, 1)
+                  .toUpperCase()
                   .concat(item.nombre.slice(1).toLowerCase())}
               </option>
             ))}
@@ -489,7 +660,9 @@ const ProductForm = () => {
             className="input bg-fontGrey"
             placeholder="Modelo"
             name="modelo"
-            value={form.modelo}
+            value={
+              productToUpdate?._id?.length ? formUpdate.modelo : form.modelo
+            }
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
           />
@@ -510,12 +683,12 @@ const ProductForm = () => {
             onBlur={validateOnBlur}
             defaultValue="Seleccione un tipo de producto"
           >
-            {form.tipo.length ? (
-              currentSubcategories.length ? (
+            {form.tipo?.length ? (
+              currentSubcategories?.subcategorias?.length ? (
                 <>
                   <option disabled>Elige una marca</option>
-                  {currentSubcategories.map((item) => (
-                    <option key={item._id} value={item.nombre}>
+                  {currentSubcategories?.subcategorias.map((item) => (
+                    <option key={item._id} value={item._id}>
                       {item.nombre
                         ?.slice(0, 1)
                         .toUpperCase()
@@ -544,7 +717,11 @@ const ProductForm = () => {
             type="text"
             className="textarea h-20 bg-fontGrey"
             name="descripcion"
-            value={form.descripcion}
+            value={
+              productToUpdate?._id?.length
+                ? formUpdate.descripcion
+                : form.descripcion
+            }
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
             placeholder="Descripción"
@@ -561,7 +738,9 @@ const ProductForm = () => {
             type="text"
             className="input bg-fontGrey"
             name="precio"
-            value={form.precio}
+            value={
+              productToUpdate?._id?.length ? formUpdate.precio : form.precio
+            }
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
             placeholder="Precio"
@@ -578,7 +757,9 @@ const ProductForm = () => {
             type="text"
             className="input bg-fontGrey"
             name="codigo"
-            value={form.codigo}
+            value={
+              productToUpdate?._id?.length ? formUpdate.codigo : form.codigo
+            }
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
             placeholder="Código"
@@ -595,7 +776,9 @@ const ProductForm = () => {
             type="text"
             className="input bg-fontGrey"
             name="genero"
-            value={form.genero}
+            value={
+              productToUpdate?._id?.length ? formUpdate.genero : form.genero
+            }
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
             placeholder="Género"
@@ -612,7 +795,11 @@ const ProductForm = () => {
             type="text"
             className="input bg-fontGrey"
             name="proveedor"
-            value={form.proveedor}
+            value={
+              productToUpdate?._id?.length
+                ? formUpdate.proveedor
+                : form.proveedor
+            }
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
             placeholder="Proveedor"
@@ -629,7 +816,11 @@ const ProductForm = () => {
             type="text"
             className="input bg-fontGrey mb-4"
             name="disciplina"
-            value={form.disciplina}
+            value={
+              productToUpdate?._id?.length
+                ? formUpdate.disciplina
+                : form.disciplina
+            }
             onChange={handleChangeForm}
             onBlur={validateOnBlur}
             placeholder="Disciplina"
@@ -642,9 +833,13 @@ const ProductForm = () => {
           <button
             type="submit"
             className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
-            disabled={isFormDisabled}
+            disabled={
+              productToUpdate?._id?.length
+                ? isFormUpdateDisabled
+                : isFormDisabled
+            }
           >
-            Crear producto
+            {params?.id?.length ? "Editar producto" : "Crear producto"}
           </button>
         </form>
       </>

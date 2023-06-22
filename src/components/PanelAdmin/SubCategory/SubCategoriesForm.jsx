@@ -7,9 +7,9 @@ import {
   setErrorSubCategory,
   setSuccessSubCategory,
 } from "../../../redux/categoriesSlice";
+import { toBase64 } from "../../../utils/FileToBase64";
 
 const SubCategoriesForm = () => {
-  const formData = new FormData();
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const selectInputRef = useRef(null);
@@ -55,17 +55,16 @@ const SubCategoriesForm = () => {
   const validateName = (input) => {
     let error = {};
 
-    if (input.name === "nombre") {
-      if (subcategoriesNames.includes(input.value.toUpperCase())) {
-        error.nombre =
-          "La Subcategoría ya existente, ingrese un nombre diferente.";
-      }
-      if (!input.value) {
-        error.nombre = "El campo Nombre no puede estar vacío.";
-      }
+    if (subcategoriesNames.includes(input.nombre.toUpperCase())) {
+      error.nombre =
+        "La Subcategoría ya existente, ingrese un nombre diferente.";
     }
-    if (input.name === "categoria") {
-      if (input.value === "Elige una categoría" || !input.value) {
+    if (!input.nombre.length) {
+      error.nombre = "El campo Nombre no puede estar vacío.";
+    }
+
+    if (input.categoria.length) {
+      if (input.categoria === "Elige una categoría" || !input.categoria) {
         error.categoria = "Debe seleccionar una categoría.";
       }
     }
@@ -85,7 +84,7 @@ const SubCategoriesForm = () => {
     e.preventDefault();
     const { name, value, files } = e.target;
     if (name === "nombre" || name === "categoria") {
-      let errorFormValidation = validateName(e.target);
+      let errorFormValidation = validateName({ ...form, [name]: value });
       setErrorName(errorFormValidation);
     }
     if (name === "imagenFile") {
@@ -96,18 +95,36 @@ const SubCategoriesForm = () => {
   const handleChangeForm = (e) => {
     e.preventDefault();
     const { name, value, files } = e.target;
-    if (files) {
-      let file = files[0];
-      if (name === "imagenFile" && file) {
-        setImage(file);
-        let errorFormValidation = validateImage(file);
+    if (files?.length) {
+      let eventualState = [];
+      const previewFiles = [];
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          if (typeof reader.result === "string") {
+            previewFiles.push(reader.result);
+            if (previewFiles.length === files.length) {
+              setImage(reader.result);
+            }
+          }
+        };
+        toBase64(files[i])
+          .then((res) => eventualState.push(res))
+          .catch((e) => console.log(e));
+        reader.readAsDataURL(files[i]);
+      }
+      setForm((prev) => ({ ...prev, imagen: eventualState }));
+      /* let file = files[0]; */
+      if (name === "imagenFile" && files.length) {
+        let errorFormValidation = validateImage(previewFiles);
         setErrorImage(errorFormValidation);
       }
     }
 
     if (name === "nombre" || name === "categoria") {
       setForm((prev) => ({ ...prev, [name]: value }));
-      let errorFormValidation = validateName(e.target);
+      let errorFormValidation = validateName({ ...form, [name]: value });
       setErrorName(errorFormValidation);
     }
   };
@@ -115,18 +132,17 @@ const SubCategoriesForm = () => {
     e.preventDefault();
 
     async function post() {
-      formData.append("data", JSON.stringify(form));
-      formData.append("files", image);
-      await dispatch(postSubCategoryAction(formData, token));
+      await dispatch(postSubCategoryAction(form, token));
     }
+
     post();
+
     clearForm();
   };
 
   let isFormDisabled =
     !Object.values(form).join("").length ||
     !form?.categoria?.length ||
-    !image?.name?.length ||
     Object.values(errorName).join("").length ||
     Object.values(errorImage).join("").length
       ? true
@@ -238,7 +254,7 @@ const SubCategoriesForm = () => {
               {errorImage.image}
             </small>
           ) : (
-            !image.name && (
+            !image.length && (
               <small className="h-6 text-red-600 w-full flex self-start mb-1">
                 * Campo requerido
               </small>
