@@ -16,6 +16,14 @@ function Profile() {
   const [apellido, setApellido] = useState(usuario.lastName || "");
   const [dni, setDNI] = useState(usuario.dni || "");
   const [telefono, setTelefono] = useState(usuario.phone || "");
+  const [calle, setCalle] = useState(usuario.calle || "");
+  const [numeroCalle, setNumeroCalle] = useState(usuario.numeroDeCalle || "");
+  const [infoAdicional, setInfoAdicional] = useState(usuario.infoAdicional || "");
+  const [codigoPostal, setCodigoPostal] = useState(usuario.codigoPostal || "");
+  const [ciudad, setCiudad] = useState(usuario.ciudad || "");
+  const [provincia, setProvincia] = useState(usuario.provincia || "");
+  const [pais, setPais] = useState(usuario.pais || "");
+  const [destinatario, setDestinatario] = useState(usuario.destinatario || "");
   const [showCamposCorporativos, setShowCamposCorporativos] = useState(false);
   const [showAddressFields, setShowAddressFields] = useState(false);
   const [formData, setFormData] = useState({});
@@ -32,7 +40,7 @@ function Profile() {
     number: "",
     passwordLength: ""
   });
-
+console.log(usuario)
   const handleSaveChanges = () => {
     const updatedUser = {
       ...usuario,
@@ -157,27 +165,45 @@ function Profile() {
     // Navega al componente Home
     navigate("/");
   };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-
-    if (name === "pais") {
-      setPais(value);
-    } else if (name === "codigoPostal") {
-      setCodigoPostal(value);
-    } else if (name === "calle") {
-      setCalle(value);
-    } else if (name === "numero") {
-      setNumero(value);
-    } else if (name === "ciudad") {
-      setCiudad(value);
-    }
+console.log(usuario.userId)
+const handleSaveChangesDireccion = () => {
+  const { userId, userRole, token, isLoggedIn, ...rest } = usuario;
+  const updatedUser = {
+    ...rest,
+    calle: calle,
+    numeroDeCalle: numeroCalle,
+    infoAdicional: infoAdicional,
+    codigoPostal: codigoPostal,
+    ciudad: ciudad,
+    provincia: provincia,
+    pais: pais,
+    destinatario: destinatario,
   };
+  dispatch(updateUserAction(usuario.userId, updatedUser));
+  console.log(updatedUser);
+  setEditMode(false);
+};
 
+  
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  
+  //   const inputFields = {
+  //     calle: setCalle,
+  //     numero: setNumeroCalle,
+  //     infoAdicional: setInfoAdicional,
+  //     codigoPostal: setCodigoPostal,
+  //     ciudad: setCiudad,
+  //     provincia: setProvincia,
+  //     pais: setPais,
+  //     destinatario: setDestinatario
+  //   };
+  
+  //   if (name in inputFields) {
+  //     inputFields[name](value);
+  //   }
+  // };
+  
   const handleToggleAddressFields = () => {
     setShowAddressFields(true);
   };
@@ -207,43 +233,7 @@ function Profile() {
   const handleToggleEditMode = () => {
     setEditMode(!editMode);
   };
-  const agregarDireccion = (e) => {
-    e.preventDefault();
-    const nuevaDireccion = {
-      pais: "Argentina",
-      codigoPostal: formData.codigoPostal,
-      calle: formData.calle,
-      numero: formData.numero,
-      ciudad: formData.ciudad,
-      destinatario: formData.destinatario,
-      
-    };
-
-    const nuevoUsuario = {
-      ...user,
-      direcciones: nuevaDireccion,
-    };
-
-    // Lógica para guardar los cambios en la base de datos utilizando nuevoUsuario
-
-    setUser(nuevoUsuario); // Actualiza el estado del usuario con la nueva dirección
-
-    setEditMode(false);
-    setShowAddressFields(false);
-    limpiarFormulario();
-  };
-
-  const limpiarFormulario = () => {
-    setFormData((prevState) => ({
-      ...prevState,
-      pais: "",
-      codigoPostal: "",
-      calle: "",
-      numero: "",
-      ciudad: "",
-      destinatario: "",
-    }));
-  };
+  
 
   return (
     <div className="flex flex-col sm:flex-row sm:mr-20 w-full mt-14 lg:w-full xl:w-full xl:mt-5">
@@ -525,185 +515,178 @@ function Profile() {
             <h1 className="flex justify-center px-5 py-5 md:justify-start lg:justify-start xl:justify-start text-sm font-bold font-sans">
               DIRECCIONES
             </h1>
-            <div className="flex flex-col items-center">
-              <p className="text-center">
-                Usted no tiene direcciones cargadas.
-              </p>
-            </div>
-            {/* {editMode ? (
-              <div className="w-full h-full rounded border-solid border-2 border-gray-300 p-4 sm:mt-14 md:w-3/4 lg:w-1/2 xl:mt-0 xl:w-1/2">
-                <form className="w-full h-full" onSubmit={agregarDireccion}>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="pais"
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                    >
-                      País
-                    </label>
-                    <input
-                      id="pais"
-                      name="pais"
-                      type="text"
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      defaultValue="Argentina"
-                      disabled
-                    />
+           {editMode ? (
+  <div className="w-full h-full rounded border-solid border-2 border-gray-300 p-4 sm:mt-14 md:w-3/4 lg:w-1/2 xl:mt-0 xl:w-1/2">
+    <label className="block mb-4">
+      <span className="text-gray-700">País:</span>
+      <input
+        id="pais"
+        name="pais"
+        type="text"
+        className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+        placeholder="Ingrese el Pais"
+        onChange={(e) => setPais(e.target.value)}
+        value={pais}
+      />
+    </label>
 
-                    <div className="mb-4">
-                      <label
-                        htmlFor="codigoPostal"
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                      >
-                        Código Postal
-                      </label>
-                      <input
-                        id="codigoPostal"
-                        name="codigoPostal"
-                        type="text"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        placeholder="Ingrese el código postal"
-                        onChange={handleInputChange}
-                        value={formData.codigoPostal || ""}
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label
-                        htmlFor="calle"
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                      >
-                        Calle
-                      </label>
-                      <input
-                        id="calle"
-                        name="calle"
-                        type="text"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        placeholder="Ingrese la calle"
-                        onChange={handleInputChange}
-                        value={formData.calle || ""}
-                      />
+    <label className="block mb-4">
+      <span className="text-gray-700">Código Postal</span>
+      <input
+        id="codigoPostal"
+        name="codigoPostal"
+        type="text"
+        className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+        placeholder="Ingrese el código postal"
+        onChange={(e) => setCodigoPostal(e.target.value)}
+        value={codigoPostal}
+      />
+    </label>
 
-                      <label
-                        htmlFor="numero"
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                      >
-                        Número
-                      </label>
-                      <input
-                        id="numero"
-                        name="numero"
-                        type="text"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        placeholder="Ingrese el número"
-                        onChange={handleInputChange}
-                        value={formData.numero || ""}
-                      />
+    <label className="block mb-4">
+      <span className="text-gray-700">Provincia</span>
+      <input
+        id="provincia"
+        name="provincia"
+        type="text"
+        className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+        placeholder="Ingrese la provincia"
+        onChange={(e) => setProvincia(e.target.value)}
+        value={provincia}
+      />
+    </label>
 
-                      <label
-                        htmlFor="infoAdicional"
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                      >
-                        Información adicional (ej.: apto. 201)
-                      </label>
-                      <input
-                        id="infoAdicional"
-                        name="infoAdicional"
-                        type="text"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        placeholder="Ingrese información adicional"
-                        onChange={handleInputChange}
-                        value={formData.infoAdicional || ""}
-                      />
+    <label className="block mb-4">
+      <span className="text-gray-700">Ciudad</span>
+      <input
+        id="ciudad"
+        name="ciudad"
+        type="text"
+        className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+        placeholder="Ingrese la ciudad"
+        onChange={(e) => setCiudad(e.target.value)}
+        value={ciudad}
+      />
+    </label>
 
-                      <label
-                        htmlFor="ciudad"
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                      >
-                        Ciudad
-                      </label>
-                      <input
-                        id="ciudad"
-                        name="ciudad"
-                        type="text"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        placeholder="Ingrese la ciudad"
-                        onChange={handleInputChange}
-                        value={formData.ciudad || ""}
-                      />
+    <label className="block mb-4">
+      <span className="text-gray-700">Calle</span>
+      <input
+        id="calle"
+        name="calle"
+        type="text"
+        className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+        placeholder="Ingrese la calle"
+        onChange={(e) => setCalle(e.target.value)}
+        value={calle}
+      />
+    </label>
 
-                      <label
-                        htmlFor="destinatario"
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                      >
-                        Destinatario
-                      </label>
-                      <input
-                        id="destinatario"
-                        name="destinatario"
-                        type="text"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        placeholder="Ingrese el destinatario"
-                        onChange={handleInputChange}
-                        value={formData.destinatario || ""}
-                      />
-                    </div>
-                    <div className="flex justify-center">
-                      <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                        type="submit"
-                      >
-                        Guardar dirección
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            ) : (
-              <div className="w-full ">
-                {Object.keys(usuario).length > 0 ? (
-                  <div className="w-full bg-gray border border-gray-400 rounded-lg shadow p-2 mx-auto mt-4 md:flex md:flex-wrap md:justify-start md:mx-1 md:p-5 md:w-3/4 lg:flex lg:w-3/4 lg:flex-wrap lg:justify-start lg:mx-1 lg:p-5 xl:flex xl:w-3/4 xl:flex-wrap xl:justify-start xl:mx-1 xl:p-5"> 
-                    <>
-                       <div className="flex flex-col w-full my-2 mx-3 items-center">
-                        <h3 className="font-bold w-full mx-3">Código Postal</h3>
-                        <p className=" w-full my-2 mx-3">
-                          {usuario}
-                        </p>
-                      </div>
-                      <div className="flex flex-col w-full items-center">
-                        <h3 className="font-bold w-full mx-3">Calle</h3>
-                        <p className=" w-full my-2 mx-3">
-                          {usuario}
-                        </p>
-                      </div>
-                      <div className="flex flex-col w-full items-center">
-                        <h3 className="font-bold w-full mx-3">Ciudad</h3>
-                        <p className=" w-full my-2 mx-3">
-                          {usuario}
-                        </p>
-                      </div>
-                      <div className="flex flex-col w-full items-center">
-                        <h3 className="font-bold w-full mx-3">Destinatario</h3>
-                        <p className=" w-full my-2 mx-3">
-                          {usuario}
-                        </p>
-                      </div> 
-                    </>
-                     <button
-                      className="bg-white mr-3 hover:bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded mt-4"
-                      onClick={handleToggleEditMode}
-                    >
-                      Agregar dirección
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <p className="text-gray-400 mb-4">
-                      No tienes ninguna dirección registrada.
-                    </p>
-                  </div>
-                )}
-              </div>
-            )} */}
+    <label className="block mb-4">
+      <span className="text-gray-700">Número</span>
+      <input
+        id="numero"
+        name="numero"
+        type="text"
+        className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+        placeholder="Ingrese el número"
+        onChange={(e) => setNumeroCalle(e.target.value)}
+        value={numeroCalle}
+      />
+    </label>
+
+    <label className="block mb-4">
+      <span className="text-gray-700">Información adicional (ej.: apto. 201)</span>
+      <input
+        id="infoAdicional"
+        name="infoAdicional"
+        type="text"
+        className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+        placeholder="Ingrese información adicional"
+        onChange={(e) => setInfoAdicional(e.target.value)}
+        value={infoAdicional}
+      />
+    </label>
+
+    <label className="block mb-4">
+      <span className="text-gray-700">Destinatario</span>
+      <input
+        id="destinatario"
+        name="destinatario"
+        type="text"
+        className="mt-1 block w-full border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500"
+        placeholder="Ingrese el destinatario"
+        onChange={(e) => setDestinatario(e.target.value)}
+        value={destinatario}
+      />
+    </label>
+
+    <div className="flex justify-center">
+      <button
+        className="bg-black w-full hover:bg-white hover:text-black text-white font-bold py-2 px-4 rounded"
+        onClick={handleSaveChangesDireccion}
+      >
+        Guardar dirección
+      </button>
+    </div>
+  </div>
+) : (
+  <div className="w-full">
+     {usuario.provincia.length || usuario.ciudad.lenth > 0 ? (
+    <div className="w-full bg-gray border border-gray-400 rounded-lg shadow p-2 mx-auto mt-4 md:flex md:flex-wrap md:justify-start md:mx-1 md:p-5 md:w-3/4 lg:flex lg:w-3/4 lg:flex-wrap lg:justify-start lg:mx-1 lg:p-5 xl:flex xl:w-3/4 xl:flex-wrap xl:justify-start xl:mx-1 xl:p-5">
+      <>
+        <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
+          <p className="ml-0 py-4 px-0">Pais</p>
+          <p className="ml-0 py-1 px-1 text-gray-400">{usuario.pais}</p>
+        </div>
+        <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
+          <p className="ml-0 py-4 px-0">Provincia</p>
+          <p className="ml-0 py-1 px-1 text-gray-400">{usuario.provincia}</p>
+        </div>
+        <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
+          <p className="ml-0 py-4 px-0">Ciudad</p>
+          <p className="ml-0 py-1 px-1 text-gray-400">{usuario.ciudad}</p>
+        </div>
+        <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
+          <p className="ml-0 py-4 px-0">Código Postal</p>
+          <p className="ml-0 py-1 px-1 text-gray-400">{usuario.codigoPostal}</p>
+        </div>
+        <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
+          <p className="ml-0 py-4 px-0">Calle</p>
+          <p className="ml-0 py-1 px-1 text-gray-400">{usuario.calle}</p>
+        </div>
+        <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
+          <p className="ml-0 py-4 px-0">Numero</p>
+          <p className="ml-0 py-1 px-1 text-gray-400">{usuario.numeroDeCalle}</p>
+        </div>
+        <div className="mb-2 w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
+          <p className="ml-0 py-4 px-0">Destinatario</p>
+          <p className="ml-0 py-1 px-1 text-gray-400">{usuario.destinatario}</p>
+        </div>
+      
+      </>
+      <button
+          className="bg-white mr-3 hover:bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded mt-4"
+          onClick={handleToggleEditMode}
+        >
+          Editar dirección
+        </button>
+    </div>
+     ) : (
+      <div className="flex flex-col items-center">
+        <p className="text-gray-400 mb-4">
+          No tienes ninguna dirección registrada.
+        </p>
+        <button
+          className="bg-white mr-3 hover:bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded mt-4"
+          onClick={handleToggleEditMode}
+        >
+          Agregar dirección
+        </button>
+      </div>
+)}
+  </div>
+  )}
           </section>
         )}
         {selectedOption === "pedidos" && (
@@ -759,11 +742,19 @@ function Profile() {
                       )}
                     </div>
                   </div>
-                  {errorPassword.upperCase && <p className="text-red-500">{errorPassword.upperCase}</p>}
-                  {errorPassword.lowerCase && <p className="text-red-500">{errorPassword.lowerCase}</p>}
-                  {errorPassword.number && <p className="text-red-500">{errorPassword.number}</p>}
+                  {errorPassword.upperCase && (
+                    <p className="text-red-500">{errorPassword.upperCase}</p>
+                  )}
+                  {errorPassword.lowerCase && (
+                    <p className="text-red-500">{errorPassword.lowerCase}</p>
+                  )}
+                  {errorPassword.number && (
+                    <p className="text-red-500">{errorPassword.number}</p>
+                  )}
                   {errorPassword.passwordLength && (
-                    <p className="text-red-500">{errorPassword.passwordLength}</p>
+                    <p className="text-red-500">
+                      {errorPassword.passwordLength}
+                    </p>
                   )}
                   <button
                     className="bg-white mr-3 hover:bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded mt-4"
