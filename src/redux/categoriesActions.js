@@ -15,6 +15,7 @@ import {
   updateSubCategory,
   deleteSubCategory,
   addSubToCategory,
+  searchCategory,
 } from "./categoriesSlice";
 const url = import.meta.env.VITE_REACT_APP_API;
 
@@ -36,6 +37,26 @@ export const getCategoriesAction = () => {
     }
   };
 };
+
+//accion para buscar categorias
+export const searchCategoriesAction = (value) => {
+  return async function (dispatch) {
+    /*  try { */
+    dispatch(setLoading(true));
+    /* const res = await axios.get(`${url}/productos`); */
+    dispatch(searchCategory(value));
+    dispatch(setLoading(false));
+    /* } catch (error) {
+      dispatch(setLoading(false));
+      if (error.response) {
+        dispatch(setErrorProduct(error.response.data?.message));
+      } else {
+        dispatch(setErrorProduct());
+      }
+    } */
+  };
+};
+
 //accion de creacion de categorias
 export const postCategoryAction = (values, token) => {
   return async function (dispatch) {
@@ -43,7 +64,7 @@ export const postCategoryAction = (values, token) => {
       dispatch(setLoading(true));
       const res = await axios.post(`${url}/categorias`, values, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           authorization: `Bearer ${token}`,
         },
       });
@@ -95,7 +116,7 @@ export const patchCategoryAction = (values, token, id) => {
       dispatch(setLoading(true));
       const res = await axios.patch(`${url}/categorias/${id}`, values, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           authorization: `Bearer ${token}`,
         },
       });

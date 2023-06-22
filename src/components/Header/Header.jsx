@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { FiShoppingCart } from "react-icons/fi";
 import { TbMapPinFilled } from "react-icons/tb";
@@ -10,14 +10,37 @@ import UserDropdown from "./UserDropdown";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/userSlice";
+import useDebounce from "../../hooks/useDebounce";
+import { searchProductsAction } from "../../redux/productActions";
+import { setErrorSearchProduct } from "../../redux/productSlice";
+import SearchItems from "../../utils/SearchItems";
 
 const Header = () => {
   const dispatch = useDispatch();
   const { isLoggedIn, userRole } = useSelector((state) => state.users);
+  const { products, loading, errorSearch } = useSelector(
+    (state) => state.products
+  );
   const [navbar, setNavbar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [showItems, setShowItems] = useState(false);
+  const debouncedSearchValue = useDebounce(searchValue);
+
+  useEffect(() => {
+    const searchProducts = () => {
+      if (debouncedSearchValue?.length) {
+        setShowItems(true);
+        if (errorSearch.length) {
+          dispatch(setErrorSearchProduct(""));
+        }
+        dispatch(searchProductsAction(debouncedSearchValue));
+      }
+    };
+    searchProducts();
+  }, [debouncedSearchValue]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -40,6 +63,11 @@ const Header = () => {
         <SearchBar
           isSearchOpen={isSearchOpen}
           toggleSearchBar={toggleSearchBar}
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
+          error={errorSearch}
+          setShowItems={setShowItems}
+          showItems={showItems}
         />
       )}
 
@@ -132,10 +160,26 @@ const Header = () => {
               focus:outline-none
               appearance-none
               "
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                autoFocus
               />
-              <button>
-                <IoIosSearch color="white" fontSize={32} />
-              </button>
+
+              {!searchValue.length ? (
+                <button>
+                  <IoIosSearch color="white" fontSize={32} />
+                </button>
+              ) : (
+                <button
+                  onClick={() => setSearchValue("")}
+                  className="p-1 text-white text-xl"
+                >
+                  X
+                </button>
+              )}
+              {showItems && (
+                <SearchItems setShowItems={setShowItems} error={errorSearch} />
+              )}
             </div>
             <div className=" lg:flex hidden flex-row-reverse justify-between items-center ">
               <button className="pr-6 " onClick={toggleShoppingCart}>

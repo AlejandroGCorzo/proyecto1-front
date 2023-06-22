@@ -2,9 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   products: null,
+  productsBackUp: null,
   loading: false,
   success: "",
   error: "",
+  errorSearch: "",
 };
 
 const productSlice = createSlice({
@@ -16,9 +18,36 @@ const productSlice = createSlice({
     },
     setProduct: (state, action) => {
       state.products = action.payload;
+      state.productsBackUp = action.payload;
+    },
+    searchProduct: (state, action) => {
+      let filteredProducts = state.productsBackUp.filter(
+        (item) =>
+          item.modelo.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.marca.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.tipo.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.genero.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.codigo.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.proveedor.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.disciplina.toLowerCase().includes(action.payload.toLowerCase())
+      );
+
+      if (filteredProducts.length) {
+        state.productsBackUp = filteredProducts;
+      } else {
+        state.productsBackUp = state.products;
+        state.errorSearch = "Producto no encontrado";
+      }
     },
     addProduct: (state, action) => {
       state.products = [...state.products, action.payload];
+    },
+    updateProduct: (state, action) => {
+      let filteredProducts = state.products.filter(
+        (item) => item._id !== action.payload._id
+      );
+
+      state.products = [...filteredProducts, action.payload];
     },
     deleteProduct: (state, action) => {
       let filteredProducts = state.products.filter(
@@ -29,6 +58,9 @@ const productSlice = createSlice({
     setErrorProduct: (state, action) => {
       state.error = action.payload;
     },
+    setErrorSearchProduct: (state, action) => {
+      state.errorSearch = action.payload;
+    },
     setSuccessProduct: (state, action) => {
       state.success = action.payload;
     },
@@ -38,9 +70,12 @@ const productSlice = createSlice({
 export const {
   setLoading,
   addProduct,
+  updateProduct,
   deleteProduct,
   setProduct,
+  searchProduct,
   setErrorProduct,
+  setErrorSearchProduct,
   setSuccessProduct,
 } = productSlice.actions;
 

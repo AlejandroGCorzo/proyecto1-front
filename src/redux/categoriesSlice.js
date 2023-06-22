@@ -6,6 +6,7 @@ const initialState = {
   loading: false,
   success: "",
   error: "",
+  errorSearch: "",
   successSub: "",
   errorSub: "",
 };
@@ -48,6 +49,18 @@ const categoriesSlice = createSlice({
     },
     setCategory: (state, action) => {
       state.categories = action.payload;
+    },
+    searchCategory: (state, action) => {
+      let filteredCategories = state.categories.filter((item) =>
+        item.nombre.toLowerCase().includes(action.payload.toLowerCase())
+      );
+
+      if (filteredCategories.length) {
+        state.categories = filteredCategories;
+      } else {
+        state.categories = state.categories;
+        state.errorSearch = "Categoría no encontrada.";
+      }
     },
     updateCategory: (state, action) => {
       let filteredCategories = state.categories.filter(
@@ -101,6 +114,9 @@ const categoriesSlice = createSlice({
       );
       state.subcategorias = filteredSubcategorias;
     },
+    setErrorSearchCategory: (state, action) => {
+      state.errorSearch = action.payload;
+    },
     setErrorCategory: (state, action) => {
       state.error = action.payload;
     },
@@ -121,6 +137,7 @@ export const {
   addCategory,
   addSubToCategory,
   setCategory,
+  searchCategory,
   updateCategory,
   deleteSubFromCategories,
   deleteCategory,
@@ -129,6 +146,7 @@ export const {
   updateSubCategory,
   deleteSubCategory,
   setErrorCategory,
+  setErrorSearchCategory,
   setSuccessCategory,
   setErrorSubCategory,
   setSuccessSubCategory,

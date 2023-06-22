@@ -1,7 +1,15 @@
 import React from "react";
 import { IoIosSearch } from "react-icons/io";
+import SearchItems from "../../utils/SearchItems";
 
-const SearchBar = ({ isSearchOpen, toggleSearchBar }) => {
+const SearchBar = ({
+  isSearchOpen,
+  toggleSearchBar,
+  searchValue,
+  setSearchValue,
+  showItems,
+  setShowItems,
+}) => {
   return (
     <div
       className={`fixed inset-0 flex flex-1 z-[9999] justify-center lg:hidden ${
@@ -34,11 +42,26 @@ const SearchBar = ({ isSearchOpen, toggleSearchBar }) => {
               focus:outline-none
               appearance-none
               "
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            autoFocus
           />
-          <button>
-            <IoIosSearch color="white" fontSize={32} />
-          </button>
+          {!searchValue.length ? (
+            <button>
+              <IoIosSearch color="white" fontSize={32} />
+            </button>
+          ) : (
+            <button
+              onClick={() => setSearchValue("")}
+              className="p-1 text-white text-xl"
+            >
+              X
+            </button>
+          )}
         </div>
+        {showItems && (
+          <SearchItems showItems={showItems} setShowItems={setShowItems} />
+        )}
       </div>
     </div>
   );
