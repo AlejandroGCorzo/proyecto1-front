@@ -12,15 +12,21 @@ import {
   deleteSubCategoriesAction,
   getCategoriesAction,
   getSubCategoriesAction,
+  searchCategoriesAction,
 } from "../../../redux/categoriesActions";
 import { ConfirmationComponent } from "../../../utils/DeleteSteps";
 import AddSubcategory from "./AddSubcategory";
+import useDebounce from "../../../hooks/useDebounce";
+import SearchBarAdmin from "../Search/SearchBarAdmin";
+import { setErrorSearchCategory } from "../../../redux/categoriesSlice";
 
 const Categories = () => {
   const dispatch = useDispatch();
   const modalRef = useRef(null);
   const modalRefSub = useRef(null);
-  const { categories, loading } = useSelector((state) => state.categories);
+  const { categories, loading, errorSearch } = useSelector(
+    (state) => state.categories
+  );
   const sortedCategories = [...categories].sort((a, b) =>
     a.nombre.localeCompare(b.nombre)
   );
@@ -33,14 +39,35 @@ const Categories = () => {
   const [itemToDelete, setItemToDelete] = useState({ nombre: "", id: "" });
   const [section, setSection] = useState("");
   const [confirmed, setConfirmed] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const debouncedSearchValue = useDebounce(searchValue);
+
   useEffect(() => {
-    const getCategories = () => {
-      dispatch(getCategoriesAction());
+    const getSubCategories = () => {
       dispatch(getSubCategoriesAction());
     };
 
-    getCategories();
+    getSubCategories();
   }, []);
+
+  useEffect(() => {
+    const getCategories = () => {
+      if (debouncedSearchValue) {
+        if (errorSearch.length) {
+          dispatch(setErrorSearchCategory(""));
+        }
+        dispatch(searchCategoriesAction(debouncedSearchValue));
+      } else {
+        if (errorSearch.length) {
+          dispatch(setErrorSearchCategory(""));
+        }
+
+        dispatch(getCategoriesAction());
+      }
+    };
+    getCategories();
+  }, [debouncedSearchValue]);
+
   const toggleModal = (e) => {
     modalRef.current.classList.toggle("modal-open");
     document.activeElement.blur();
@@ -60,16 +87,21 @@ const Categories = () => {
   };
   return (
     <div className="flex flex-col mt-6 w-full max-w-full h-full justify-center items-center p-2">
-      <div className="w-full max-w-[350px] sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-start mb-2">
+      <div className="w-full max-w-[350px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-between gap-1 mb-2">
         <Link
           to="/admin/categories/form"
-          className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out"
+          className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out w-1/3 md:w-auto"
         >
           Crear categoría
         </Link>
+        <SearchBarAdmin
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
+          error={errorSearch}
+        />
       </div>
 
-      <div className="flex flex-nowrap w-full xl:flex-wrap max-w-[400px] sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto">
+      <div className="flex flex-nowrap w-full xl:flex-wrap max-w-[400px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto">
         {loading ? (
           <Loading />
         ) : (
