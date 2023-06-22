@@ -38,6 +38,8 @@ const settings = {
   slidesToScroll: 1,
   initialSlide: 0,
   dots: true,
+  arrows: true,
+  pauseOnHover: true,
   prevArrow: <CustomPrevArrow />,
   nextArrow: <CustomNextArrow />,
   responsive: [
@@ -81,7 +83,7 @@ const Slide = () => {
   return (
     <div className="container">
       <div className="w-[95%]">
-        <Slider {...settings} arrows={true}>
+        <Slider {...settings}>
           <img
             src={"/hero1.webp"}
             alt={"hero 1"}

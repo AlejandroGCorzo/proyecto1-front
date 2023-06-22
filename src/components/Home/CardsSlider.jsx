@@ -41,17 +41,11 @@ const settings = {
   slidesToScroll: 5,
   initialSlide: 0,
   dots: true,
+  arrows: true,
+  pauseOnHover: true,
   prevArrow: <CustomPrevArrow />,
   nextArrow: <CustomNextArrow />,
   responsive: [
-    /*  {
-      breakpoint: 1540,
-      settings: {
-        slidesToShow: 4,
-        slidesToScroll: 4,
-        dots: true,
-      },
-    }, */
     {
       breakpoint: 1280,
       settings: {
@@ -94,7 +88,7 @@ const CardsSlider = ({ data }) => {
   return (
     <div className="container">
       <div className="containerSlider">
-        <Slider {...settings} arrows={true}>
+        <Slider {...settings}>
           {data?.length &&
             data.map((item, index) => (
               <Link to={`/detail/${item._id}`} key={item._id}>

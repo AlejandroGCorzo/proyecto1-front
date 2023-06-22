@@ -3,7 +3,10 @@ import Slide from "./Slide";
 import CardsSlider from "./CardsSlider";
 import { getProductAction } from "../../redux/productActions";
 import { useDispatch, useSelector } from "react-redux";
-import { getSubCategoriesAction } from "../../redux/categoriesActions";
+import {
+  getCategoriesAction,
+  getSubCategoriesAction,
+} from "../../redux/categoriesActions";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -12,6 +15,7 @@ const Home = () => {
   useEffect(() => {
     const getProducts = () => {
       dispatch(getProductAction());
+      dispatch(getCategoriesAction());
       dispatch(getSubCategoriesAction());
     };
     getProducts();
