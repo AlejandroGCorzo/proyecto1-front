@@ -77,7 +77,7 @@ const CategoriesForm = () => {
 
   const validateImage = (input) => {
     let error = {};
-    if (categoryToUpdate?.nombre?.length) {
+    if (categoryToUpdate?.imagen?.length) {
       if (!input && !categoryToUpdate?.imagen?.length) {
         error.image = "Debe ingresar una imagen";
       }
@@ -122,8 +122,12 @@ const CategoriesForm = () => {
         reader.readAsDataURL(files[i]);
       }
       if (!params?.id?.length) {
+        let validatedImage = validateImage(files);
+        setErrorImage(validatedImage);
         setForm((prev) => ({ ...prev, imagen: eventualState }));
       } else {
+        let validatedImage = validateImage(files);
+        setErrorImage(validatedImage);
         setFormUpdate((prev) => ({ ...prev, imagen: eventualState }));
       }
     }
@@ -153,18 +157,18 @@ const CategoriesForm = () => {
     post();
     clearForm();
   };
-  
 
   let isFormDisabled =
-    !Object.values(form).join("").length ||
+    !form.nombre.length ||
+    !form.imagen.length ||
     !image.length ||
     Object.values(errorName).join("").length ||
     Object.values(errorImage).join("").length
       ? true
       : false;
   let isFormUpdateDisabled =
-    !Object.values(form).join("").length ||
-    (!image.length && !categoryToUpdate?.imagen?.length) ||
+    !Object.values(formUpdate).join("").length ||
+    !categoryToUpdate?.imagen?.length ||
     Object.values(errorName).join("").length ||
     Object.values(errorImage).join("").length
       ? true
@@ -208,11 +212,9 @@ const CategoriesForm = () => {
             type="text"
             className="input bg-fontGrey"
             name="nombre"
-            value={
-              categoryToUpdate?._id?.length ? formUpdate.nombre : form.nombre
-            }
+            value={params?.id?.length ? formUpdate.nombre : form.nombre}
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
             placeholder="Nombre de la categoría"
           />
           {errorName?.nombre?.length ? (
@@ -241,7 +243,7 @@ const CategoriesForm = () => {
             className="file-input-xs sm:file-input bg-fontGrey w-full text-white"
             name="imagenFile"
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
           />
           {errorImage?.image?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
@@ -263,7 +265,7 @@ const CategoriesForm = () => {
           Añadir
         </button>
       </form>
-      {!params?.id.length && <SubCategoriesForm />}
+      {!params?.id?.length && <SubCategoriesForm />}
     </div>
   );
 };

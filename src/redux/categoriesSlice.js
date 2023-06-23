@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   categories: [],
+  categoriesBackUp: [],
   subcategorias: [],
   loading: false,
   success: "",
@@ -49,6 +50,7 @@ const categoriesSlice = createSlice({
     },
     setCategory: (state, action) => {
       state.categories = action.payload;
+      state.categoriesBackUp = action.payload;
     },
     searchCategory: (state, action) => {
       let filteredCategories = state.categories.filter((item) =>

@@ -3,6 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   products: null,
   productsBackUp: null,
+  productsSearch: null,
+  productsFilter: null,
   loading: false,
   success: "",
   error: "",
@@ -21,7 +23,7 @@ const productSlice = createSlice({
       state.productsBackUp = action.payload;
     },
     searchProduct: (state, action) => {
-      let filteredProducts = state.productsBackUp.filter(
+      let filteredProducts = state.products.filter(
         (item) =>
           item.modelo.toLowerCase().includes(action.payload.toLowerCase()) ||
           item.marca.toLowerCase().includes(action.payload.toLowerCase()) ||
@@ -33,11 +35,28 @@ const productSlice = createSlice({
       );
 
       if (filteredProducts.length) {
-        state.productsBackUp = filteredProducts;
+        state.productsSearch = filteredProducts;
       } else {
-        state.productsBackUp = state.products;
+        state.productsSearch = state.products;
         state.errorSearch = "Producto no encontrado";
       }
+    },
+    filterProducts: (state, action) => {
+      let filteredProducts = state.products.filter(
+        (item) =>
+          item.modelo.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.marca.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.tipo.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.genero.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.codigo.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.proveedor.toLowerCase().includes(action.payload.toLowerCase()) ||
+          item.disciplina.toLowerCase().includes(action.payload.toLowerCase())
+      );
+
+      state.productsFilter = filteredProducts;
+    },
+    setSearchProducts: (state, action) => {
+      state.productsSearch = state.products;
     },
     addProduct: (state, action) => {
       state.products = [...state.products, action.payload];
@@ -54,6 +73,7 @@ const productSlice = createSlice({
         (item) => item._id !== action.payload._id
       );
       state.products = filteredProducts;
+      state.productsBackUp = filteredProducts;
     },
     setErrorProduct: (state, action) => {
       state.error = action.payload;
@@ -73,7 +93,9 @@ export const {
   updateProduct,
   deleteProduct,
   setProduct,
+  setSearchProducts,
   searchProduct,
+  filterProducts,
   setErrorProduct,
   setErrorSearchProduct,
   setSuccessProduct,

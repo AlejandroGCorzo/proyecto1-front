@@ -29,7 +29,7 @@ const SubCategoriesForm = () => {
   const [errorImage, setErrorImage] = useState({});
   const [image, setImage] = useState({});
   const [form, setForm] = useState({
-    categoria: "",
+    categoria: "Elige una categoría",
     nombre: "",
     imagen: [],
   });
@@ -38,7 +38,7 @@ const SubCategoriesForm = () => {
     setErrorName({});
     setErrorImage({});
     setForm({
-      categoria: "",
+      categoria: "Elige una categoría",
       nombre: "",
       imagen: [],
     });
@@ -54,6 +54,11 @@ const SubCategoriesForm = () => {
   };
   const validateName = (input) => {
     let error = {};
+
+    if (!input.nombre.length && input.categoria === "Elige una categoría") {
+      error.nombre = "El campo Nombre no puede estar vacío.";
+      error.categoria = "Debe seleccionar una categoría.";
+    }
 
     if (subcategoriesNames.includes(input.nombre.toUpperCase())) {
       error.nombre =
@@ -92,6 +97,7 @@ const SubCategoriesForm = () => {
       setErrorImage(errorFormValidation);
     }
   };
+  console.log(errorName);
   const handleChangeForm = (e) => {
     e.preventDefault();
     const { name, value, files } = e.target;
@@ -183,7 +189,7 @@ const SubCategoriesForm = () => {
             name="categoria"
             ref={selectInputRef}
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
             defaultValue="Elige una categoría"
           >
             <option disabled>Elige una categoría</option>
@@ -218,7 +224,7 @@ const SubCategoriesForm = () => {
             name="nombre"
             value={form.nombre}
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
             placeholder="Nombre de la subcategoria"
           />
           {errorName?.nombre?.length ? (
@@ -247,7 +253,7 @@ const SubCategoriesForm = () => {
             className="file-input-xs sm:file-input bg-fontGrey w-full text-white"
             name="imagenFile"
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
           />
           {errorImage?.image?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">

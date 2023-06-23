@@ -2,7 +2,10 @@ import React, { useRef, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { patchProductAction, postProductAction } from "../../../redux/productActions";
+import {
+  patchProductAction,
+  postProductAction,
+} from "../../../redux/productActions";
 import {
   setErrorProduct,
   setSuccessProduct,
@@ -87,7 +90,7 @@ function validateProduct(input, products) {
     errorsProduct.modelo = "El campo Modelo no puede estar vacío.";
   }
 
-  if (!input.marca || input.marca === "Elige una marca") {
+  if (!input.marca.length || input.marca === "Elige una marca") {
     errorsProduct.marca = "Seleccione una marca.";
   }
   if (!input.descripcion) {
@@ -161,7 +164,6 @@ const ProductForm = () => {
           cantidad: Number(item.cantidad),
         }))
       : [],
-    imagenes: productToUpdate?.imagenes?.length ? productToUpdate.imagenes : [],
   });
   const [errorsForm, setErrorsForm] = useState({});
 
@@ -178,7 +180,10 @@ const ProductForm = () => {
         let validatedImage = validateImage(files[0]);
         setErrorImage(validatedImage);
       } else {
-        let errorFormValidation = validateProduct(form, products);
+        let errorFormValidation = validateProduct(
+          { ...form, [name]: value },
+          products
+        );
         setErrorsForm(errorFormValidation);
       }
     }
@@ -224,6 +229,9 @@ const ProductForm = () => {
       proveedor: "",
       disciplina: "",
     });
+    if (params?.id?.length) {
+      setFormUpdate({});
+    }
     setErrorColor({});
     setErrorSize({});
     setErrorImage({});
@@ -258,8 +266,6 @@ const ProductForm = () => {
       }
       reader.readAsDataURL(files[i]);
     }
-   
-
     if (!params?.id?.length) {
       let validatedImage = validateImage(files);
       setErrorImage(validatedImage);
@@ -288,7 +294,7 @@ const ProductForm = () => {
     const { value, name } = e.target;
     setColor(value);
     if (!productToUpdate?.colores?.length) {
-      let errorColorValidation = validateColor(color);
+      let errorColorValidation = validateColor(value);
       setErrorColor(errorColorValidation);
     }
     if (color) {
@@ -381,10 +387,14 @@ const ProductForm = () => {
     const { name, value } = e.target;
     if (name === "tipo") {
       setCurrentSubcategories(
-        categoriesNameAndId.find(
-          (category) => category.nombre.toLowerCase() === value.toLowerCase()
-        )
+        categoriesNameAndId.find((category) => category.id === value)
       );
+      if (currentSubcategories?.subcategorias?.length === 1) {
+        setForm((prev) => ({
+          ...prev,
+          marca: currentSubcategories.subcategorias[0]._id,
+        }));
+      }
     }
 
     if (params?.id?.length) {
@@ -394,31 +404,28 @@ const ProductForm = () => {
         ...prev,
         [name]: value,
       }));
-      let errorObj = validateProduct(
-        {
-          ...form,
-          [name]: value,
-        },
-        products
-      );
+      let errorObj = validateProduct({ ...form, [name]: value }, products);
       setErrorsForm(errorObj);
     }
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    let formToSubmit =
-      productToUpdate?._id?.length && formUpdate?.precio?.length
+    let formToSubmit = productToUpdate?._id?.length
+      ? formUpdate?.precio?.length
         ? { ...formUpdate, precio: Number(formUpdate.precio) }
-        : { ...form, precio: Number(form.precio) };
+        : formUpdate
+      : { ...form, precio: Number(form.precio) };
     async function post() {
       await dispatch(postProductAction(formToSubmit, token));
     }
 
     async function patch() {
-      await dispatch(patchProductAction(formToSubmit, token));
+      await dispatch(
+        patchProductAction(formToSubmit, token, productToUpdate._id)
+      );
     }
-     if (productToUpdate?._id?.length) {
+    if (productToUpdate?._id?.length) {
       patch();
     } else {
       post();
@@ -493,7 +500,7 @@ const ProductForm = () => {
               name="color"
               value={color}
               onChange={handleColorChange}
-              onBlur={validateOnBlur}
+              onFocus={validateOnBlur}
               placeholder="Color"
             />
             {errorColor?.color?.length ? (
@@ -524,7 +531,7 @@ const ProductForm = () => {
               name="talle"
               value={size.talle}
               onChange={handleSizeChange}
-              onBlur={validateOnBlur}
+              onFocus={validateOnBlur}
               placeholder="Talle"
             />
             {errorSize?.talle?.length ? (
@@ -543,7 +550,7 @@ const ProductForm = () => {
               name="cantidad"
               value={size.cantidad}
               onChange={handleSizeChange}
-              onBlur={validateOnBlur}
+              onFocus={validateOnBlur}
               placeholder="Cantidad"
             />
             {errorSize?.cantidad?.length ? (
@@ -615,7 +622,7 @@ const ProductForm = () => {
               className="file-input-xs sm:file-input bg-fontGrey w-full text-white"
               name="image"
               onChange={handleImageChange}
-              onBlur={validateOnBlur}
+              onFocus={validateOnBlur}
               placeholder="Imagen"
               ref={fileInputRef}
             />
@@ -634,12 +641,12 @@ const ProductForm = () => {
             placeholder="Tipo de producto"
             name="tipo"
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
             defaultValue="Elige un tipo de producto"
           >
             <option disabled>Elige un tipo de producto</option>
             {categoriesNameAndId.map((item) => (
-              <option key={item.id + "productForm"} value={item._id}>
+              <option key={item.id + "productForm"} value={item.id}>
                 {item?.nombre
                   ?.slice(0, 1)
                   .toUpperCase()
@@ -664,7 +671,7 @@ const ProductForm = () => {
               productToUpdate?._id?.length ? formUpdate.modelo : form.modelo
             }
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
           />
           {errorsForm?.modelo?.length ? (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
@@ -723,7 +730,7 @@ const ProductForm = () => {
                 : form.descripcion
             }
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
             placeholder="Descripción"
           />
           {errorsForm?.descripcion?.length ? (
@@ -742,7 +749,7 @@ const ProductForm = () => {
               productToUpdate?._id?.length ? formUpdate.precio : form.precio
             }
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
             placeholder="Precio"
           />
           {errorsForm?.precio?.length ? (
@@ -761,7 +768,7 @@ const ProductForm = () => {
               productToUpdate?._id?.length ? formUpdate.codigo : form.codigo
             }
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
             placeholder="Código"
           />
           {errorsForm?.codigo?.length ? (
@@ -780,7 +787,7 @@ const ProductForm = () => {
               productToUpdate?._id?.length ? formUpdate.genero : form.genero
             }
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
             placeholder="Género"
           />
           {errorsForm?.genero?.length ? (
@@ -801,7 +808,7 @@ const ProductForm = () => {
                 : form.proveedor
             }
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
             placeholder="Proveedor"
           />
           {errorsForm?.proveedor?.length ? (
@@ -822,7 +829,7 @@ const ProductForm = () => {
                 : form.disciplina
             }
             onChange={handleChangeForm}
-            onBlur={validateOnBlur}
+            onFocus={validateOnBlur}
             placeholder="Disciplina"
           />
           {errorsForm?.disciplina?.length ? (

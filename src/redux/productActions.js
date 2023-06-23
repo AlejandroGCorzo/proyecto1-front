@@ -8,6 +8,7 @@ import {
   setProduct,
   deleteProduct,
   searchProduct,
+  filterProducts,
 } from "./productSlice";
 const url = import.meta.env.VITE_REACT_APP_API;
 
@@ -48,6 +49,14 @@ export const searchProductsAction = (value) => {
     } */
   };
 };
+//accion para filtrar productos
+export const filterProductsAction = (value) => {
+  return async function (dispatch) {
+    dispatch(setLoading(true));
+    dispatch(filterProducts(value));
+    dispatch(setLoading(false));
+  };
+};
 
 //accion de creacion de producto
 export const postProductAction = (values, token) => {
@@ -75,18 +84,17 @@ export const postProductAction = (values, token) => {
 };
 
 //accion de creacion de producto
-export const patchProductAction = (values, token) => {
+export const patchProductAction = (values, token, id) => {
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
-      const res = await axios.patch(`${url}/productos`, values, {
+      const res = await axios.patch(`${url}/productos/${id}`, values, {
         headers: {
           "Content-Type": "application/json",
           authorization: `Bearer ${token}`,
         },
       });
-      console.log(res.data);
-      /* dispatch(updateProduct(res.data)); */
+      dispatch(updateProduct(res.data));
       dispatch(setSuccessProduct("Producto actualizado con exito."));
       dispatch(setLoading(false));
     } catch (error) {

@@ -147,10 +147,6 @@ const Products = () => {
                                     className="flex flex-row gap-1 flex-wrap "
                                   >
                                     <img src={image} className="w-16" />
-                                    <img src={image} className="w-16" />
-                                    <img src={image} className="w-16" />
-                                    <img src={image} className="w-16" />
-                                    <img src={image} className="w-16" />
                                   </div>
                                 ))
                               ) : (
