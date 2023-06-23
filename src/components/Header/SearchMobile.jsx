@@ -9,6 +9,9 @@ const SearchBar = ({
   setSearchValue,
   showItems,
   setShowItems,
+  setNavbar,
+  debouncedSearchValue,
+  error,
 }) => {
   return (
     <div
@@ -44,7 +47,6 @@ const SearchBar = ({
               "
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            autoFocus
           />
           {!searchValue.length ? (
             <button>
@@ -52,7 +54,10 @@ const SearchBar = ({
             </button>
           ) : (
             <button
-              onClick={() => setSearchValue("")}
+              onClick={() => {
+                setSearchValue("");
+                setShowItems(false);
+              }}
               className="p-1 text-white text-xl"
             >
               X
@@ -60,7 +65,14 @@ const SearchBar = ({
           )}
         </div>
         {showItems && (
-          <SearchItems showItems={showItems} setShowItems={setShowItems} />
+          <SearchItems
+            showItems={showItems}
+            setShowItems={setShowItems}
+            error={error}
+            debouncedSearchValue={debouncedSearchValue}
+            setNavbar={setNavbar}
+            setSearchValue={setSearchValue}
+          />
         )}
       </div>
     </div>

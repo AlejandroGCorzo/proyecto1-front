@@ -1,19 +1,66 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ServerError from "./ServerError";
+import { filterProductsAction } from "../redux/productActions";
 
-const SearchItems = ({ setShowItems, error }) => {
-  const { productsBackUp, loading } = useSelector((state) => state.products);
+const SearchItems = ({
+  setShowItems,
+  setSearchValue,
+  debouncedSearchValue,
+  error,
+  setNavbar,
+}) => {
+  const { productsSearch, productsFilter, loading } = useSelector(
+    (state) => state.products
+  );
+  const categories = [...new Set(productsSearch.map((item) => item.tipo))];
+  const dispatch = useDispatch();
+
   return (
-    <div className="lg:w-[410px] max-h-72 bg-white absolute top-32 lg:left-[850px] z-[9999] overflow-y-auto contentScroll">
-      {productsBackUp.length > 0 &&
-        productsBackUp.map((item) => (
+    <div className="w-[95%] md:w-2/3 lg:w-[400px] h-auto contentScroll max-h-[80%] sm:max-h-[70%] xl:max-h-screen bg-white absolute top-32 2xl:left-[850px] z-[9999] overflow-y-auto font-medium">
+      <Link
+        to={`/${debouncedSearchValue}`}
+        className="flex flex-row gap-2 px-2 py-4 hover:bg-grey"
+        onClick={() => {
+          dispatch(filterProductsAction(debouncedSearchValue));
+          setShowItems(false);
+          setNavbar(false);
+          setSearchValue("");
+        }}
+      >
+        <p>Buscar por "{debouncedSearchValue}"</p>
+      </Link>
+      {categories.length > 0 &&
+        debouncedSearchValue.length > 0 &&
+        categories.map((item) => (
           <Link
-            to={`/detail/${item._id}`}
+            key={item}
+            to={`/${debouncedSearchValue}`}
+            className="flex flex-row gap-2 px-2 py-4 hover:bg-grey"
+            onClick={() => {
+              dispatch(filterProductsAction(item));
+              setShowItems(false);
+              setNavbar(false);
+              setSearchValue("");
+            }}
+          >
+            <p>{debouncedSearchValue}</p>
+            <p>{item}</p>
+          </Link>
+        ))}
+      {productsSearch.length > 0 &&
+        !error.length &&
+        productsSearch.map((item) => (
+          <Link
             key={item._id}
-            className="flex flex-row gap-2 my-2 px-2 py-6 hover:bg-grey"
-            onClick={() => setShowItems(false)}
+            to={`/detail/${item._id}`}
+            className="flex flex-row gap-2 my-2 px-2 py-6 hover:bg-grey "
+            onClick={() => {
+              setShowItems(false);
+              setNavbar(false);
+              setSearchValue("");
+            }}
           >
             <img
               src={item.imagenes[0]}

@@ -12,7 +12,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/userSlice";
 import useDebounce from "../../hooks/useDebounce";
 import { searchProductsAction } from "../../redux/productActions";
-import { setErrorSearchProduct } from "../../redux/productSlice";
+import {
+  setErrorSearchProduct,
+  setSearchProducts,
+} from "../../redux/productSlice";
 import SearchItems from "../../utils/SearchItems";
 
 const Header = () => {
@@ -37,6 +40,14 @@ const Header = () => {
           dispatch(setErrorSearchProduct(""));
         }
         dispatch(searchProductsAction(debouncedSearchValue));
+      } else {
+        if (errorSearch.length) {
+          dispatch(setErrorSearchProduct(""));
+        }
+
+        dispatch(setSearchProducts());
+
+        setShowItems(false);
       }
     };
     searchProducts();
@@ -68,13 +79,15 @@ const Header = () => {
           error={errorSearch}
           setShowItems={setShowItems}
           showItems={showItems}
+          setNavbar={setNavbar}
+          debouncedSearchValue={debouncedSearchValue}
         />
       )}
 
       <header className="z-[999] w-full flex flex-col items-center justify-center fixed top-0 ">
         <section
           className="
-     flex flex-row justify-between items-center h-16 w-full mx-auto border-b-[10px] border-grid bg-header"
+     flex flex-row justify-between lg:justify-center items-center h-16 w-full mx-auto border-b-[10px] border-grid bg-header lg:px-8"
         >
           <div className="flex flex-row text-white justify-between w-1/2 sm:w-1/3 lg:w-1/5 h-full pl-2">
             <button className="w-full h-full flex justify-center items-center focus:border-r focus:border-r-white">
@@ -93,8 +106,8 @@ const Header = () => {
             <p>envío gratis a partir de $29.999 - 3 cuotas sin interés</p>
           </div>
           <div className="w-1/3 flex justify-end">
-            <button className="text-white hidden lg:flex lg:pr-2 justify-center items-center">
-              <TbMapPinFilled className="pr-2 text-grid" />
+            <button className="text-white hidden lg:flex lg:pr-12 justify-center items-center">
+              <TbMapPinFilled className="pr-2 text-grid text-xl" />
               Sucursales
             </button>
             <button
@@ -105,9 +118,9 @@ const Header = () => {
             </button>
           </div>
         </section>
-        <nav className="h-full w-full bg-header flex flex-col items-center justify-center">
-          <div className="p-3 w-full h-2/3 flex flex-row justify-between items-center">
-            <div className="lg:hidden flex justify-start items-center w-1/3">
+        <nav className="h-full w-full  bg-header flex flex-col items-center justify-center">
+          <div className="p-3 w-full h-2/3 flex flex-row justify-center items-center">
+            <div className={`lg:hidden flex justify-start items-center w-1/3 `}>
               <button
                 className=" text-white  flex justify-center items-center"
                 onClick={() => setNavbar(!navbar)}
@@ -143,49 +156,63 @@ const Header = () => {
                 )}
               </button>
             </div>
-            <div className="flex justify-center items-center w-auto">
-              <Link to={"/"}>
-                <img
-                  src="https://grid0.vtexassets.com/assets/vtex/assets-builder/grid0.theme/1.0.69/Img/Header/grid___3f6eaa5876e60f68a28d0f2f14c68944.svg"
-                  alt="GRID icon"
-                />
-              </Link>
-            </div>
-            <div className="hidden lg:flex justify-end bg-nav w-[410px] pr-2">
-              <input
-                type="text"
-                name="search"
-                id="search"
-                className="bg-nav text-white w-full p-2 border-nav focus:border-nav
+            <div className="flex flex-row justify-between items-center lg:w-[80%]">
+              <div
+                className={`${
+                  isSearchOpen ? "hidden" : "flex"
+                } justify-center items-center w-auto`}
+              >
+                <Link to={"/"}>
+                  <img
+                    src="https://grid0.vtexassets.com/assets/vtex/assets-builder/grid0.theme/1.0.69/Img/Header/grid___3f6eaa5876e60f68a28d0f2f14c68944.svg"
+                    alt="GRID icon"
+                  />
+                </Link>
+              </div>
+              <div className="hidden lg:flex justify-end bg-nav w-[410px] pr-2">
+                <input
+                  type="text"
+                  name="search"
+                  id="search"
+                  className="bg-nav text-white w-full p-2 border-nav focus:border-nav
               focus:outline-none
               appearance-none
               "
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                autoFocus
-              />
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
 
-              {!searchValue.length ? (
-                <button>
-                  <IoIosSearch color="white" fontSize={32} />
+                {!searchValue.length ? (
+                  <button>
+                    <IoIosSearch color="white" fontSize={32} />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setSearchValue("");
+                      setShowItems(false);
+                    }}
+                    className="p-1 text-white text-xl"
+                  >
+                    X
+                  </button>
+                )}
+                {showItems && (
+                  <SearchItems
+                    setShowItems={setShowItems}
+                    error={errorSearch}
+                    debouncedSearchValue={debouncedSearchValue}
+                    setNavbar={setNavbar}
+                    setSearchValue={setSearchValue}
+                  />
+                )}
+              </div>
+              <div className=" lg:flex hidden flex-row-reverse justify-between items-center ">
+                <button className="pr-6 " onClick={toggleShoppingCart}>
+                  <FiShoppingCart color="white" fontSize={22} />
                 </button>
-              ) : (
-                <button
-                  onClick={() => setSearchValue("")}
-                  className="p-1 text-white text-xl"
-                >
-                  X
-                </button>
-              )}
-              {showItems && (
-                <SearchItems setShowItems={setShowItems} error={errorSearch} />
-              )}
-            </div>
-            <div className=" lg:flex hidden flex-row-reverse justify-between items-center ">
-              <button className="pr-6 " onClick={toggleShoppingCart}>
-                <FiShoppingCart color="white" fontSize={22} />
-              </button>
-              <UserDropdown />
+                <UserDropdown />
+              </div>
             </div>
             <div
               className={`lg:hidden flex justify-end w-1/3 ${

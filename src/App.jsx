@@ -7,6 +7,7 @@ import PanelHome from "./components/PanelAdmin/PanelHome";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import ProductDetail from "./components/ProductDetail";
 import { useEffect } from "react";
+import FilterProducts from "./components/Home/FilterProducts";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -24,6 +25,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/:filter" element={<FilterProducts />} />
         <Route path="/detail/:id" element={<ProductDetail />} />
         <Route path="/login" element={<UserDropdown />} />
         <Route element={<PrivateRoutes />}>
