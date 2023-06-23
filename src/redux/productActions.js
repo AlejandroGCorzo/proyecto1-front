@@ -28,3 +28,46 @@ export const postProductAction = (values) => {
     }
   };
 };
+
+export const fetchProductById = (productId) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+
+    const response = await axios.get(`${url}/productos/${productId}`);
+    const product = response.data;
+
+    dispatch(setProduct(product));
+    dispatch(setLoading(false));
+  } catch (error) {
+    dispatch(setError(true));
+    dispatch(setLoading(false));
+  }
+};
+
+export const fetchAllProducts = () => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+
+    const response = await axios.get(`${url}/productos`);
+    const products = response.data;
+console.log(products)
+    dispatch(setProduct(products));
+    dispatch(setLoading(false));
+  } catch (error) {
+    dispatch(setError(true));
+    dispatch(setLoading(false));
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+

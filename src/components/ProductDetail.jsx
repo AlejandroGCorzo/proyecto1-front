@@ -1,44 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductById, fetchAllProducts } from "../redux/productActions";
+import { useParams } from 'react-router-dom';
 import Modal from "./Modal";
 import { useSwipeable } from "react-swipeable";
 
-import { useSelector } from "react-redux";
-
 const ProductDetail = () => {
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const detailProduct = useSelector((state) => state.products.products);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [isCambioOpen, setIsCambioOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [isSucursalesOpen, setIsSucursalesOpen] = useState(false);
   const [isEnvioOpen, setIsEnvioOpen] = useState(false);
   const [isTalleOpen, setIsTalleOpen] = useState(false);
-  console.log(isTooltipOpen);
-  const detailProduct = {
-    tipo: "Zapatillas",
-    marca: "Adidas",
-    modelo: "Superstar",
-    colores: ["Negro", "Rojo"],
-    talle: ["37", "38", "39", "40", "41", "42", "43"],
-    precio: 89.99,
-    codigo: "ZA002",
-    genero: "Unisex",
-    proveedor: "ProveedorB",
-    disciplina: "Deportes varios",
-    icono:
-      "data:image/png;base64,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",
-    descripcion:
-      "Botitas Jordan Air 5 Retro De Moda Para Hombre Código: Dd0587-047",
-    images: [
-      "https://essential.vtexassets.com/arquivos/ids/791457-800-auto?v=638193268383530000&width=800&height=auto&aspect=true",
-      "https://essential.vtexassets.com/arquivos/ids/791459-800-auto?v=638193268391030000&width=800&height=auto&aspect=true",
-      "https://essential.vtexassets.com/arquivos/ids/791458-800-auto?v=638193268387270000&width=800&height=auto&aspect=true",
-    ],
-  };
-  const [selectedImage, setSelectedImage] = useState(detailProduct.images[0]);
-  const rutaDelArticulo = "Calzados > Botitas > Botitas Jordan Air 5 Retr";
+
+  useEffect(() => {
+    dispatch(fetchAllProducts)
+    dispatch(fetchProductById(id));
+  }, [dispatch, id]);
+
+  // const detailProduct = {
+  //   tipo: "Zapatillas",
+  //   marca: "Adidas",
+  //   modelo: "Superstar",
+  //   colores: ["Negro", "Rojo"],
+  //   talle: ["37", "38", "39", "40", "41", "42", "43"],
+  //   precio: 89.99,
+  //   codigo: "ZA002",
+  //   genero: "Unisex",
+  //   proveedor: "ProveedorB",
+  //   disciplina: "Deportes varios",
+  //   icono:
+  //     "data:image/png;base64,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",
+  //   descripcion:
+  //     "Botitas Jordan Air 5 Retro De Moda Para Hombre Código: Dd0587-047",
+  //   images: [
+  //     "https://essential.vtexassets.com/arquivos/ids/791457-800-auto?v=638193268383530000&width=800&height=auto&aspect=true",
+  //     "https://essential.vtexassets.com/arquivos/ids/791459-800-auto?v=638193268391030000&width=800&height=auto&aspect=true",
+  //     "https://essential.vtexassets.com/arquivos/ids/791458-800-auto?v=638193268387270000&width=800&height=auto&aspect=true",
+  //   ],
+  // };
+  const [selectedImage, setSelectedImage] = useState([]);
+  
   const handleToggleTooltip = () => {
     setIsTooltipOpen(!isTooltipOpen);
   };
-
+console.log(detailProduct)
   const handleToggleTalle = () => {
     setIsTalleOpen(!isTalleOpen);
   };
@@ -68,21 +77,21 @@ const ProductDetail = () => {
     // Lógica para compartir en Facebook
     // ...
   };
-  const handleImageClick = (imageName) => {
-    setSelectedImage(imageName);
+  const handleImageClick = () => {
+    setSelectedImage(detailProduct.imagenes);
   };
 
   const handleSwipe = (direction) => {
     if (direction === "LEFT") {
-      const currentIndex = detailProduct.images.indexOf(selectedImage);
+      const currentIndex = detailProduct.imagenes.indexOf(selectedImage);
       const nextIndex =
-        currentIndex === 0 ? detailProduct.images.length - 1 : currentIndex - 1;
-      setSelectedImage(detailProduct.images[nextIndex]);
+        currentIndex === 0 ? detailProduct.imagenes.length - 1 : currentIndex - 1;
+      setSelectedImage(detailProduct.imagenes[nextIndex]);
     } else if (direction === "RIGHT") {
-      const currentIndex = detailProduct.images.indexOf(selectedImage);
+      const currentIndex = detailProduct.imagenes.indexOf(selectedImage);
       const nextIndex =
-        currentIndex === detailProduct.images.length - 1 ? 0 : currentIndex + 1;
-      setSelectedImage(detailProduct.images[nextIndex]);
+        currentIndex === detailProduct.imagenes.length - 1 ? 0 : currentIndex + 1;
+      setSelectedImage(detailProduct.imagenes[nextIndex]);
     }
   };
 
@@ -114,29 +123,29 @@ const ProductDetail = () => {
 
   return detailProduct ? (
     <div className="flex flex-col sm:flex-row sm:mr-20 w-full mt-14 lg:w-full xl:w-full">
-      <div className="hidden w-full sm:hidden md:block md:w-1/4 lg:block lg:w-1/3 xl:block xl:w-1/4"></div>
-      <div className="lg:flex lg:mx-0 lg:w-1/2 xl:w-1/2 lg:p-8 ">
+      <div className="hidden w-full sm:hidden md:block md:w-1/5 lg:block lg:w-1/5 xl:block xl:w-1/5"></div>
+      <div className="xsm:mt-14 sm:mt-12 lg:flex md:mt-20 lg:mx-0 lg:w-1/2 xl:my-0 ">
         <div
           {...handlers}
           className="hidden lg:block lg:mt-0 lg:w-1/4 sm:mt-2 md:mt-4 sm:ml-1 md:ml-1 lg:mr-1 sm:mr-1 md:mr-1 xl:w-1/4 xl:h-1/2"
         >
-          {detailProduct.images.map((imageName, index) => (
+          {detailProduct.imagenes.map((imageName, index) => (
             <img
               key={index}
               className={`w-full mb-4 ${
                 selectedImage === imageName ? "border border-black" : ""
               }`}
               src={imageName}
-              alt={`Image ${index + 1}`}
+              alt="Image" 
               onClick={() => handleImageClick(imageName)}
             />
           ))}
         </div>
 
-        <div className="w-full items-center lg:mx-5 lg:w-3/4 xl:mx-10 xl:p-10">
+        <div className="w-full items-center lg:mx-5 lg:w-3/4 xl:mx-10 xl:p-1">
           {/* Imagen principal */}
           <img
-            src={selectedImage}
+            src={detailProduct.imagenes[0]}
             alt={detailProduct.modelo}
             className="items-center w-full sm:w-3/4 sm:mb-0 md:w-full xsm:mt-20 lg:mt-0 lg:w-full xl:w-full xl:mt-0"
           />
@@ -198,7 +207,7 @@ const ProductDetail = () => {
                   <tr>
                     <th className="bg-gray-100 text-left px-4 py-2">Color:</th>
                     <td className="bg-gray-100 text-left px-4 py-2">
-                      {detailProduct.colores.join(", ")}
+                      {detailProduct.colores.map(color=>color).join("," )}
                     </td>
                   </tr>
                   <tr>
@@ -230,12 +239,12 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      <aside className="flex-1 lg:p-8 lg:w-1/3 md:w-1/2 order-2 xsm:order-1 md:mt-28 xsm:mt-0 xsm:mb-0 xsm:ml-0 xsm:mr-0 sm:ml-0  sm:mr-1 mx-auto w-full sm:w-1/2 sm:mt-20 lg:mt-0 xl:mt-0 lg:mr-20 xl:w-1/2 justify-end">
-        <h1 className="font-bold tracking-tight text-gray-400 text-1xl mt-4 xsm:mt.0">
-          {rutaDelArticulo}
+      <aside className="flex-1 lg:p-1 lg:w-1/3 md:w-1/2 order-2 xsm:order-1 md:mt-28 xsm:mt-0 xsm:mb-0 xsm:ml-0 xsm:mr-0 sm:ml-0  sm:mr-1 mx-auto w-full sm:w-1/2 sm:mt-20 lg:mt-0 xl:mt-0 lg:mr-20 xl:w-1/2 justify-end">
+        <h1 className="font-bold tracking-tight text-gray-400 text-1xl mt-0 xsm:mt.0">
+          ruta Del Articulo
         </h1>
         <img
-          src={detailProduct.icono}
+          src=""
           alt="Logo del producto"
           className="w-12 h-12 mt-2 mb-2"
         />
@@ -280,9 +289,8 @@ const ProductDetail = () => {
           <p className="text-3xl text-gray-900">${detailProduct.precio}</p>
         </div>
         <div className="mt-4">
-          <p>3 CUOTAS SIN INTERÉS DE $ 38.333,00</p>
-          <p>6 CUOTAS FIJAS DE $ 23.754,96</p>
-          <p>12 CUOTAS FIJAS DE $ 13.905,30</p>
+          <p>3 CUOTAS SIN INTERÉS DE $ {Math.round(detailProduct.precio / 3)}</p>
+          
         </div>
         <div className="mt-4 mx-auto sm:mx-auto md:mx-auto lg:mx-auto xl:mx-auto">
           <div className="flex items-center justify-between mr-16">
@@ -424,18 +432,18 @@ const ProductDetail = () => {
           </Modal>
 
           <div className="flex items-center mt-2 mx-auto w-auto sm:mx-auto md:mx-auto lg:mx-auto xl:mr-3 flex-grow">
-            {detailProduct.talle.map((size) => (
-              <div
-                key={size}
-                className={`border border-gray-300 rounded-md p-2 mr-1 sm:mx-auto md:mr-0 lg:p-2 xl:p-3${
-                  selectedSize === size ? "bg-black text-white" : ""
-                }`}
-                onClick={() => handleSizeSelection(size)}
-              >
-                <span className="text-center">{size}</span>
-              </div>
-            ))}
-          </div>
+  {detailProduct.talle.map((size) => (
+    <div
+      key={size.talle}
+      className={`border border-gray-300 rounded-md p-2 mr-1 sm:mx-auto md:mr-0 lg:p-2 xl:p-3${
+        selectedSize === size.talle ? "bg-black text-white" : ""
+      }`}
+      onClick={() => handleSizeSelection(size.talle)}
+    >
+      <span className="text-center">{size.talle}</span>
+    </div>
+  ))}
+</div>
         </div>
         <button className="bg-black text-white py-2 px-0 mt-8 rounded-lg w-1/2">
           AGREGAR AL CARRITO
