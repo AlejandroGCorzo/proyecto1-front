@@ -241,10 +241,10 @@ console.log(detailProduct)
 
       <aside className="flex-1 lg:p-1 lg:w-1/3 md:w-1/2 order-2 xsm:order-1 md:mt-28 xsm:mt-0 xsm:mb-0 xsm:ml-0 xsm:mr-0 sm:ml-0  sm:mr-1 mx-auto w-full sm:w-1/2 sm:mt-20 lg:mt-0 xl:mt-0 lg:mr-20 xl:w-1/2 justify-end">
         <h1 className="font-bold tracking-tight text-gray-400 text-1xl mt-0 xsm:mt.0">
-          ruta Del Articulo
+          {detailProduct.marca}
         </h1>
         <img
-          src=""
+          src={detailProduct.imagenes[0]}
           alt="Logo del producto"
           className="w-12 h-12 mt-2 mb-2"
         />
@@ -313,9 +313,7 @@ console.log(detailProduct)
                 <h3 className="font-bold">TABLA DE TALLES</h3>
                 <div className="leading-tight text-sm">
                   <p className="mt-8">
-                    Buscá tu talle en la tabla y comprá seguro. Si tienes dudas
-                    sobre cómo medir tu talle, visita el siguiente link:
-                    <a href="URL_DEL_LINK">Enlace para medir el talle</a>
+                    Buscá tu talle en la tabla y comprá seguro.
                   </p>
                   <table className="mt-4 w-full h-full">
                     <tbody>
@@ -435,9 +433,9 @@ console.log(detailProduct)
   {detailProduct.talle.map((size) => (
     <div
       key={size.talle}
-      className={`border border-gray-300 rounded-md p-2 mr-1 sm:mx-auto md:mr-0 lg:p-2 xl:p-3${
-        selectedSize === size.talle ? "bg-black text-white" : ""
-      }`}
+      className={`border border-gray-300 rounded-md p-2 mr-1 sm:mx-auto md:mr-0 lg:p-2 xl:p-3 ${
+        selectedSize === size.talle ? "bg-black text-white" : "bg-white text-black"
+      } cursor-pointer`}
       onClick={() => handleSizeSelection(size.talle)}
     >
       <span className="text-center">{size.talle}</span>
@@ -601,38 +599,10 @@ console.log(detailProduct)
                 <hr className="w-full border-gray-300 mt-4 mb-4" />
                 <div className="leading-tight text-base w-full">
                   <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                    GRID JOSÉ C.PAZ - José C.Paz 1784
+                   Sucursal 1
                   </p>
                   <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                    MARK MARTINEZ - Av. Panamericana 535 esq Edison
-                  </p>
-                  <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                    DASH SAN MARTIN - Belgrano 3607
-                  </p>
-                  <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                    GRID CONSTITUYENTES - Av. Constituyentes 6020
-                  </p>
-                  <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                    DASH GRAN BOURG - Colectora Panamericana KM34 Ramal Escobar
-                  </p>
-                  <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                    DASH PILAR - Colectora Panamericana KM 54 Ramal Pilar
-                  </p>
-                  <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                    GRID SAN MIGUEL - Av. Presidente Perón 1320
-                  </p>
-                  <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                    DASH JOSÉ C. PAZ - José C. Paz 1827
-                  </p>
-                  <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                    DASH PILAR - Rivadia 744
-                  </p>
-                  <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                    GRID MORÓN - Av. Rivadavia 18276
-                  </p>
-                  <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                    GRID SAN JUSTO SHOPPING - Brigadier Juan Manuel de Rosas
-                    3910
+                  sucursal 2
                   </p>
                 </div>
               </div>
