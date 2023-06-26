@@ -38,6 +38,7 @@ const SearchBar = ({
         </button>
         <div className="flex bg-nav w-2/3 pr-2">
           <input
+            autoComplete="off"
             type="text"
             name="search"
             id="searchMobile"

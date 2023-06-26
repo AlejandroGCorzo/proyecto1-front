@@ -3,6 +3,7 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteImgProductsAction,
   patchProductAction,
   postProductAction,
 } from "../../../redux/productActions";
@@ -24,8 +25,12 @@ function validateImage(input) {
 
   return errorsImage;
 }
-function validateColor(input) {
+function validateColor(input, form = null) {
   let errorsColor = {};
+
+  if (form?.colores.includes(input.toUpperCase().trim())) {
+    errorsColor.color = "El Color ya existe, ingrese un valor diferente.";
+  }
 
   if (!input) {
     errorsColor.color = "El campo Color no puede estar vacío.";
@@ -164,6 +169,7 @@ const ProductForm = () => {
           cantidad: Number(item.cantidad),
         }))
       : [],
+    colores: productToUpdate?.colores?.length ? productToUpdate.colores : [],
   });
   const [errorsForm, setErrorsForm] = useState({});
 
@@ -171,7 +177,7 @@ const ProductForm = () => {
     const { value, name, files } = e.target;
     if (!params?.id?.length) {
       if (name === "color") {
-        let errorColorValidation = validateColor(color);
+        let errorColorValidation = validateColor(value, form);
         setErrorColor(errorColorValidation);
       } else if (name === "talle" || name === "cantidad") {
         let errorSizeValidation = validateSize({ ...size, [name]: value });
@@ -192,7 +198,7 @@ const ProductForm = () => {
       setErrorSize(errorSizeValidation);
     }
     if (name === "color") {
-      let errorColorValidation = validateColor(color);
+      let errorColorValidation = validateColor(value, formUpdate);
       setErrorColor(errorColorValidation);
     }
     return;
@@ -253,9 +259,8 @@ const ProductForm = () => {
       reader.onload = () => {
         if (typeof reader.result === "string") {
           previewFiles.push(reader.result);
-          if (previewFiles.length === files.length) {
-            setImage((prev) => [...prev, reader.result]);
-          }
+
+          setImage((prev) => [...prev, reader.result]);
         }
       };
       try {
@@ -289,16 +294,26 @@ const ProductForm = () => {
     }
   };
 
+  const handleImageRemove = (index) => {
+    setImage((prevImages) => prevImages.filter((img, i) => i !== index));
+    return;
+  };
+  const handleImageDelete = (img) => {
+    console.log(img);
+    dispatch(deleteImgProductsAction({ id: img }));
+  };
+
   const handleColorChange = (e) => {
     e.preventDefault();
     const { value, name } = e.target;
     setColor(value);
     if (!productToUpdate?.colores?.length) {
-      let errorColorValidation = validateColor(value);
+      let errorColorValidation = validateColor(value, form);
       setErrorColor(errorColorValidation);
-    }
-    if (color) {
-      setErrorColor({ color: "" });
+    } else {
+      let errorColorValidation = validateColor(value, formUpdate);
+
+      setErrorColor(errorColorValidation);
     }
   };
   const handleColorSubmit = (e) => {
@@ -306,17 +321,20 @@ const ProductForm = () => {
 
     if (!params?.id?.length) {
       if (!form.colores.length) {
-        setForm((prev) => ({ ...prev, colores: [color] }));
+        setForm((prev) => ({ ...prev, colores: [color.toUpperCase()] }));
       } else {
-        setForm((prev) => ({ ...prev, colores: [...prev.colores, color] }));
+        setForm((prev) => ({
+          ...prev,
+          colores: [...prev.colores, color.toUpperCase()],
+        }));
       }
     } else {
-      if (!formUpdate?.imagenes?.length) {
-        setFormUpdate((prev) => ({ ...prev, colores: [color] }));
+      if (!formUpdate?.colores?.length) {
+        setFormUpdate((prev) => ({ ...prev, colores: [color.toUpperCase()] }));
       } else {
         setFormUpdate((prev) => ({
           ...prev,
-          colores: [...prev.colores, color],
+          colores: [...prev.colores, color.toUpperCase()],
         }));
       }
     }
@@ -495,6 +513,7 @@ const ProductForm = () => {
               <span>Color</span>
             </label>
             <input
+              autoComplete="off"
               type="text"
               className="input bg-fontGrey w-full"
               name="color"
@@ -503,11 +522,11 @@ const ProductForm = () => {
               onFocus={validateOnBlur}
               placeholder="Color"
             />
-            {errorColor?.color?.length ? (
+            {errorColor?.color?.length > 0 && (
               <small className="h-6 text-red-600 w-full flex self-start mb-1">
                 {errorColor.color}
               </small>
-            ) : null}
+            )}
           </div>
           <button
             type="submit"
@@ -517,6 +536,61 @@ const ProductForm = () => {
             Añadir
           </button>
         </form>
+        {form.colores.length > 0 ||
+          (formUpdate?.colores?.length > 0 && (
+            <div className="flex flex-col w-2/3 justify-center items-center">
+              {form?.colores?.length > 0 &&
+                form.colores.map((item, index) => (
+                  <div
+                    className="w-2/3 flex justify-center items-center border rounded p-4"
+                    key={index + "talle"}
+                  >
+                    <div className="w-full flex items-center justify-around text-lg text-fontDark">
+                      {" "}
+                      <span>Color: {item}</span>
+                    </div>
+                    <button
+                      className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
+                      onClick={() =>
+                        setForm((prev) => ({
+                          ...prev,
+                          colores: form.colores.filter(
+                            (color) => color !== item
+                          ),
+                        }))
+                      }
+                    >
+                      x
+                    </button>
+                  </div>
+                ))}
+              {formUpdate?.colores?.length > 0 &&
+                formUpdate.colores.map((item, index) => (
+                  <div
+                    className="w-2/3 flex justify-between items-center border rounded p-2"
+                    key={index + "talle"}
+                  >
+                    <div className="w-2/3 flex items-center justify-between px-4 text-lg text-fontDark">
+                      {" "}
+                      <span>Color: {item}</span>
+                    </div>
+                    <button
+                      className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
+                      onClick={() =>
+                        setFormUpdate((prev) => ({
+                          ...prev,
+                          colores: formUpdate.colores.filter(
+                            (color) => color !== item
+                          ),
+                        }))
+                      }
+                    >
+                      x
+                    </button>
+                  </div>
+                ))}
+            </div>
+          ))}
         <form
           className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start 2xl:flex-row 2xl:items-end"
           onSubmit={handleSizeSubmit}
@@ -526,6 +600,7 @@ const ProductForm = () => {
               <span>Talle</span>
             </label>
             <input
+              autoComplete="off"
               type="text"
               className="input bg-fontGrey"
               name="talle"
@@ -534,17 +609,18 @@ const ProductForm = () => {
               onFocus={validateOnBlur}
               placeholder="Talle"
             />
-            {errorSize?.talle?.length ? (
+            {errorSize?.talle?.length > 0 && (
               <small className="h-6 text-red-600 w-full flex self-start mb-1">
                 {errorSize.talle}
               </small>
-            ) : null}
+            )}
           </div>
           <div className="flex flex-col w-40 sm:w-1/2">
             <label className="label pt-2 pb-0">
               <span>Cantidad</span>
             </label>
             <input
+              autoComplete="off"
               type="text"
               className="input bg-fontGrey"
               name="cantidad"
@@ -553,11 +629,11 @@ const ProductForm = () => {
               onFocus={validateOnBlur}
               placeholder="Cantidad"
             />
-            {errorSize?.cantidad?.length ? (
+            {errorSize?.cantidad?.length > 0 && (
               <small className="h-6 text-red-600 w-full flex self-start mb-1">
                 {errorSize.cantidad}
               </small>
-            ) : null}
+            )}
           </div>
           <button
             type="submit"
@@ -580,6 +656,7 @@ const ProductForm = () => {
                   <span>Cantidad: {item.cantidad}</span>
                 </div>
                 <button
+                  type="button"
                   className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
                   onClick={handleSizeEdition}
                   value={`talle: ${item.talle}, cantidad: ${item.cantidad}`}
@@ -600,6 +677,7 @@ const ProductForm = () => {
                   <span>Cantidad: {item.cantidad}</span>
                 </div>
                 <button
+                  type="button"
                   className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
                   onClick={handleSizeEdition}
                   value={`talle: ${item.talle}, cantidad: ${item.cantidad}`}
@@ -626,11 +704,53 @@ const ProductForm = () => {
               placeholder="Imagen"
               ref={fileInputRef}
             />
-            {errorImage?.image?.length ? (
+            {errorImage?.image?.length > 0 && (
               <small className="h-6 text-red-600 w-full flex self-start mb-1">
                 {errorImage.image}
               </small>
-            ) : null}
+            )}
+          </div>
+          <div className="flex flex-wrap justify-center items-start mt-4 gap-2">
+            {image?.length > 0 &&
+              image.map((img, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col-reverse w-1/4 h-72 border rounded justify-end items-end p-2 bg-white"
+                >
+                  <img
+                    src={img}
+                    alt={`preview ${index}`}
+                    className="w-full h-full object-contain rounded-md  "
+                  />
+                  <button
+                    className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-fontDark text-xl relative flex px-2 transition-all"
+                    type="button"
+                    onClick={() => handleImageRemove(index)}
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
+            {productToUpdate?.imagenes?.length > 0 &&
+              productToUpdate.imagenes.map((img, index) => (
+                <div
+                  key={img}
+                  className="flex flex-col-reverse w-1/4 h-72 border rounded justify-end items-end p-2 bg-white"
+                >
+                  <img
+                    src={img}
+                    alt={`edit ${index}`}
+                    className="w-full h-full object-contain rounded-md  "
+                  />
+                  <button
+                    className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-fontDark text-xl relative flex px-2 transition-all"
+                    type="button"
+                    onClick={() => handleImageDelete(img)}
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
           </div>
           <label className="label pt-2 pb-0">
             <span>Tipo de producto</span>
@@ -654,15 +774,16 @@ const ProductForm = () => {
               </option>
             ))}
           </select>
-          {errorsForm?.tipo?.length ? (
+          {errorsForm?.tipo?.length > 0 && (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorsForm.tipo}
             </small>
-          ) : null}
+          )}
           <label className="label pt-2 pb-0">
             <span>Modelo</span>
           </label>
           <input
+            autoComplete="off"
             type="text"
             className="input bg-fontGrey"
             placeholder="Modelo"
@@ -673,11 +794,11 @@ const ProductForm = () => {
             onChange={handleChangeForm}
             onFocus={validateOnBlur}
           />
-          {errorsForm?.modelo?.length ? (
+          {errorsForm?.modelo?.length > 0 && (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorsForm.modelo}
             </small>
-          ) : null}
+          )}
           <label className="label pt-2 pb-0">
             <span>Marca</span>
           </label>
@@ -712,16 +833,17 @@ const ProductForm = () => {
               <option disabled>Seleccione un tipo de producto</option>
             )}
           </select>
-          {errorsForm?.marca?.length ? (
+          {errorsForm?.marca?.length > 0 && (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorsForm.marca}
             </small>
-          ) : null}
+          )}
           <label className="label pt-2 pb-0">
             <span>Descripción</span>
           </label>
           <input
             type="text"
+            autoComplete="off"
             className="textarea h-20 bg-fontGrey"
             name="descripcion"
             value={
@@ -733,16 +855,17 @@ const ProductForm = () => {
             onFocus={validateOnBlur}
             placeholder="Descripción"
           />
-          {errorsForm?.descripcion?.length ? (
+          {errorsForm?.descripcion?.length > 0 && (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorsForm.descripcion}
             </small>
-          ) : null}
+          )}
           <label className="label pt-2 pb-0">
             <span>Precio</span>
           </label>
           <input
             type="text"
+            autoComplete="off"
             className="input bg-fontGrey"
             name="precio"
             value={
@@ -752,15 +875,16 @@ const ProductForm = () => {
             onFocus={validateOnBlur}
             placeholder="Precio"
           />
-          {errorsForm?.precio?.length ? (
+          {errorsForm?.precio?.length > 0 && (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorsForm.precio}
             </small>
-          ) : null}
+          )}
           <label className="label pt-2 pb-0">
             <span>Código</span>
           </label>
           <input
+            autoComplete="off"
             type="text"
             className="input bg-fontGrey"
             name="codigo"
@@ -771,16 +895,17 @@ const ProductForm = () => {
             onFocus={validateOnBlur}
             placeholder="Código"
           />
-          {errorsForm?.codigo?.length ? (
+          {errorsForm?.codigo?.length > 0 && (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorsForm.codigo}
             </small>
-          ) : null}
+          )}
           <label className="label pt-2 pb-0">
             <span>Género</span>
           </label>
           <input
             type="text"
+            autoComplete="off"
             className="input bg-fontGrey"
             name="genero"
             value={
@@ -790,16 +915,17 @@ const ProductForm = () => {
             onFocus={validateOnBlur}
             placeholder="Género"
           />
-          {errorsForm?.genero?.length ? (
+          {errorsForm?.genero?.length > 0 && (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorsForm.genero}
             </small>
-          ) : null}
+          )}
           <label className="label pt-2 pb-0">
             <span>Proveedor</span>
           </label>
           <input
             type="text"
+            autoComplete="off"
             className="input bg-fontGrey"
             name="proveedor"
             value={
@@ -811,16 +937,17 @@ const ProductForm = () => {
             onFocus={validateOnBlur}
             placeholder="Proveedor"
           />
-          {errorsForm?.proveedor?.length ? (
+          {errorsForm?.proveedor?.length > 0 && (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorsForm.proveedor}
             </small>
-          ) : null}
+          )}
           <label className="label pt-2 pb-0">
             <span>Disciplina</span>
           </label>
           <input
             type="text"
+            autoComplete="off"
             className="input bg-fontGrey mb-4"
             name="disciplina"
             value={
@@ -832,11 +959,11 @@ const ProductForm = () => {
             onFocus={validateOnBlur}
             placeholder="Disciplina"
           />
-          {errorsForm?.disciplina?.length ? (
+          {errorsForm?.disciplina?.length > 0 && (
             <small className="h-6 text-red-600 w-full flex self-start mb-1">
               {errorsForm.disciplina}
             </small>
-          ) : null}
+          )}
           <button
             type="submit"
             className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"

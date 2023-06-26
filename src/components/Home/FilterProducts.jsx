@@ -14,16 +14,16 @@ const FilterProducts = () => {
 
   return (
     <section className="mt-[10%] w-full flex flex-col justify-center items-center">
-      <div className="w-full flex flex-row justify-center items-start">
-        <aside className="w-72 pt-6 ">
-          <p className="font-medium text-fontDark">
+      <div className="w-full flex flex-row justify-center items-start gap-2">
+        <aside className="w-72 pt-7">
+          <p className="font-medium text-fontDark pb-7 px-6">
             {params.filter.toUpperCase()}
           </p>
-          <Filters />
+          <Filters products={productsFilter} />
         </aside>
         <aside className="flex flex-col justify-center items-center w-max max-w-6xl">
-          <div className="w-full flex justify-between items-end pt-6 px-4 text-lg ">
-            <p>{productsFilter.length} Productos</p>
+          <div className="w-full flex justify-between items-start pt-6 px-4 text-lg ">
+            <p>{productsFilter?.length} Productos</p>
             <details className="dropdown ">
               <summary className="select py-0 flex justify-center items-center max-w-max w-full bg-white text-base text-gray-600 font-normal">
                 Ordenar por
@@ -46,52 +46,12 @@ const FilterProducts = () => {
                 </li>
               </ul>
             </details>
-            {/* <select
-              name="order"
-              id="order"
-              className="select max-w-max w-full bg-slate-50"
-              defaultValue={"Ordernar por"}
-            >
-              <option disabled hidden>
-                Ordenar por
-              </option>
-              <option
-                className=" hover:bg-orange hover:text-orange transition-all text-lg "
-                value="relevant"
-              >
-                Relevancia
-              </option>
-              <option
-                className=" hover:bg-orange hover:text-orange transition-all text-lg "
-                value="new"
-              >
-                Más reciente
-              </option>
-              <option
-                className=" hover:bg-orange hover:text-orange transition-all text-lg "
-                value="discount"
-              >
-                Descuento
-              </option>
-              <option
-                className=" hover:bg-orange hover:text-orange transition-all text-lg "
-                value="highest"
-              >
-                Precio más alto
-              </option>
-              <option
-                className=" hover:bg-orange hover:text-orange transition-all text-lg "
-                value="lower"
-              >
-                Precio más bajo
-              </option>
-            </select> */}
           </div>
           <div className="flex flex-row flex-wrap w-full justify-between gap-2 flex-1 text-fontDark p-2">
-            {productsFilter?.length &&
+            {productsFilter?.length > 0 &&
               productsFilter.map((item, index) => (
                 <Link to={`/detail/${item._id}`} key={item._id}>
-                  <div className="sm:max-w-[250px] border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
+                  <div className="sm:max-w-[250px] border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header  bg-white ">
                     <div className="mb-1">
                       <span className=" absolute text-white bg-header p-1 ">
                         NUEVO
@@ -104,7 +64,7 @@ const FilterProducts = () => {
                         />
                       )}
                     </div>
-                    {brandImg.length &&
+                    {brandImg?.length &&
                       brandImg.map(
                         (brand) =>
                           brand.nombre === item.marca && (

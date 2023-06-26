@@ -42,18 +42,30 @@ const productSlice = createSlice({
       }
     },
     filterProducts: (state, action) => {
-      let filteredProducts = state.products.filter(
-        (item) =>
-          item.modelo.toLowerCase().includes(action.payload.toLowerCase()) ||
-          item.marca.toLowerCase().includes(action.payload.toLowerCase()) ||
-          item.tipo.toLowerCase().includes(action.payload.toLowerCase()) ||
-          item.genero.toLowerCase().includes(action.payload.toLowerCase()) ||
-          item.codigo.toLowerCase().includes(action.payload.toLowerCase()) ||
-          item.proveedor.toLowerCase().includes(action.payload.toLowerCase()) ||
-          item.disciplina.toLowerCase().includes(action.payload.toLowerCase())
-      );
-
-      state.productsFilter = filteredProducts;
+      let filteredProducts;
+      if (typeof action.payload === "string") {
+        filteredProducts = state.products.filter(
+          (item) =>
+            item.modelo.toLowerCase().includes(action.payload.toLowerCase()) ||
+            item.marca.toLowerCase().includes(action.payload.toLowerCase()) ||
+            item.tipo.toLowerCase().includes(action.payload.toLowerCase()) ||
+            item.genero.toLowerCase().includes(action.payload.toLowerCase()) ||
+            item.codigo.toLowerCase().includes(action.payload.toLowerCase()) ||
+            item.proveedor
+              .toLowerCase()
+              .includes(action.payload.toLowerCase()) ||
+            item.disciplina.toLowerCase().includes(action.payload.toLowerCase())
+        );
+        state.productsFilter = filteredProducts;
+      } else {
+        if (action.payload.category?.length) {
+          state.productsFilter = action.payload.category
+            .map((elem) => state.products.filter((prod) => prod.tipo === elem))
+            .flat(Infinity);
+        } else {
+          state.productsFilter = state.products;
+        }
+      }
     },
     setSearchProducts: (state, action) => {
       state.productsSearch = state.products;

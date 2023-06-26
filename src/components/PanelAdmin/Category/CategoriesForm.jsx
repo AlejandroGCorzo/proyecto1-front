@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { Link, useParams } from "react-router-dom";
 import {
+  deleteImgCategoriesAction,
   patchCategoryAction,
   postCategoryAction,
 } from "../../../redux/categoriesActions";
@@ -30,7 +31,7 @@ const CategoriesForm = () => {
   const token = localStorage.getItem("token");
   const [errorName, setErrorName] = useState({});
   const [errorImage, setErrorImage] = useState({});
-  const [image, setImage] = useState({});
+  const [image, setImage] = useState([]);
   const [form, setForm] = useState({
     nombre: "",
     imagen: [],
@@ -46,7 +47,7 @@ const CategoriesForm = () => {
       nombre: "",
       imagen: [],
     });
-    setImage({});
+    setImage([]);
     if (Object.values(formUpdate).length) {
       setFormUpdate({});
     }
@@ -99,6 +100,19 @@ const CategoriesForm = () => {
       setErrorImage(errorFormValidation);
     }
   };
+
+  const handleImageRemove = (index) => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Limpiar el valor del input
+    }
+    setImage((prevImages) => prevImages.filter((img, i) => i !== index));
+    setForm((prev) => ({ ...prev, imagen: [] }));
+    return;
+  };
+  const handleImageDelete = (img) => {
+    console.log(img);
+     dispatch(deleteImgCategoriesAction({id: img}));
+  };
   const handleChangeForm = (e) => {
     e.preventDefault();
     const { name, value, files } = e.target;
@@ -112,7 +126,7 @@ const CategoriesForm = () => {
           if (typeof reader.result === "string") {
             previewFiles.push(reader.result);
             if (previewFiles.length === files.length) {
-              setImage(reader.result);
+              setImage(previewFiles);
             }
           }
         };
@@ -142,6 +156,7 @@ const CategoriesForm = () => {
       setErrorName(errorFormValidation);
     }
   };
+
   const handleSubmitForm = (e) => {
     e.preventDefault();
     async function post() {
@@ -149,6 +164,10 @@ const CategoriesForm = () => {
         await dispatch(
           patchCategoryAction(formUpdate, token, categoryToUpdate._id)
         );
+        if (formUpdate?.imagen?.length && categoryToUpdate?.imagen?.length) {
+          console.log(categoryToUpdate.imagen[0]);
+           dispatch(deleteImgCategoriesAction({id: categoryToUpdate.imagen[0]}))
+        }
       } else {
         await dispatch(postCategoryAction(form, token));
       }
@@ -256,6 +275,49 @@ const CategoriesForm = () => {
               </small>
             )
           )}
+        </div>
+        <div className="flex flex-wrap justify-center items-center mt-4 gap-2 w-full">
+          {image?.length > 0 &&
+            image.map((img, index) => (
+              <div
+                key={index}
+                className="flex flex-col-reverse w-1/4 h-72 border rounded justify-end items-end p-2 bg-white"
+              >
+                <img
+                  src={img}
+                  alt={`preview ${index}`}
+                  className="w-full h-full object-contain rounded-md  "
+                />
+                <button
+                  className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-fontDark text-xl relative flex px-2 transition-all"
+                  type="button"
+                  onClick={() => handleImageRemove(index)}
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          {categoryToUpdate?.imagen?.length > 0 &&
+            image.length === 0 &&
+            categoryToUpdate.imagen.map((img, index) => (
+              <div
+                key={img}
+                className="flex flex-col-reverse w-1/4 h-72 border rounded justify-end items-end p-2 bg-white"
+              >
+                <img
+                  src={img}
+                  alt={`edit ${index}`}
+                  className="w-full h-full object-contain rounded-md  "
+                />
+                <button
+                  className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-fontDark text-xl relative flex px-2 transition-all"
+                  type="button"
+                  onClick={() => handleImageDelete(img)}
+                >
+                  X
+                </button>
+              </div>
+            ))}
         </div>
         <button
           type="submit"

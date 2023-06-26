@@ -51,6 +51,7 @@ export const searchProductsAction = (value) => {
 };
 //accion para filtrar productos
 export const filterProductsAction = (value) => {
+  console.log("action", value);
   return async function (dispatch) {
     dispatch(setLoading(true));
     dispatch(filterProducts(value));
@@ -96,6 +97,33 @@ export const patchProductAction = (values, token, id) => {
       });
       dispatch(updateProduct(res.data));
       dispatch(setSuccessProduct("Producto actualizado con exito."));
+      dispatch(setLoading(false));
+    } catch (error) {
+      dispatch(setLoading(false));
+      if (error.response) {
+        dispatch(setErrorProduct(error.response.data?.message));
+      } else {
+        dispatch(setErrorProduct(error.message));
+      }
+    }
+  };
+};
+
+//accion para eliminar imagenes de productos
+export const deleteImgProductsAction = (value) => {
+  console.log(value);
+  return async function (dispatch) {
+    try {
+      dispatch(setLoading(true));
+      const res = await axios.delete(`${url}/upload-image`, value, {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res.data);
+      /*     dispatch(updateProduct(res.data)); */
+      /* dispatch(setSuccessProduct("Producto actualizado con exito.")); */
       dispatch(setLoading(false));
     } catch (error) {
       dispatch(setLoading(false));

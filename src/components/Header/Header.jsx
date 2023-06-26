@@ -171,6 +171,7 @@ const Header = () => {
               </div>
               <div className="hidden lg:flex justify-end bg-nav w-[410px] pr-2">
                 <input
+                  autoComplete="off"
                   type="text"
                   name="search"
                   id="search"

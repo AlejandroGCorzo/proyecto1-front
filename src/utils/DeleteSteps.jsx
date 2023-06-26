@@ -2,10 +2,15 @@ import React, { useState } from "react";
 import {
   deleteCategoriesAction,
   deleteCategoriesSubCategoryAction,
+  deleteImgCategoriesAction,
+  deleteImgSubcategoriesAction,
   deleteSubCategoriesAction,
 } from "../redux/categoriesActions";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteProductAction } from "../redux/productActions";
+import {
+  deleteImgProductsAction,
+  deleteProductAction,
+} from "../redux/productActions";
 
 export const ConfirmationComponent = ({
   onDelete,
@@ -74,6 +79,7 @@ export const DeleteComponent = ({
 }) => {
   const dispatch = useDispatch();
   const { categories, loading } = useSelector((state) => state.categories);
+  const { products } = useSelector((state) => state.products);
   const token = localStorage.getItem("token");
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
@@ -136,12 +142,14 @@ export const DeleteComponent = ({
         }
 
         if (isInOneCat.length) {
-          isInOneCat.forEach((sub) =>
-            dispatch(deleteSubCategoriesAction(sub._id))
-          );
+          isInOneCat.forEach((sub) => {
+            dispatch(deleteSubCategoriesAction(sub._id));
+            dispatch(deleteImgSubcategoriesAction({ id: sub.imagen[0] }));
+          });
         }
 
         dispatch(deleteCategoriesAction(itemToDelete.id, token));
+        dispatch(deleteImgCategoriesAction({ id: categoryToDelete.imagen[0] }));
       } else if (section.includes("Subcategorías")) {
         let isInMoreThanOneCat = categories.map((item) =>
           item.subcategorias.filter((item) => item._id === itemToDelete.id)
@@ -150,7 +158,7 @@ export const DeleteComponent = ({
           ...isInMoreThanOneCat.filter((item) => item.length).flat(Infinity),
         ];
 
-        dispatch(
+        /* dispatch(
           deleteCategoriesSubCategoryAction(
             {
               categoriaId: itemToDelete.categoriaId,
@@ -158,13 +166,20 @@ export const DeleteComponent = ({
             },
             token
           )
-        );
+        ); */
 
         if (isInMoreThanOneCat.length === 1) {
-          dispatch(deleteSubCategoriesAction(itemToDelete.id));
+          console.log(isInMoreThanOneCat);
+          /* dispatch(deleteSubCategoriesAction(itemToDelete.id)); */
         }
       } else if (section === "Productos") {
+        let productToDelete = products.filter(
+          (item) => item._id === itemToDelete.id
+        );
         dispatch(deleteProductAction(itemToDelete.id, token));
+        productToDelete?.imagenes?.forEach((elem) =>
+          dispatch(deleteImgProductsAction({ id: elem }))
+        );
       }
       setItemToDelete({ nombre: "", id: "" });
     }

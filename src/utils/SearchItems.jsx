@@ -36,7 +36,7 @@ const SearchItems = ({
         categories.map((item) => (
           <Link
             key={item}
-            to={`/${debouncedSearchValue}`}
+            to={`/${item}`}
             className="flex flex-row gap-2 px-2 py-4 hover:bg-grey"
             onClick={() => {
               dispatch(filterProductsAction(item));

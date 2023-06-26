@@ -227,6 +227,57 @@ export const postSubCategoryAction = (values, token) => {
   };
 };
 
+//accion para eliminar imagenes de categorias
+export const deleteImgCategoriesAction = (value) => {
+  return async function (dispatch) {
+    try {
+      dispatch(setLoading(true));
+      const res = await axios.delete(`${url}/upload-image`, value, {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res.data);
+      /*     dispatch(updateProduct(res.data)); */
+      /* dispatch(setSuccessProduct("Producto actualizado con exito.")); */
+      dispatch(setLoading(false));
+    } catch (error) {
+      dispatch(setLoading(false));
+      if (error.response) {
+        dispatch(setErrorProduct(error.response.data?.message));
+      } else {
+        dispatch(setErrorProduct(error.message));
+      }
+    }
+  };
+};
+//accion para eliminar imagenes de subcategorias
+export const deleteImgSubcategoriesAction = (value) => {
+  return async function (dispatch) {
+    try {
+      dispatch(setLoading(true));
+      const res = await axios.delete(`${url}/subcategorias/${id}`, value, {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res.data);
+      /*     dispatch(updateProduct(res.data)); */
+      /* dispatch(setSuccessProduct("Producto actualizado con exito.")); */
+      dispatch(setLoading(false));
+    } catch (error) {
+      dispatch(setLoading(false));
+      if (error.response) {
+        dispatch(setErrorCategory(error.response.data?.message));
+      } else {
+        dispatch(setErrorCategory(error.message));
+      }
+    }
+  };
+};
+
 //accion para eliminar las subcategorias
 export const deleteSubCategoriesAction = (id, token) => {
   return async function (dispatch) {
