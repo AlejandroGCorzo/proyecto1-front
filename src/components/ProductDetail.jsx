@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById, fetchAllProducts } from "../redux/productActions";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 import Modal from "./Modal";
 import { useSwipeable } from "react-swipeable";
 
@@ -17,37 +17,16 @@ const ProductDetail = () => {
   const [isTalleOpen, setIsTalleOpen] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchAllProducts)
+    dispatch(fetchAllProducts);
     dispatch(fetchProductById(id));
   }, [dispatch, id]);
 
-  // const detailProduct = {
-  //   tipo: "Zapatillas",
-  //   marca: "Adidas",
-  //   modelo: "Superstar",
-  //   colores: ["Negro", "Rojo"],
-  //   talle: ["37", "38", "39", "40", "41", "42", "43"],
-  //   precio: 89.99,
-  //   codigo: "ZA002",
-  //   genero: "Unisex",
-  //   proveedor: "ProveedorB",
-  //   disciplina: "Deportes varios",
-  //   icono:
-  //     "data:image/png;base64,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",
-  //   descripcion:
-  //     "Botitas Jordan Air 5 Retro De Moda Para Hombre Código: Dd0587-047",
-  //   images: [
-  //     "https://essential.vtexassets.com/arquivos/ids/791457-800-auto?v=638193268383530000&width=800&height=auto&aspect=true",
-  //     "https://essential.vtexassets.com/arquivos/ids/791459-800-auto?v=638193268391030000&width=800&height=auto&aspect=true",
-  //     "https://essential.vtexassets.com/arquivos/ids/791458-800-auto?v=638193268387270000&width=800&height=auto&aspect=true",
-  //   ],
-  // };
   const [selectedImage, setSelectedImage] = useState([]);
-  
+
   const handleToggleTooltip = () => {
     setIsTooltipOpen(!isTooltipOpen);
   };
-console.log(detailProduct)
+
   const handleToggleTalle = () => {
     setIsTalleOpen(!isTalleOpen);
   };
@@ -85,12 +64,16 @@ console.log(detailProduct)
     if (direction === "LEFT") {
       const currentIndex = detailProduct.imagenes.indexOf(selectedImage);
       const nextIndex =
-        currentIndex === 0 ? detailProduct.imagenes.length - 1 : currentIndex - 1;
+        currentIndex === 0
+          ? detailProduct.imagenes.length - 1
+          : currentIndex - 1;
       setSelectedImage(detailProduct.imagenes[nextIndex]);
     } else if (direction === "RIGHT") {
       const currentIndex = detailProduct.imagenes.indexOf(selectedImage);
       const nextIndex =
-        currentIndex === detailProduct.imagenes.length - 1 ? 0 : currentIndex + 1;
+        currentIndex === detailProduct.imagenes.length - 1
+          ? 0
+          : currentIndex + 1;
       setSelectedImage(detailProduct.imagenes[nextIndex]);
     }
   };
@@ -104,23 +87,6 @@ console.log(detailProduct)
     setIsSucursalesOpen(!isSucursalesOpen);
   };
 
-  const precios = 100;
-  const review = {
-    avg: 4.5,
-    count: 10,
-  };
-
-  const BrightStar = (index, avg) => {
-    // Lógica para determinar el estilo de la estrella según el promedio de calificaciones
-    // ...
-
-    return "text-yellow-400";
-  };
-
-  const createMarkup = (summary) => {
-    return { __html: summary };
-  };
-
   return detailProduct ? (
     <div className="flex flex-col sm:flex-row sm:mr-20 w-full mt-14 lg:w-full xl:w-full">
       <div className="hidden w-full sm:hidden md:block md:w-1/5 lg:block lg:w-1/5 xl:block xl:w-1/5"></div>
@@ -129,17 +95,21 @@ console.log(detailProduct)
           {...handlers}
           className="hidden lg:block lg:mt-0 lg:w-1/4 sm:mt-2 md:mt-4 sm:ml-1 md:ml-1 lg:mr-1 sm:mr-1 md:mr-1 xl:w-1/4 xl:h-1/2"
         >
-          {detailProduct.imagenes.map((imageName, index) => (
-            <img
-              key={index}
-              className={`w-full mb-4 ${
-                selectedImage === imageName ? "border border-black" : ""
-              }`}
-              src={imageName}
-              alt="Image" 
-              onClick={() => handleImageClick(imageName)}
-            />
-          ))}
+          {detailProduct.imagenes
+            .filter((imageName) => imageName === detailProduct.imagenes[0])
+            .map((imageName, index) => (
+              <img
+                key={index}
+                className={`w-full mb-4 ${
+                  selectedImage === imageName
+                    ? "border border-black"
+                    : " border border-white"
+                } cursor pointer`}
+                src={imageName}
+                alt="Image"
+                onClick={() => handleImageClick(imageName)}
+              />
+            ))}
         </div>
 
         <div className="w-full items-center lg:mx-5 lg:w-3/4 xl:mx-10 xl:p-1">
@@ -207,7 +177,9 @@ console.log(detailProduct)
                   <tr>
                     <th className="bg-gray-100 text-left px-4 py-2">Color:</th>
                     <td className="bg-gray-100 text-left px-4 py-2">
-                      {detailProduct.colores.map(color=>color).join("," )}
+                      {detailProduct.colores
+                        .map((color) => color)
+                        .join("," + " ")}
                     </td>
                   </tr>
                   <tr>
@@ -249,36 +221,8 @@ console.log(detailProduct)
           className="w-12 h-12 mt-2 mb-2"
         />
         <h1 className="font-extrabold tracking-tight text-gray-900 text-3xl mt-4 xsm:mt.0 ">
-          {detailProduct.tipo} - {detailProduct.marca} {detailProduct.modelo}
+          {detailProduct.tipo} - {detailProduct.marca} - {detailProduct.modelo}
         </h1>
-        <div className="flex items-center mt-4">
-          <div className="flex items-center">
-            {[...Array(5)].map((_, index) => (
-              <svg
-                key={index}
-                className={`h-5 w-5 fill-current ${BrightStar(
-                  index,
-                  review.avg
-                )}`}
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 1.106l2.447 4.978 5.487.796L13.942 10l1.992 4.12-5.488.798L10 18.893l-2.446-4.978-5.488-.798L6.058 10 .566 5.878l5.487-.796L10 1.106zM5.978 9.766l-2.584.375 1.956 1.997-.464 2.713 2.451-1.28 2.45 1.28-.463-2.713 1.956-1.997-2.584-.375-1.209-2.37-.912 2.369zm8.622.375l-2.584-.375-.912-2.369-1.209 2.369-2.584.375 1.956 1.997-.464 2.713 2.45-1.28 2.451 1.28-.463-2.713 1.956-1.997zm-1.209-5.086L13.933 8.82l.5 2.924-2.337-1.22-2.338 1.22.5-2.924L6.609 5.056l2.338-1.22.5-2.924 1.957 1.997L12 3.47zm.5 11.144L10 14.303l-2.5 1.368.954-2.79-2.506-1.938 3.1-.268L10 7.958l1.952 3.717 3.1.268-2.507 1.938.954 2.79z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            ))}
-            <span className="ml-1 text-sm text-gray-700">
-              {review.avg.toFixed(1)}
-            </span>
-          </div>
-          <span className="ml-3 text-sm text-gray-500">
-            {review.count} reseñas
-          </span>
-        </div>
         <div className="mt-4">
           <p className="ml-3 text-sm text-gray-500">
             CODIGO: {detailProduct.codigo}
@@ -289,8 +233,9 @@ console.log(detailProduct)
           <p className="text-3xl text-gray-900">${detailProduct.precio}</p>
         </div>
         <div className="mt-4">
-          <p>3 CUOTAS SIN INTERÉS DE $ {Math.round(detailProduct.precio / 3)}</p>
-          
+          <p>
+            3 CUOTAS SIN INTERÉS DE $ {Math.round(detailProduct.precio / 3)}
+          </p>
         </div>
         <div className="mt-4 mx-auto sm:mx-auto md:mx-auto lg:mx-auto xl:mx-auto">
           <div className="flex items-center justify-between mr-16">
@@ -308,140 +253,260 @@ console.log(detailProduct)
             isOpen={isTalleOpen}
             onClose={handleToggleTalle}
           >
-            <div className="bg-white text-black p-6">
+            <div className="bg-white text-black p-6 mx-2 my-2">
               <div>
-                <h3 className="font-bold">TABLA DE TALLES</h3>
+                {detailProduct.tipo === "Zapatillas" ? (
+                  <h3 className="font-bold">TABLA DE TALLES DE CALZADO</h3>
+                ) : (
+                  <h3 className="font-bold">TABLA DE TALLES DE INDUMENTARIA</h3>
+                )}
+
                 <div className="leading-tight text-sm">
                   <p className="mt-8">
                     Buscá tu talle en la tabla y comprá seguro.
                   </p>
-                  <table className="mt-4 w-full h-full">
-                    <tbody>
-                      <tr>
-                        <td className="text-center bg-black text-white py-2 px-4">
-                          CM
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          24
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          24.5
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          25
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          25.5
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          26
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          26.5
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          27
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          27.5
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          28
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          28.5
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          29
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          29.5
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          30
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          30.5
-                        </td>
-                        <td className="text-center bg-black text-white border py-2 px-4">
-                          31
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="text-center bg-white py-2 px-4">ARG</td>
-                        <td className="text-center border py-2 px-4">37.5</td>
-                        <td className="text-center border py-2 px-4">38</td>
-                        <td className="text-center border py-2 px-4">39</td>
-                        <td className="text-center border py-2 px-4">39.5</td>
-                        <td className="text-center border py-2 px-4">40</td>
-                        <td className="text-center border py-2 px-4">40.5</td>
-                        <td className="text-center border py-2 px-4">41</td>
-                        <td className="text-center border py-2 px-4">41.5</td>
-                        <td className="text-center border py-2 px-4">42</td>
-                        <td className="text-center border py-2 px-4">42.5</td>
-                        <td className="text-center border py-2 px-4">43</td>
-                        <td className="text-center border py-2 px-4">43.5</td>
-                        <td className="text-center border py-2 px-4">44</td>
-                        <td className="text-center border py-2 px-4">44.5</td>
-                        <td className="text-center border py-2 px-4">45</td>
-                      </tr>
-                      <tr>
-                        <td className="text-center bg-white py-2 px-4">US</td>
-                        <td className="text-center border py-2 px-4">6.00</td>
-                        <td className="text-center border py-2 px-4">6.50</td>
-                        <td className="text-center border py-2 px-4">7.00</td>
-                        <td className="text-center border py-2 px-4">7.50</td>
-                        <td className="text-center border py-2 px-4">8.00</td>
-                        <td className="text-center border py-2 px-4">8.50</td>
-                        <td className="text-center border py-2 px-4">9.00</td>
-                        <td className="text-center border py-2 px-4">9.50</td>
-                        <td className="text-center border py-2 px-4">10.0</td>
-                        <td className="text-center border py-2 px-4">10.5</td>
-                        <td className="text-center border py-2 px-4">11.0</td>
-                        <td className="text-center border py-2 px-4">11.5</td>
-                        <td className="text-center border py-2 px-4">12.0</td>
-                        <td className="text-center border py-2 px-4">12.5</td>
-                        <td className="text-center border py-2 px-4">13.0</td>
-                      </tr>
-                      <tr>
-                        <td className="text-center bg-white py-2 px-4">EU</td>
-                        <td className="text-center border py-2 px-4">38.5</td>
-                        <td className="text-center border py-2 px-4">39</td>
-                        <td className="text-center border py-2 px-4">40</td>
-                        <td className="text-center border py-2 px-4">40.5</td>
-                        <td className="text-center border py-2 px-4">41</td>
-                        <td className="text-center border py-2 px-4">42</td>
-                        <td className="text-center border py-2 px-4">42.5</td>
-                        <td className="text-center border py-2 px-4">43</td>
-                        <td className="text-center border py-2 px-4">44</td>
-                        <td className="text-center border py-2 px-4">44.5</td>
-                        <td className="text-center border py-2 px-4">45</td>
-                        <td className="text-center border py-2 px-4">45.5</td>
-                        <td className="text-center border py-2 px-4">46</td>
-                        <td className="text-center border py-2 px-4">46.5</td>
-                        <td className="text-center border py-2 px-4">47</td>
-                      </tr>
-                      {/* Continuar con las filas restantes */}
-                    </tbody>
-                  </table>
+                  {detailProduct.tipo === "Zapatillas" ? (
+                    <table className="mt-4 w-full h-full mr-5">
+                      <tbody>
+                        <tr>
+                          <td className="text-center bg-black text-white py-2 px-4">
+                            CM
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            24
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            24.5
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            25
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            25.5
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            26
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            26.5
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            27
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            27.5
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            28
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            28.5
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            29
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            29.5
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            30
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            30.5
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            31
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="text-center bg-white py-2 px-4">
+                            ARG
+                          </td>
+                          <td className="text-center border py-2 px-4">37.5</td>
+                          <td className="text-center border py-2 px-4">38</td>
+                          <td className="text-center border py-2 px-4">39</td>
+                          <td className="text-center border py-2 px-4">39.5</td>
+                          <td className="text-center border py-2 px-4">40</td>
+                          <td className="text-center border py-2 px-4">40.5</td>
+                          <td className="text-center border py-2 px-4">41</td>
+                          <td className="text-center border py-2 px-4">41.5</td>
+                          <td className="text-center border py-2 px-4">42</td>
+                          <td className="text-center border py-2 px-4">42.5</td>
+                          <td className="text-center border py-2 px-4">43</td>
+                          <td className="text-center border py-2 px-4">43.5</td>
+                          <td className="text-center border py-2 px-4">44</td>
+                          <td className="text-center border py-2 px-4">44.5</td>
+                          <td className="text-center border py-2 px-4">45</td>
+                        </tr>
+                        <tr>
+                          <td className="text-center bg-white py-2 px-4">US</td>
+                          <td className="text-center border py-2 px-4">6.00</td>
+                          <td className="text-center border py-2 px-4">6.50</td>
+                          <td className="text-center border py-2 px-4">7.00</td>
+                          <td className="text-center border py-2 px-4">7.50</td>
+                          <td className="text-center border py-2 px-4">8.00</td>
+                          <td className="text-center border py-2 px-4">8.50</td>
+                          <td className="text-center border py-2 px-4">9.00</td>
+                          <td className="text-center border py-2 px-4">9.50</td>
+                          <td className="text-center border py-2 px-4">10.0</td>
+                          <td className="text-center border py-2 px-4">10.5</td>
+                          <td className="text-center border py-2 px-4">11.0</td>
+                          <td className="text-center border py-2 px-4">11.5</td>
+                          <td className="text-center border py-2 px-4">12.0</td>
+                          <td className="text-center border py-2 px-4">12.5</td>
+                          <td className="text-center border py-2 px-4">13.0</td>
+                        </tr>
+                        <tr>
+                          <td className="text-center bg-white py-2 px-4">EU</td>
+                          <td className="text-center border py-2 px-4">38.5</td>
+                          <td className="text-center border py-2 px-4">39</td>
+                          <td className="text-center border py-2 px-4">40</td>
+                          <td className="text-center border py-2 px-4">40.5</td>
+                          <td className="text-center border py-2 px-4">41</td>
+                          <td className="text-center border py-2 px-4">42</td>
+                          <td className="text-center border py-2 px-4">42.5</td>
+                          <td className="text-center border py-2 px-4">43</td>
+                          <td className="text-center border py-2 px-4">44</td>
+                          <td className="text-center border py-2 px-4">44.5</td>
+                          <td className="text-center border py-2 px-4">45</td>
+                          <td className="text-center border py-2 px-4">45.5</td>
+                          <td className="text-center border py-2 px-4">46</td>
+                          <td className="text-center border py-2 px-4">46.5</td>
+                          <td className="text-center border py-2 px-4">47</td>
+                        </tr>
+                        {/* Continuar con las filas restantes */}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <table className="mt-4 w-full h-full mr-5">
+                      <tbody>
+                        <tr>
+                          <td className="text-center bg-black text-white py-2 px-4">
+                            Etiqueta
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            XS
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            S
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            M
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            L
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            XL
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            2XL
+                          </td>
+                          <td className="text-center bg-black text-white border py-2 px-4">
+                            3XL
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="text-center bg-white py-2 px-4">
+                            Pecho
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            82-87 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            88-94 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            95-102 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            103-111 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            112-121 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            122-132 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            133-144 cm
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="text-center bg-white py-2 px-4">
+                            Cintura
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            71-75 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            76-82 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            83-90 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            91-99 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            100-109 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            110-121 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            122-134 cm
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="text-center bg-white py-2 px-4">
+                            Cadera
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            82-86 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            87-93 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            94-101 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            102-110 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            111-119 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            120-128 cm
+                          </td>
+                          <td className="text-center border py-2 px-4">
+                            129-138 cm
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               </div>
             </div>
           </Modal>
 
           <div className="flex items-center mt-2 mx-auto w-auto sm:mx-auto md:mx-auto lg:mx-auto xl:mr-3 flex-grow">
-  {detailProduct.talle.map((size) => (
-    <div
-      key={size.talle}
-      className={`border border-gray-300 rounded-md p-2 mr-1 sm:mx-auto md:mr-0 lg:p-2 xl:p-3 ${
-        selectedSize === size.talle ? "bg-black text-white" : "bg-white text-black"
-      } cursor-pointer`}
-      onClick={() => handleSizeSelection(size.talle)}
-    >
-      <span className="text-center">{size.talle}</span>
-    </div>
-  ))}
-</div>
+            {detailProduct.talle.map((size) => (
+              <div
+                key={size.talle}
+                className={`border border-gray-300 rounded-md p-2 mr-1 sm:mx-auto md:mr-0 lg:p-2 xl:p-3 ${
+                  selectedSize === size.talle
+                    ? "bg-black text-white"
+                    : "bg-white text-black"
+                } cursor-pointer`}
+                onClick={() => handleSizeSelection(size.talle)}
+              >
+                <span className="text-center">{size.talle}</span>
+              </div>
+            ))}
+          </div>
         </div>
         <button className="bg-black text-white py-2 px-0 mt-8 rounded-lg w-1/2">
           AGREGAR AL CARRITO
@@ -599,10 +664,10 @@ console.log(detailProduct)
                 <hr className="w-full border-gray-300 mt-4 mb-4" />
                 <div className="leading-tight text-base w-full">
                   <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                   Sucursal 1
+                    Sucursal 1
                   </p>
                   <p className="mt-6 mb-6 border border-gray-300 border-t-2 border-b-2 p-4">
-                  sucursal 2
+                    Sucursal 2
                   </p>
                 </div>
               </div>
@@ -653,7 +718,9 @@ console.log(detailProduct)
       </aside>
     </div>
   ) : (
-    <div>Cargando...</div>
+    <div className="flex justify-center items-center h-screen">
+      <h1 className="text-4xl font-bold animate-color-change">Cargando...</h1>
+    </div>
   );
 };
 
