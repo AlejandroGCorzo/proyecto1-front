@@ -15,11 +15,21 @@ const ProductDetail = () => {
   const [isSucursalesOpen, setIsSucursalesOpen] = useState(false);
   const [isEnvioOpen, setIsEnvioOpen] = useState(false);
   const [isTalleOpen, setIsTalleOpen] = useState(false);
-
   useEffect(() => {
     dispatch(fetchAllProducts);
     dispatch(fetchProductById(id));
   }, [dispatch, id]);
+  const brandLogos = {
+    puma: "/puma.webp",
+    nike: "/nike.png",
+    adidas: "/adidas.jpeg",
+    champion: "/champion.webp",
+    fila: "/fila.jpg",
+    jordan: "/jordan.png",
+  };
+  
+  const brand = detailProduct?.marca.toLowerCase();
+  const logoPath = brandLogos[brand];
 
   const [selectedImage, setSelectedImage] = useState([]);
 
@@ -211,14 +221,13 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      <aside className="flex-1 lg:p-1 lg:w-1/3 md:w-1/2 order-2 xsm:order-1 md:mt-28 xsm:mt-0 xsm:mb-0 xsm:ml-0 xsm:mr-0 sm:ml-0  sm:mr-1 mx-auto w-full sm:w-1/2 sm:mt-20 lg:mt-0 xl:mt-0 lg:mr-20 xl:w-1/2 justify-end">
+      <aside className="flex-1 lg:p-1 lg:w-1/3 md:w-1/2 order-2 xsm:order-1 md:mt-28 xsm:mt-0 xsm:mb-0 xsm:ml-0 xsm:mr-0 sm:ml-0  sm:mr-1 mx-auto w-full sm:w-1/2 sm:mt-28 lg:mt-0 xl:mt-0 lg:mr-20 xl:w-1/2 justify-end">
         <h1 className="font-bold tracking-tight text-gray-400 text-1xl mt-0 xsm:mt.0">
           {detailProduct.marca}
         </h1>
         <img
-          src={detailProduct.imagenes[0]}
-          alt="Logo del producto"
-          className="w-12 h-12 mt-2 mb-2"
+         src={logoPath} alt={brand}
+          className="w-14 h-10 mt-2"
         />
         <h1 className="font-extrabold tracking-tight text-gray-900 text-3xl mt-4 xsm:mt.0 ">
           {detailProduct.tipo} - {detailProduct.marca} - {detailProduct.modelo}
