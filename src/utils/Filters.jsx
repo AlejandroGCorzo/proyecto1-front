@@ -1,12 +1,19 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { filterProductsAction } from "../redux/productActions";
+import React, { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  filterProductsAction,
+  setFiltersAction,
+} from "../redux/productActions";
 import { useParams } from "react-router-dom";
 
-const Filters = ({ products }) => {
+const Filters = () => {
   const dispatch = useDispatch();
   const params = useParams();
-  let productBrands = [...new Set(products?.map((item) => item.marca))];
+  const { filters, products, productsFilter } = useSelector(
+    (state) => state.products
+  );
+
+  let productBrands = [...new Set(productsFilter?.map((item) => item.marca))];
   let productColors = [
     ...new Set(
       products?.map((item) => item.colores.map((color) => color)).flat(Infinity)
@@ -19,79 +26,124 @@ const Filters = ({ products }) => {
         .flat(Infinity)
     ),
   ];
+
+  let sizeNumbers = productSizes
+    .filter((item) => Number(item))
+    .sort((a, b) => a - b);
+  let sizeStrings = productSizes.filter((item) => !Number(item));
+
+  productSizes =
+    sizeNumbers.length && sizeStrings.length
+      ? [...sizeStrings, ...sizeNumbers]
+      : sizeNumbers.length
+      ? sizeNumbers
+      : sizeStrings.length
+      ? sizeStrings
+      : productSizes;
+
   let productDisciplines = [
-    ...new Set(products?.map((item) => item.disciplina)),
+    ...new Set(products?.map((item) => item.disciplina.toUpperCase())),
   ];
   let productGenders = [...new Set(products?.map((item) => item.genero))];
-  let productCategory = [...new Set(products?.map((item) => item.tipo))];
+  let productCategory = [...new Set(productsFilter?.map((item) => item.tipo))];
   let maxPrice = Math.max(...products.map((item) => item.precio));
   let minPrice = Math.min(...products.map((item) => item.precio));
   const [price, setPrice] = useState(maxPrice);
-  const [filters, setFilters] = useState({
-    category: productCategory.includes(params.filter) ? [params.filter] : [],
+  const [filtersState, setFiltersState] = useState({
+    category: productCategory?.includes(params.filter) ? [params.filter] : [],
     color: [],
     marca: [],
     genero: [],
     disciplina: [],
     talle: [],
-    precio: [minPrice, price],
+    precio: [],
   });
 
   const handlePrice = (e) => {
     const { value, name } = e.target;
-    console.log("me llame");
     setPrice(value);
-    setFilters((prev) => ({ ...prev, precio: [minPrice, Number(value)] }));
+    setFiltersState((prev) => ({ ...prev, precio: [minPrice, Number(value)] }));
   };
   const handleRange = (e) => {
     const { value, name } = e.target;
-    console.log("me llame range");
-    dispatch(filterProductsAction(filters));
+    dispatch(setFiltersAction(filtersState));
+    dispatch(filterProductsAction());
   };
 
   const handleFilters = (e) => {
     const { name, value, checked } = e.target;
 
+    if (value === "removeName") {
+      setFiltersState((prev) => ({ ...prev, name: [] }));
+      dispatch(
+        setFiltersAction({
+          ...filtersState,
+          name: [],
+        })
+      );
+    }
+
     if (checked) {
-      if (filters[name]?.length) {
-        setFilters((prev) => ({ ...prev, [name]: [...prev[name], value] }));
+      if (filtersState[name]?.length) {
+        setFiltersState((prev) => ({
+          ...prev,
+          [name]: [...prev[name], value],
+        }));
         dispatch(
-          filterProductsAction({
-            ...filters,
-            [name]: [...filters[name], value],
+          setFiltersAction({
+            ...filtersState,
+            [name]: [...filtersState[name], value],
           })
         );
       } else {
-        setFilters((prev) => ({ ...prev, [name]: [value] }));
-        dispatch(filterProductsAction({ ...filters, [name]: [value] }));
+        setFiltersState((prev) => ({ ...prev, [name]: [value] }));
+        dispatch(setFiltersAction({ ...filtersState, [name]: [value] }));
       }
     } else {
-      if (filters[name]?.length) {
-        setFilters((prev) => ({
+      if (filtersState[name]?.length) {
+        setFiltersState((prev) => ({
           ...prev,
           [name]: prev[name].filter((item) => item !== value),
         }));
         dispatch(
-          filterProductsAction({
-            ...filters,
-            [name]: filters[name].filter((item) => item !== value),
+          setFiltersAction({
+            ...filtersState,
+            [name]: filtersState[name].filter((item) => item !== value),
           })
         );
       } else {
-        setFilters((prev) => ({ ...prev, [name]: [] }));
-        dispatch(filterProductsAction({ ...filters, [name]: [] }));
+        setFiltersState((prev) => ({ ...prev, [name]: [] }));
+        dispatch(setFiltersAction({ ...filtersState, [name]: [] }));
       }
     }
+    dispatch(filterProductsAction());
   };
 
   return (
-    <>
-      {Object.values(filters).length > 0 && (
+    <div className="lg:block flex flex-col w-full">
+      <span className="h-14 bg-header flex justify-center items-center text-xl text-white lg:hidden">
+        FILTROS
+      </span>
+      {filters?.name?.length > 0 && (
+        <div className="flex flex-row justify-between items-center pb-7 px-6 gap-4">
+          <p className="font-medium text-fontDark ">
+            {params.filter.toUpperCase()}
+          </p>
+          <button
+            value="removeName"
+            onClick={handleFilters}
+            className="text-fontGrey bg-nav border w-6 rounded-full"
+          >
+            X
+          </button>
+        </div>
+      )}
+      {Object.values(filters).filter((item) => item.length).length > 0 && (
         <div className=" rounded-none bg-white border-b border-x flex flex-col justify-center items-start">
           <div className="collapse-title text-sm font-medium uppercase text-nav border-t rounded">
             Filtros aplicados
           </div>
-          <div className=" text-fontDark px-5">
+          <div className=" text-fontDark px-5 py-0 max-h-80 contentScroll sm:py-0">
             {filters?.category?.length > 0 &&
               filters.category.map((cat) => (
                 <label
@@ -105,7 +157,7 @@ const Filters = ({ products }) => {
                     id=""
                     value={cat}
                     onChange={handleFilters}
-                    checked={filters.category.includes(cat)}
+                    checked={filtersState.category.includes(cat)}
                   />
                   <span>{cat}</span>
                 </label>
@@ -123,7 +175,7 @@ const Filters = ({ products }) => {
                     id=""
                     value={color}
                     onChange={handleFilters}
-                    checked={filters.color.includes(color)}
+                    checked={filtersState.color.includes(color)}
                   />
                   <span>
                     {color.slice(0, 1) + color.slice(1).toLowerCase()}
@@ -143,9 +195,9 @@ const Filters = ({ products }) => {
                     id=""
                     value={dis}
                     onChange={handleFilters}
-                    checked={filters.disciplina.includes(dis)}
+                    checked={filtersState.disciplina.includes(dis)}
                   />
-                  <span>{dis}</span>
+                  <span>{dis.slice(0, 1) + dis.slice(1).toLowerCase()}</span>
                 </label>
               ))}
             {filters?.genero?.length > 0 &&
@@ -161,7 +213,7 @@ const Filters = ({ products }) => {
                     id=""
                     value={gen}
                     onChange={handleFilters}
-                    checked={filters.genero.includes(gen)}
+                    checked={filtersState.genero.includes(gen)}
                   />
                   <span>{gen}</span>
                 </label>
@@ -179,7 +231,7 @@ const Filters = ({ products }) => {
                     id=""
                     value={mar}
                     onChange={handleFilters}
-                    checked={filters.marca.includes(mar)}
+                    checked={filtersState.marca.includes(mar)}
                   />
                   <span>{mar}</span>
                 </label>
@@ -197,7 +249,7 @@ const Filters = ({ products }) => {
                     id=""
                     value={tall}
                     onChange={handleFilters}
-                    checked={filters.talle.includes(tall)}
+                    checked={filtersState.talle.includes(tall)}
                   />
                   <span>{tall.slice(0, 1).toUpperCase() + tall.slice(1)}</span>
                 </label>
@@ -210,7 +262,7 @@ const Filters = ({ products }) => {
         <div className="collapse-title text-sm font-medium uppercase text-nav border-b rounded">
           Categoría
         </div>
-        <div className="collapse-content text-fontDark">
+        <div className="collapse-content text-fontDark p-0 max-h-80 contentScroll sm:p-0">
           {productCategory?.length > 0 &&
             productCategory.map((category) => (
               <div
@@ -228,7 +280,7 @@ const Filters = ({ products }) => {
                     id=""
                     value={category}
                     onChange={handleFilters}
-                    checked={filters.category.includes(category)}
+                    checked={filtersState.category.includes(category)}
                   />
                   <span>{category}</span>
                 </label>
@@ -241,7 +293,7 @@ const Filters = ({ products }) => {
         <div className="collapse-title text-sm font-medium uppercase text-nav border-b rounded">
           Color
         </div>
-        <div className="collapse-content text-fontDark">
+        <div className="collapse-content text-fontDark p-0 max-h-80 contentScroll sm:p-0">
           {productColors?.length > 0 &&
             productColors.map((color) => (
               <div
@@ -256,7 +308,7 @@ const Filters = ({ products }) => {
                     id=""
                     value={color}
                     onChange={handleFilters}
-                    checked={filters.color.includes(color)}
+                    checked={filtersState.color.includes(color)}
                   />
                   <span>
                     {color.slice(0, 1) + color.slice(1).toLowerCase()}
@@ -271,7 +323,7 @@ const Filters = ({ products }) => {
         <div className="collapse-title text-sm font-medium uppercase text-nav border-b rounded">
           Disciplina
         </div>
-        <div className="collapse-content text-fontDark">
+        <div className="collapse-content text-fontDark p-0 max-h-80 contentScroll sm:p-0">
           {productDisciplines?.length > 0 &&
             productDisciplines.map((disciplina) => (
               <div
@@ -286,9 +338,11 @@ const Filters = ({ products }) => {
                     value={disciplina}
                     id=""
                     onChange={handleFilters}
-                    checked={filters.disciplina.includes(disciplina)}
+                    checked={filtersState.disciplina.includes(disciplina)}
                   />
-                  <span>{disciplina}</span>
+                  <span>
+                    {disciplina.slice(0, 1) + disciplina.slice(1).toLowerCase()}
+                  </span>
                 </label>
               </div>
             ))}
@@ -299,7 +353,7 @@ const Filters = ({ products }) => {
         <div className="collapse-title text-sm font-medium uppercase text-nav border-b rounded">
           Género
         </div>
-        <div className="collapse-content text-fontDark">
+        <div className="collapse-content text-fontDark p-0 max-h-80 contentScroll sm:p-0">
           {productGenders?.length > 0 &&
             productGenders.map((genero) => (
               <div
@@ -314,7 +368,7 @@ const Filters = ({ products }) => {
                     id=""
                     value={genero}
                     onChange={handleFilters}
-                    checked={filters.genero.includes(genero)}
+                    checked={filtersState.genero.includes(genero)}
                   />
                   <span>{genero}</span>
                 </label>
@@ -327,7 +381,7 @@ const Filters = ({ products }) => {
         <div className="collapse-title text-sm font-medium uppercase text-nav border-b rounded">
           Marca
         </div>
-        <div className="collapse-content text-fontDark">
+        <div className="collapse-content text-fontDark p-0 max-h-80 contentScroll sm:p-0">
           {productBrands?.length > 0 &&
             productBrands.map((brand) => (
               <div
@@ -342,7 +396,7 @@ const Filters = ({ products }) => {
                     id=""
                     value={brand}
                     onChange={handleFilters}
-                    checked={filters.marca.includes(brand)}
+                    checked={filtersState.marca.includes(brand)}
                   />
                   <span>
                     {brand.slice(0, 1).toUpperCase() + brand.slice(1)}
@@ -357,7 +411,7 @@ const Filters = ({ products }) => {
         <div className="collapse-title text-sm font-medium uppercase text-nav border-b rounded">
           Talle
         </div>
-        <div className="collapse-content text-fontDark">
+        <div className="collapse-content text-fontDark p-0 max-h-80 contentScroll sm:p-0">
           {productSizes?.length > 0 &&
             productSizes.map((size) => (
               <div
@@ -372,7 +426,7 @@ const Filters = ({ products }) => {
                     id=""
                     onChange={handleFilters}
                     value={size}
-                    checked={filters.talle.includes(size)}
+                    checked={filtersState.talle.includes(size)}
                   />
                   <span>{size}</span>
                 </label>
@@ -400,7 +454,7 @@ const Filters = ({ products }) => {
           <span>${price},00</span>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

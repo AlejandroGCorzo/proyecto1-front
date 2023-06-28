@@ -158,7 +158,7 @@ export const DeleteComponent = ({
           ...isInMoreThanOneCat.filter((item) => item.length).flat(Infinity),
         ];
 
-        /* dispatch(
+        dispatch(
           deleteCategoriesSubCategoryAction(
             {
               categoriaId: itemToDelete.categoriaId,
@@ -166,11 +166,10 @@ export const DeleteComponent = ({
             },
             token
           )
-        ); */
+        );
 
         if (isInMoreThanOneCat.length === 1) {
-          console.log(isInMoreThanOneCat);
-          /* dispatch(deleteSubCategoriesAction(itemToDelete.id)); */
+          dispatch(deleteSubCategoriesAction(itemToDelete.id));
         }
       } else if (section === "Productos") {
         let productToDelete = products.filter(

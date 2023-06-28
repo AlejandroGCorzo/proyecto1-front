@@ -2,14 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Loading from "../../../utils/Loading";
+import { MdDeleteOutline, MdOutlineEdit } from "react-icons/md";
 import {
-  MdDeleteOutline,
-  MdOutlineAddCircleOutline,
-  MdOutlineEdit,
-} from "react-icons/md";
-import {
-  deleteCategoriesSubCategoryAction,
-  deleteSubCategoriesAction,
   getCategoriesAction,
   getSubCategoriesAction,
   searchCategoriesAction,

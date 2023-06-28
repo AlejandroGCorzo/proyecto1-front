@@ -2,7 +2,11 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ServerError from "./ServerError";
-import { filterProductsAction } from "../redux/productActions";
+import {
+  filterProductsAction,
+  searchProductsAction,
+  setFiltersAction,
+} from "../redux/productActions";
 
 const SearchItems = ({
   setShowItems,
@@ -23,7 +27,9 @@ const SearchItems = ({
         to={`/${debouncedSearchValue}`}
         className="flex flex-row gap-2 px-2 py-4 hover:bg-grey"
         onClick={() => {
-          dispatch(filterProductsAction(debouncedSearchValue));
+          dispatch(searchProductsAction(debouncedSearchValue));
+          dispatch(setFiltersAction({ name: [debouncedSearchValue] }));
+          dispatch(filterProductsAction());
           setShowItems(false);
           setNavbar(false);
           setSearchValue("");
@@ -39,7 +45,8 @@ const SearchItems = ({
             to={`/${item}`}
             className="flex flex-row gap-2 px-2 py-4 hover:bg-grey"
             onClick={() => {
-              dispatch(filterProductsAction(item));
+              dispatch(setFiltersAction({ category: [item] }));
+              dispatch(filterProductsAction());
               setShowItems(false);
               setNavbar(false);
               setSearchValue("");

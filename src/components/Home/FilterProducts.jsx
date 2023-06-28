@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Filters from "../../utils/Filters";
+import { LuListPlus } from "react-icons/lu";
 
 const FilterProducts = () => {
-  const params = useParams();
   const { productsFilter } = useSelector((state) => state.products);
   const { subcategorias } = useSelector((state) => state.categories);
   let productBrands = [...new Set(productsFilter?.map((item) => item.marca))];
@@ -13,19 +13,40 @@ const FilterProducts = () => {
   );
 
   return (
-    <section className="mt-[10%] w-full flex flex-col justify-center items-center">
-      <div className="w-full flex flex-row justify-center items-start gap-2">
-        <aside className="w-72 pt-7">
-          <p className="font-medium text-fontDark pb-7 px-6">
-            {params.filter.toUpperCase()}
-          </p>
-          <Filters products={productsFilter} />
+    <section className="w-full h-auto flex flex-row  justify-center items-center max-h-max mt-[40%] sm:mt-[21%] md:max-lg:mt-[15.5%] lg:mt-[15%] 2xl:mt-[9.5%]">
+      <div className=" flex flex-row justify-center items-start gap-2 w-full">
+        <aside className="w-72 pt-7 pl-2 hidden lg:block">
+          <Filters />
         </aside>
-        <aside className="flex flex-col justify-center items-center w-max max-w-6xl">
-          <div className="w-full flex justify-between items-start pt-6 px-4 text-lg ">
-            <p>{productsFilter?.length} Productos</p>
-            <details className="dropdown ">
-              <summary className="select py-0 flex justify-center items-center max-w-max w-full bg-white text-base text-gray-600 font-normal">
+        <aside className="flex flex-col justify-center items-center w-full md:max-w-3xl lg:max-w-6xl">
+          <div className="w-full flex justify-between items-start py-4 px-4 text-lg gap-2 lg:gap-0">
+            <p className="hidden lg:block">
+              {productsFilter?.length} Productos
+            </p>
+            <div className="drawer drawer-end lg:hidden grid w-1/2">
+              <input
+                id="my-drawer-4"
+                type="checkbox"
+                className="drawer-toggle"
+              />
+              <div className="drawer-content">
+                {/* Page content here */}
+                <label
+                  htmlFor="my-drawer-4"
+                  className="drawer-button p-3 rounded-lg flex justify-between lg:justify-center items-center lg:max-w-max w-full bg-white text-base text-gray-600 font-normal whitespace-nowrap "
+                >
+                  Filtrar por <LuListPlus fontSize={18} />
+                </label>
+              </div>
+              <div className="drawer-side z-[9999]">
+                <label htmlFor="my-drawer-4" className="drawer-overlay"></label>
+                <ul className="menu transition-all w-2/3 sm:w-2/4 h-full overflow-y-auto text-base-content bg-white p-0">
+                  <Filters />
+                </ul>
+              </div>
+            </div>
+            <details className="dropdown w-1/2 lg:w-auto">
+              <summary className="select py-0 flex lg:justify-center items-center lg:max-w-max w-full bg-white text-base text-gray-600 font-normal whitespace-nowrap">
                 Ordenar por
               </summary>
               <ul className="p-2 text-lg shadow menu dropdown-content z-[1] rounded-box w-max bg-white flex flex-col gap-1 text-fontDark">
@@ -47,9 +68,9 @@ const FilterProducts = () => {
               </ul>
             </details>
           </div>
-          <div className="flex flex-row flex-wrap w-full justify-between gap-2 flex-1 text-fontDark p-2">
-            {productsFilter?.length > 0 &&
-              productsFilter.map((item, index) => (
+          <div className="flex flex-row flex-wrap w-full justify-center gap-1 flex-1 text-fontDark ">
+            {productsFilter?.length ? (
+              productsFilter?.map((item, index) => (
                 <Link to={`/detail/${item._id}`} key={item._id}>
                   <div className="sm:max-w-[250px] border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header  bg-white ">
                     <div className="mb-1">
@@ -93,7 +114,12 @@ const FilterProducts = () => {
                     </p>
                   </div>
                 </Link>
-              ))}
+              ))
+            ) : (
+              <>
+                <div>No existe un producto con esas caracteristicas</div>
+              </>
+            )}
           </div>
         </aside>
       </div>

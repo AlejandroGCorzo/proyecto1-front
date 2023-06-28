@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  getProductAction,
-  searchProductsAction,
-} from "../../../redux/productActions";
+import { searchProductsAction } from "../../../redux/productActions";
 import Loading from "../../../utils/Loading";
 import { ConfirmationComponent } from "../../../utils/DeleteSteps";
 import {
@@ -18,12 +15,15 @@ import {
 } from "../../../redux/categoriesActions";
 import SearchBarAdmin from "../Search/SearchBarAdmin";
 import useDebounce from "../../../hooks/useDebounce";
-import { setErrorSearchProduct } from "../../../redux/productSlice";
+import {
+  setErrorSearchProduct,
+  setSearchProducts,
+} from "../../../redux/productSlice";
 const Products = () => {
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
   const modalProductRef = useRef(null);
-  const { products, productsBackUp, loading, errorSearch } = useSelector(
+  const { products, productsSearch, loading, errorSearch } = useSelector(
     (state) => state.products
   );
   const [onDelete, setOnDelete] = useState(null);
@@ -52,7 +52,7 @@ const Products = () => {
           dispatch(setErrorSearchProduct(""));
         }
 
-        dispatch(getProductAction());
+        dispatch(setSearchProducts(""));
       }
     };
     getProducts();
@@ -88,8 +88,8 @@ const Products = () => {
             <Loading />
           ) : (
             <div className="overflow-x-auto w-full flex-col flex px-4">
-              {productsBackUp.length > 0 &&
-                productsBackUp.map((item, index) => (
+              {productsSearch?.length > 0 &&
+                productsSearch.map((item, index) => (
                   <div
                     key={item._id}
                     className="bg-grey flex flex-row justify-start items-start md:text-lg border w-full"

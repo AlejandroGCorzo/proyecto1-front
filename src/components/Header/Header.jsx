@@ -11,7 +11,10 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/userSlice";
 import useDebounce from "../../hooks/useDebounce";
-import { searchProductsAction } from "../../redux/productActions";
+import {
+  filterProductsAction,
+  searchProductsAction,
+} from "../../redux/productActions";
 import {
   setErrorSearchProduct,
   setSearchProducts,
@@ -45,7 +48,7 @@ const Header = () => {
           dispatch(setErrorSearchProduct(""));
         }
 
-        dispatch(setSearchProducts());
+        dispatch(setSearchProducts(""));
 
         setShowItems(false);
       }

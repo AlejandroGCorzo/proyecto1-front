@@ -7,8 +7,9 @@ import {
   setLoading,
   setProduct,
   deleteProduct,
-  searchProduct,
+  setFilters,
   filterProducts,
+  setSearchProducts,
 } from "./productSlice";
 const url = import.meta.env.VITE_REACT_APP_API;
 
@@ -37,7 +38,7 @@ export const searchProductsAction = (value) => {
     /*  try { */
     dispatch(setLoading(true));
     /* const res = await axios.get(`${url}/productos`); */
-    dispatch(searchProduct(value));
+    dispatch(setSearchProducts(value));
     dispatch(setLoading(false));
     /* } catch (error) {
       dispatch(setLoading(false));
@@ -49,12 +50,19 @@ export const searchProductsAction = (value) => {
     } */
   };
 };
-//accion para filtrar productos
-export const filterProductsAction = (value) => {
-  console.log("action", value);
+
+export const setFiltersAction = (values) => {
   return async function (dispatch) {
     dispatch(setLoading(true));
-    dispatch(filterProducts(value));
+    dispatch(setFilters(values));
+    dispatch(setLoading(false));
+  };
+};
+//accion para filtrar productos
+export const filterProductsAction = () => {
+  return async function (dispatch) {
+    dispatch(setLoading(true));
+    dispatch(filterProducts());
     dispatch(setLoading(false));
   };
 };
