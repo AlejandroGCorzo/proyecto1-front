@@ -146,7 +146,7 @@ const ProductForm = () => {
   const [errorImage, setErrorImage] = useState({});
   const [color, setColor] = useState("");
   const [errorColor, setErrorColor] = useState({});
-  const [size, setSize] = useState({ talle: "", cantidad: "" });
+  const [size, setSize] = useState({ talle: "Único", cantidad: "" });
   const [errorSize, setErrorSize] = useState({ talle: "", cantidad: "" });
   const [form, setForm] = useState({
     imagenes: [],
@@ -162,6 +162,7 @@ const ProductForm = () => {
     proveedor: "",
     disciplina: "",
   });
+
   const [formUpdate, setFormUpdate] = useState({
     talle: productToUpdate?.talle?.length
       ? productToUpdate.talle.map((item) => ({
@@ -220,7 +221,7 @@ const ProductForm = () => {
     }
     setColor("");
     setImage([]);
-    setSize({ talle: "", cantidad: "" });
+    setSize({ talle: "Único", cantidad: "" });
     setForm({
       imagenes: [],
       tipo: "",
@@ -595,7 +596,7 @@ const ProductForm = () => {
           className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start 2xl:flex-row 2xl:items-end"
           onSubmit={handleSizeSubmit}
         >
-          <div className="flex flex-col w-40 sm:w-1/2">
+          <div className="flex flex-col w-40 sm:w-full lg:w-1/2">
             <label className="label pt-2 pb-0">
               <span>Talle</span>
             </label>
@@ -609,13 +610,21 @@ const ProductForm = () => {
               onFocus={validateOnBlur}
               placeholder="Talle"
             />
-            {errorSize?.talle?.length > 0 && (
+            {errorSize?.talle?.length > 0 ? (
               <small className="h-6 text-red-600 w-full flex self-start mb-1">
                 {errorSize.talle}
               </small>
+            ) : (
+              <small className="h-auto text-gray-500 w-full flex self-start ">
+                * Si no se ingresa Talle el valor del mismo será Talle: único.
+              </small>
             )}
           </div>
-          <div className="flex flex-col w-40 sm:w-1/2">
+          <div
+            className={`flex flex-col w-40 sm:w-full lg:w-1/2 ${
+              errorSize.cantidad?.length > 0 ? "pb-0" : "2xl:pb-8"
+            }`}
+          >
             <label className="label pt-2 pb-0">
               <span>Cantidad</span>
             </label>
@@ -637,7 +646,7 @@ const ProductForm = () => {
           </div>
           <button
             type="submit"
-            className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+            className="btn mt-1 2xl:mb-8 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
             disabled={isSizeDisabled}
           >
             Añadir

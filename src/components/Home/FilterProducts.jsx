@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Filters from "../../utils/Filters";
 import { LuListPlus } from "react-icons/lu";
+import { orderProductsAction } from "../../redux/productActions";
 
 const FilterProducts = () => {
+  const distpatch = useDispatch();
   const { productsFilter } = useSelector((state) => state.products);
   const { subcategorias } = useSelector((state) => state.categories);
   let productBrands = [...new Set(productsFilter?.map((item) => item.marca))];
@@ -12,14 +14,36 @@ const FilterProducts = () => {
     productBrands.includes(item.nombre)
   );
 
+  const [maxSlice, setMaxSlice] = useState(5);
+
+  const handleOrder = (e) => {
+    e.preventDefault();
+    const { value } = e.target;
+
+    if (value.length) {
+      distpatch(orderProductsAction(value));
+    }
+  };
+
+  const handleSlice = (e) => {
+    if (
+      maxSlice === productsFilter.length ||
+      maxSlice + 5 > productsFilter.length
+    ) {
+      setMaxSlice(productsFilter.length);
+    } else {
+      setMaxSlice(maxSlice + 5);
+    }
+  };
+
   return (
-    <section className="w-full h-auto flex flex-row  justify-center items-center max-h-max mt-[40%] sm:mt-[21%] md:max-lg:mt-[15.5%] lg:mt-[15%] 2xl:mt-[9.5%]">
+    <section className="w-full h-auto flex flex-col justify-center items-center max-h-max mt-[40%] sm:mt-[21%] md:max-lg:mt-[15.5%] lg:mt-[15%] 2xl:mt-[9.5%]">
       <div className=" flex flex-row justify-center items-start gap-2 w-full">
         <aside className="w-72 pt-7 pl-2 hidden lg:block">
           <Filters />
         </aside>
-        <aside className="flex flex-col justify-center items-center w-full md:max-w-3xl lg:max-w-6xl">
-          <div className="w-full flex justify-between items-start py-4 px-4 text-lg gap-2 lg:gap-0">
+        <aside className="flex flex-col justify-center items-center w-full md:max-w-5xl lg:max-w-7xl">
+          <div className="w- flex flex-row-reverse lg:flex-row justify-between items-center pt-4 pb-2 px-1 2xl:py-4 lg:px-4 text-lg gap-2 lg:gap-0 w-[95%]">
             <p className="hidden lg:block">
               {productsFilter?.length} Productos
             </p>
@@ -29,7 +53,7 @@ const FilterProducts = () => {
                 type="checkbox"
                 className="drawer-toggle"
               />
-              <div className="drawer-content">
+              <div className="drawer-content transition-all">
                 {/* Page content here */}
                 <label
                   htmlFor="my-drawer-4"
@@ -38,41 +62,89 @@ const FilterProducts = () => {
                   Filtrar por <LuListPlus fontSize={18} />
                 </label>
               </div>
-              <div className="drawer-side z-[9999]">
+              <div className="drawer-side z-[9999] ">
                 <label htmlFor="my-drawer-4" className="drawer-overlay"></label>
-                <ul className="menu transition-all w-2/3 sm:w-2/4 h-full overflow-y-auto text-base-content bg-white p-0">
+                <ul className=" w-2/3 sm:w-2/4 h-auto max-h-screen text-base-content bg-white p-0 overflow-y-auto">
                   <Filters />
                 </ul>
               </div>
             </div>
-            <details className="dropdown w-1/2 lg:w-auto">
-              <summary className="select py-0 flex lg:justify-center items-center lg:max-w-max w-full bg-white text-base text-gray-600 font-normal whitespace-nowrap">
+            <details className="dropdown w-1/2 lg:w-auto focus-within:outline-none">
+              <summary className="select py-0 flex lg:justify-center items-center lg:max-w-max w-full bg-white text-base text-gray-600 font-normal whitespace-nowrap focus:outline-none">
                 Ordenar por
               </summary>
-              <ul className="p-2 text-lg shadow menu dropdown-content z-[1] rounded-box w-max bg-white flex flex-col gap-1 text-fontDark">
-                <li className="hover:text-orange transition-all cursor-pointer px-2">
-                  Relevancia
+              <ul className="text-lg shadow p-4 dropdown-content z-[1] rounded-box w-full bg-white flex flex-col gap-2 text-fontDark">
+                {/* <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <button
+                    onClick={handleOrder}
+                    className=" hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                    value={"relevancia"}
+                  >
+                    Relevancia
+                  </button>
                 </li>
-                <li className="hover:text-orange transition-all cursor-pointer px-2">
-                  Más reciente
+                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <button
+                    onClick={handleOrder}
+                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                    value={"nuevo"}
+                  >
+                    Más reciente
+                  </button>
                 </li>
-                <li className="hover:text-orange transition-all cursor-pointer px-2">
-                  Descuento
+                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <button
+                    onClick={handleOrder}
+                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                    value={"descuento"}
+                  >
+                    Descuento
+                  </button>
+                </li> */}
+                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <button
+                    onClick={handleOrder}
+                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                    value={"A-Z"}
+                  >
+                    Ordenar A-Z
+                  </button>
                 </li>
-                <li className="hover:text-orange transition-all cursor-pointer px-2">
-                  Precio más alto
+                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <button
+                    onClick={handleOrder}
+                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                    value={"Z-A"}
+                  >
+                    Ordenar Z-A
+                  </button>
                 </li>
-                <li className="hover:text-orange transition-all cursor-pointer px-2">
-                  Precio más bajo
+                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <button
+                    onClick={handleOrder}
+                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                    value={"asc"}
+                  >
+                    Precio más alto
+                  </button>
+                </li>
+                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <button
+                    onClick={handleOrder}
+                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                    value={"desc"}
+                  >
+                    Precio más bajo
+                  </button>
                 </li>
               </ul>
             </details>
           </div>
-          <div className="flex flex-row flex-wrap w-full justify-center gap-1 flex-1 text-fontDark ">
-            {productsFilter?.length ? (
-              productsFilter?.map((item, index) => (
+          <div className="flex flex-row flex-wrap w-full justify-center gap-4 p-6 md:p-0 text-fontDark ">
+            {productsFilter?.length > 0 ? (
+              productsFilter?.slice(0, maxSlice).map((item, index) => (
                 <Link to={`/detail/${item._id}`} key={item._id}>
-                  <div className="sm:max-w-[250px] border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header  bg-white ">
+                  <div className="sm:max-w-[300px] border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header  bg-white ">
                     <div className="mb-1">
                       <span className=" absolute text-white bg-header p-1 ">
                         NUEVO
@@ -121,6 +193,16 @@ const FilterProducts = () => {
               </>
             )}
           </div>
+          {maxSlice < productsFilter.length && (
+            <div className="w-full flex justify-center items-center p-10">
+              <button
+                className="px-6 py-2 border border-orange text-orange uppercase font-medium"
+                onClick={handleSlice}
+              >
+                Ver más productos
+              </button>
+            </div>
+          )}
         </aside>
       </div>
     </section>

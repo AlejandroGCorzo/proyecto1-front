@@ -83,6 +83,7 @@ const Header = () => {
           setShowItems={setShowItems}
           showItems={showItems}
           setNavbar={setNavbar}
+          setIsSearchOpen={setIsSearchOpen}
           debouncedSearchValue={debouncedSearchValue}
         />
       )}

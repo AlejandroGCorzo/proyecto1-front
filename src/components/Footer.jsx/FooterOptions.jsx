@@ -1,25 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MdKeyboardArrowRight, MdKeyboardArrowDown } from "react-icons/md";
+import useViewport from "../../hooks/useViewport";
 
 const FooterOptions = () => {
   const collapseRefs = useRef([]);
   const [moreInfo, setMoreInfo] = useState(false);
-  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
-
-  useEffect(() => {
-    function handleResize() {
-      setViewportSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const { viewportSize } = useViewport();
 
   const toggleCollapse = (index) => {
     const targetCollapse = collapseRefs.current[index];

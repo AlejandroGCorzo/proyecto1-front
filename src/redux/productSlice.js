@@ -4,7 +4,16 @@ const initialState = {
   products: null,
   productsSearch: null,
   productsFilter: null,
-  filters: {},
+  filters: {
+    nombre: [],
+    category: [],
+    color: [],
+    marca: [],
+    genero: [],
+    disciplina: [],
+    talle: [],
+    precio: [],
+  },
   loading: false,
   success: "",
   error: "",
@@ -23,23 +32,37 @@ const productSlice = createSlice({
       state.productsSearch = action.payload;
     },
     setFilters: (state, action) => {
-      if (action.payload.name) {
-        state.filters = {
-          ...state.filters,
-          ...action.payload,
-          name: action.payload.name,
-        };
-      } else {
-        state.filters = { ...state.filters, ...action.payload };
+      state.filters = { ...state.filters, ...action.payload };
+    },
+    orderProducts: (state, action) => {
+      let orderedProducts = state.productsFilter;
+
+      if (action.payload === "asc") {
+        orderedProducts = orderedProducts.sort((a, b) => a.precio - b.precio);
       }
+      if (action.payload === "desc") {
+        orderedProducts = orderedProducts.sort((a, b) => b.precio - a.precio);
+      }
+      if (action.payload === "A-Z") {
+        orderedProducts = orderedProducts.sort((a, b) =>
+          a.modelo.localeCompare(b.modelo)
+        );
+      }
+      if (action.payload === "Z-A") {
+        orderedProducts = orderedProducts.sort((a, b) =>
+          b.modelo.localeCompare(a.modelo)
+        );
+      }
+
+      state.productsFilter = orderedProducts;
     },
     filterProducts: (state, action) => {
       let filteredProducts = state.products;
 
-      if (state.filters?.name?.length) {
+      if (state.filters?.nombre?.length) {
         //buscar por categoria
         //setear filteredProducts
-        filteredProducts = state.filters.name
+        filteredProducts = state.filters.nombre
           .map((item) =>
             filteredProducts.filter((prod) =>
               prod.modelo.toLowerCase().includes(item.toLowerCase())
@@ -160,6 +183,7 @@ export const {
   setSearchProducts,
   setFilters,
   filterProducts,
+  orderProducts,
   setErrorProduct,
   setErrorSearchProduct,
   setSuccessProduct,

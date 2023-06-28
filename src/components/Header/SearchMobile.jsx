@@ -4,6 +4,7 @@ import SearchItems from "../../utils/SearchItems";
 
 const SearchBar = ({
   isSearchOpen,
+  setIsSearchOpen,
   toggleSearchBar,
   searchValue,
   setSearchValue,
@@ -67,6 +68,8 @@ const SearchBar = ({
         </div>
         {showItems && (
           <SearchItems
+            isSearchOpen={isSearchOpen}
+            setIsSearchOpen={setIsSearchOpen}
             showItems={showItems}
             setShowItems={setShowItems}
             error={error}

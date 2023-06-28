@@ -9,6 +9,8 @@ import {
 } from "../redux/productActions";
 
 const SearchItems = ({
+  setIsSearchOpen,
+  isSearchOpen,
   setShowItems,
   setSearchValue,
   debouncedSearchValue,
@@ -22,17 +24,20 @@ const SearchItems = ({
   const dispatch = useDispatch();
 
   return (
-    <div className="w-[95%] md:w-2/3 lg:w-[400px] h-auto contentScroll max-h-[80%] sm:max-h-[70%] xl:max-h-screen bg-white absolute top-32 2xl:left-[850px] z-[9999] overflow-y-auto font-medium">
+    <div className="w-[95%] md:w-2/3 lg:w-[400px] h-auto contentScroll max-h-[80%] sm:max-h-[70%] xl:max-h-[600px] bg-white absolute top-32 2xl:left-[860px] z-[9999] overflow-y-auto font-medium">
       <Link
         to={`/${debouncedSearchValue}`}
         className="flex flex-row gap-2 px-2 py-4 hover:bg-grey"
         onClick={() => {
           dispatch(searchProductsAction(debouncedSearchValue));
-          dispatch(setFiltersAction({ name: [debouncedSearchValue] }));
+          dispatch(setFiltersAction({ nombre: [debouncedSearchValue] }));
           dispatch(filterProductsAction());
           setShowItems(false);
           setNavbar(false);
           setSearchValue("");
+          if (isSearchOpen) {
+            setIsSearchOpen(false);
+          }
         }}
       >
         <p>Buscar por "{debouncedSearchValue}"</p>
@@ -45,11 +50,14 @@ const SearchItems = ({
             to={`/${item}`}
             className="flex flex-row gap-2 px-2 py-4 hover:bg-grey"
             onClick={() => {
-              dispatch(setFiltersAction({ category: [item] }));
+              dispatch(setFiltersAction({ category: item }));
               dispatch(filterProductsAction());
               setShowItems(false);
               setNavbar(false);
               setSearchValue("");
+              if (isSearchOpen) {
+                setIsSearchOpen(false);
+              }
             }}
           >
             <p>{debouncedSearchValue}</p>
@@ -67,6 +75,9 @@ const SearchItems = ({
               setShowItems(false);
               setNavbar(false);
               setSearchValue("");
+              if (isSearchOpen) {
+                setIsSearchOpen(false);
+              }
             }}
           >
             <img

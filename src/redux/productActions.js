@@ -10,6 +10,7 @@ import {
   setFilters,
   filterProducts,
   setSearchProducts,
+  orderProducts,
 } from "./productSlice";
 const url = import.meta.env.VITE_REACT_APP_API;
 
@@ -55,6 +56,14 @@ export const setFiltersAction = (values) => {
   return async function (dispatch) {
     dispatch(setLoading(true));
     dispatch(setFilters(values));
+    dispatch(setLoading(false));
+  };
+};
+//accion para ordenar productos
+export const orderProductsAction = (value) => {
+  return async function (dispatch) {
+    dispatch(setLoading(true));
+    dispatch(orderProducts(value));
     dispatch(setLoading(false));
   };
 };
