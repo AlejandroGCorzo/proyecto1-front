@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  clearFiltersAction,
   filterProductsAction,
   setFiltersAction,
 } from "../redux/productActions";
@@ -158,18 +159,7 @@ const Filters = () => {
       talle: [],
       precio: [],
     });
-    dispatch(
-      setFiltersAction({
-        nombre: [],
-        category: [],
-        color: [],
-        marca: [],
-        genero: [],
-        disciplina: [],
-        talle: [],
-        precio: [],
-      })
-    );
+    dispatch(clearFiltersAction());
     dispatch(filterProductsAction());
   };
   const handleBtn = () => {

@@ -204,13 +204,14 @@ export const getSubCategoriesAction = () => {
 
 //accion de creacion de subcategorias
 export const postSubCategoryAction = (values, token) => {
+  console.log(values, "action");
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
       const res = await axios.post(`${url}/categorias/subcategoria`, values, {
         headers: {
-          "Content-Type": "multipart/form-data",
-          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          /* authorization: `Bearer ${token}`, */
         },
       });
       dispatch(addSubCategory(res.data));
@@ -228,44 +229,23 @@ export const postSubCategoryAction = (values, token) => {
 };
 
 //accion para eliminar imagenes de categorias
-export const deleteImgCategoriesAction = (value) => {
+export const deleteImgCategoriesAction = (value, update = true) => {
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
-      const res = await axios.delete(`${url}/upload-image`, value, {
+      const res = await axios.delete(`${url}/upload-image`, {
         headers: {
           "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
+          /*  authorization: `Bearer ${token}`, */
         },
+        data: value,
       });
-      console.log(res.data);
-      /*     dispatch(updateProduct(res.data)); */
-      /* dispatch(setSuccessProduct("Producto actualizado con exito.")); */
-      dispatch(setLoading(false));
-    } catch (error) {
-      dispatch(setLoading(false));
-      if (error.response) {
-        dispatch(setErrorProduct(error.response.data?.message));
-      } else {
-        dispatch(setErrorProduct(error.message));
+      console.log(res, "antes de if");
+      if (update) {
+        console.log(res, "update");
+        /* dispatch(updateCategory(res.data)); */
       }
-    }
-  };
-};
-//accion para eliminar imagenes de subcategorias
-export const deleteImgSubcategoriesAction = (value) => {
-  return async function (dispatch) {
-    try {
-      dispatch(setLoading(true));
-      const res = await axios.delete(`${url}/subcategorias/${id}`, value, {
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(res.data);
-      /*     dispatch(updateProduct(res.data)); */
-      /* dispatch(setSuccessProduct("Producto actualizado con exito.")); */
+
       dispatch(setLoading(false));
     } catch (error) {
       dispatch(setLoading(false));
@@ -273,6 +253,33 @@ export const deleteImgSubcategoriesAction = (value) => {
         dispatch(setErrorCategory(error.response.data?.message));
       } else {
         dispatch(setErrorCategory(error.message));
+      }
+    }
+  };
+};
+//accion para eliminar imagenes de subcategorias
+export const deleteImgSubcategoriesAction = (value) => {
+  console.log(value);
+  return async function (dispatch) {
+    try {
+      dispatch(setLoading(true));
+      const res = await axios.delete(`${url}/upload-image`, {
+        headers: {
+          "Content-Type": "application/json",
+          /*  authorization: `Bearer ${token}`, */
+        },
+        data: value,
+      });
+      console.log(res, "sub");
+      /*     dispatch(updateProduct(res.data)); */
+      /* dispatch(setSuccessProduct("Producto actualizado con exito.")); */
+      dispatch(setLoading(false));
+    } catch (error) {
+      dispatch(setLoading(false));
+      if (error.response) {
+        dispatch(setErrorSubCategory(error.response.data?.message));
+      } else {
+        dispatch(setErrorSubCategory(error.message));
       }
     }
   };

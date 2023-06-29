@@ -50,7 +50,7 @@ const SearchItems = ({
             to={`/${item}`}
             className="flex flex-row gap-2 px-2 py-4 hover:bg-grey"
             onClick={() => {
-              dispatch(setFiltersAction({ category: item }));
+              dispatch(setFiltersAction({ category: [item] }));
               dispatch(filterProductsAction());
               setShowItems(false);
               setNavbar(false);

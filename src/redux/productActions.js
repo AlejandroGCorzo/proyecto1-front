@@ -11,6 +11,7 @@ import {
   filterProducts,
   setSearchProducts,
   orderProducts,
+  setEmptyFilters,
 } from "./productSlice";
 const url = import.meta.env.VITE_REACT_APP_API;
 
@@ -59,6 +60,13 @@ export const setFiltersAction = (values) => {
     dispatch(setLoading(false));
   };
 };
+export const clearFiltersAction = (values) => {
+  return async function (dispatch) {
+    dispatch(setLoading(true));
+    dispatch(setEmptyFilters(values));
+    dispatch(setLoading(false));
+  };
+};
 //accion para ordenar productos
 export const orderProductsAction = (value) => {
   return async function (dispatch) {
@@ -103,6 +111,7 @@ export const postProductAction = (values, token) => {
 
 //accion de creacion de producto
 export const patchProductAction = (values, token, id) => {
+  console.log(values, "action");
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
@@ -127,20 +136,24 @@ export const patchProductAction = (values, token, id) => {
 };
 
 //accion para eliminar imagenes de productos
-export const deleteImgProductsAction = (value) => {
+export const deleteImgProductsAction = (value, update = true) => {
   console.log(value);
+  console.log("entre delete");
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
-      const res = await axios.delete(`${url}/upload-image`, value, {
+      const res = await axios.delete(`${url}/upload-image`, {
         headers: {
           "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
+          /*      authorization: `Bearer ${token}`, */
         },
+        data: value,
       });
       console.log(res.data);
-      /*     dispatch(updateProduct(res.data)); */
-      /* dispatch(setSuccessProduct("Producto actualizado con exito.")); */
+      if (update) {
+        console.log("entre");
+        dispatch(updateProduct(res.data.productById));
+      }
       dispatch(setLoading(false));
     } catch (error) {
       dispatch(setLoading(false));

@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Filters from "../../utils/Filters";
 import { LuListPlus } from "react-icons/lu";
-import { orderProductsAction } from "../../redux/productActions";
+import {
+  clearFiltersAction,
+  orderProductsAction,
+} from "../../redux/productActions";
 
 const FilterProducts = () => {
   const distpatch = useDispatch();
@@ -36,45 +39,62 @@ const FilterProducts = () => {
     }
   };
 
+  const clearErrorFilters = (e) => {
+    e.preventDefault();
+    distpatch(clearFiltersAction());
+  };
+
   return (
     <section className="w-full h-auto flex flex-col justify-center items-center max-h-max mt-[40%] sm:mt-[21%] md:max-lg:mt-[15.5%] lg:mt-[15%] 2xl:mt-[9.5%]">
-      <div className=" flex flex-row justify-center items-start gap-2 w-full">
+      <div
+        className={`flex flex-row justify-center  gap-2 w-full ${
+          productsFilter.length === 0
+            ? "h-auto sm:min-h-[550px] lg:h-[380px] items-center"
+            : "h-auto items-start"
+        }`}
+      >
         <aside className="w-72 pt-7 pl-2 hidden lg:block">
-          <Filters />
+          {productsFilter.length > 0 && <Filters />}
         </aside>
         <aside className="flex flex-col justify-center items-center w-full md:max-w-5xl lg:max-w-7xl">
-          <div className="w- flex flex-row-reverse lg:flex-row justify-between items-center pt-4 pb-2 px-1 2xl:py-4 lg:px-4 text-lg gap-2 lg:gap-0 w-[95%]">
+          <div className=" flex flex-row-reverse lg:flex-row justify-between items-center pt-4 pb-2 px-1 2xl:py-4 lg:px-4 text-lg gap-2 lg:gap-0 w-[95%]">
             <p className="hidden lg:block">
               {productsFilter?.length} Productos
             </p>
-            <div className="drawer drawer-end lg:hidden grid w-1/2">
-              <input
-                id="my-drawer-4"
-                type="checkbox"
-                className="drawer-toggle"
-              />
-              <div className="drawer-content transition-all">
-                {/* Page content here */}
-                <label
-                  htmlFor="my-drawer-4"
-                  className="drawer-button p-3 rounded-lg flex justify-between lg:justify-center items-center lg:max-w-max w-full bg-white text-base text-gray-600 font-normal whitespace-nowrap "
-                >
-                  Filtrar por <LuListPlus fontSize={18} />
-                </label>
+            {productsFilter.length > 0 && (
+              <div className="drawer drawer-end lg:hidden grid w-1/2">
+                <input
+                  id="my-drawer-4"
+                  type="checkbox"
+                  className="drawer-toggle"
+                />
+                <div className="drawer-content transition-all">
+                  {/* Page content here */}
+                  <label
+                    htmlFor="my-drawer-4"
+                    className="drawer-button p-3 rounded-lg flex justify-between lg:justify-center items-center lg:max-w-max w-full bg-white text-base text-gray-600 font-normal whitespace-nowrap "
+                  >
+                    Filtrar por <LuListPlus fontSize={18} />
+                  </label>
+                </div>
+                <div className="drawer-side z-[9999] ">
+                  <label
+                    htmlFor="my-drawer-4"
+                    className="drawer-overlay"
+                  ></label>
+                  <ul className=" w-2/3 sm:w-2/4 h-auto max-h-screen text-base-content bg-white p-0 overflow-y-auto">
+                    <Filters />
+                  </ul>
+                </div>
               </div>
-              <div className="drawer-side z-[9999] ">
-                <label htmlFor="my-drawer-4" className="drawer-overlay"></label>
-                <ul className=" w-2/3 sm:w-2/4 h-auto max-h-screen text-base-content bg-white p-0 overflow-y-auto">
-                  <Filters />
-                </ul>
-              </div>
-            </div>
-            <details className="dropdown w-1/2 lg:w-auto focus-within:outline-none">
-              <summary className="select py-0 flex lg:justify-center items-center lg:max-w-max w-full bg-white text-base text-gray-600 font-normal whitespace-nowrap focus:outline-none">
-                Ordenar por
-              </summary>
-              <ul className="text-lg shadow p-4 dropdown-content z-[1] rounded-box w-full bg-white flex flex-col gap-2 text-fontDark">
-                {/* <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+            )}
+            {productsFilter.length > 0 && (
+              <details className="dropdown w-1/2 lg:w-auto focus-within:outline-none">
+                <summary className="select py-0 flex lg:justify-center items-center lg:max-w-max w-full bg-white text-base text-gray-600 font-normal whitespace-nowrap focus:outline-none">
+                  Ordenar por
+                </summary>
+                <ul className="text-lg shadow p-4 dropdown-content z-[1] rounded-box w-full bg-white flex flex-col gap-2 text-fontDark">
+                  {/* <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
                   <button
                     onClick={handleOrder}
                     className=" hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
@@ -101,44 +121,45 @@ const FilterProducts = () => {
                     Descuento
                   </button>
                 </li> */}
-                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
-                  <button
-                    onClick={handleOrder}
-                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
-                    value={"A-Z"}
-                  >
-                    Ordenar A-Z
-                  </button>
-                </li>
-                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
-                  <button
-                    onClick={handleOrder}
-                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
-                    value={"Z-A"}
-                  >
-                    Ordenar Z-A
-                  </button>
-                </li>
-                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
-                  <button
-                    onClick={handleOrder}
-                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
-                    value={"asc"}
-                  >
-                    Precio más alto
-                  </button>
-                </li>
-                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
-                  <button
-                    onClick={handleOrder}
-                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
-                    value={"desc"}
-                  >
-                    Precio más bajo
-                  </button>
-                </li>
-              </ul>
-            </details>
+                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                    <button
+                      onClick={handleOrder}
+                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      value={"A-Z"}
+                    >
+                      Ordenar A-Z
+                    </button>
+                  </li>
+                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                    <button
+                      onClick={handleOrder}
+                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      value={"Z-A"}
+                    >
+                      Ordenar Z-A
+                    </button>
+                  </li>
+                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                    <button
+                      onClick={handleOrder}
+                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      value={"asc"}
+                    >
+                      Precio más alto
+                    </button>
+                  </li>
+                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                    <button
+                      onClick={handleOrder}
+                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      value={"desc"}
+                    >
+                      Precio más bajo
+                    </button>
+                  </li>
+                </ul>
+              </details>
+            )}
           </div>
           <div className="flex flex-row flex-wrap w-full justify-center gap-4 p-6 md:p-0 text-fontDark ">
             {productsFilter?.length > 0 ? (
@@ -189,11 +210,40 @@ const FilterProducts = () => {
               ))
             ) : (
               <>
-                <div>No existe un producto con esas caracteristicas</div>
+                <div className="flex flex-1 flex-col md:flex-row justify-evenly items-center p-6">
+                  <div>
+                    <h2 className="text-5xl uppercase font-bold text-fontLigth">
+                      Oops!
+                    </h2>
+                  </div>
+                  <div className="flex flex-col justify-between items-start gap-4">
+                    <p className="font-bold text-lg text-center md:text-xl text-fontDark/80 overflow-ellipsis pt-6 md:pt-0">
+                      No hemos encontrado ningún resultado para los filtros
+                      selecionados.
+                    </p>
+                    <ul className="flex flex-col gap-2 text-fontLigth font-semibold text-base md:text-lg items-start justify-center">
+                      <li>¿Qué hago?</li>
+                      <div className="px-6 md:px-14 py-4 flex flex-col gap-6 justify-center items-center w-full">
+                        <li className="list-disc">
+                          Elimine los filtros aplicados haciendo click el
+                          siguiente botón.
+                        </li>
+                        <li>
+                          <button
+                            onClick={clearErrorFilters}
+                            className="btn text-orange bg-grey border-orange px-6 hover:bg-orange hover:text-white transition-all hover:border-orange"
+                          >
+                            Limpiar filtros
+                          </button>
+                        </li>
+                      </div>
+                    </ul>
+                  </div>
+                </div>
               </>
             )}
           </div>
-          {maxSlice < productsFilter.length && (
+          {productsFilter.length > 0 && maxSlice < productsFilter.length && (
             <div className="w-full flex justify-center items-center p-10">
               <button
                 className="px-6 py-2 border border-orange text-orange uppercase font-medium"

@@ -155,12 +155,20 @@ const productSlice = createSlice({
       );
 
       state.products = [...filteredProducts, action.payload];
+      state.productsSearch = [...filteredProducts, action.payload];
+      state.productsFilter = [...filteredProducts, action.payload];
     },
     deleteProduct: (state, action) => {
       let filteredProducts = state.products.filter(
         (item) => item._id !== action.payload._id
       );
       state.products = filteredProducts;
+      state.productsFilter = filteredProducts;
+      state.productsSearch = filteredProducts;
+    },
+    setEmptyFilters: (state, action) => {
+      state.filters = initialState.filters;
+      state.productsFilter = state.products;
     },
     setErrorProduct: (state, action) => {
       state.error = action.payload;
@@ -184,6 +192,7 @@ export const {
   setFilters,
   filterProducts,
   orderProducts,
+  setEmptyFilters,
   setErrorProduct,
   setErrorSearchProduct,
   setSuccessProduct,
