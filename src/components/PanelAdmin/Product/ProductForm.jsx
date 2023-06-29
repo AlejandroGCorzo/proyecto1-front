@@ -15,6 +15,7 @@ import ServerError from "../../../utils/ServerError";
 import ServerSuccess from "../../../utils/ServerSuccess";
 import { MdOutlineClose } from "react-icons/md";
 import { toBase64 } from "../../../utils/FileToBase64";
+import { ConfirmationComponent } from "../../../utils/DeleteSteps";
 
 function validateImage(input) {
   let errorsImage = {};
@@ -126,11 +127,21 @@ function validateProduct(input, products) {
 
   return errorsProduct;
 }
+
+function validateDiscount(input) {
+  let error = {};
+  if (input && input > 100) {
+    error.descuento = "El Descuento no puede ser mayor al 100%";
+  }
+  return error;
+}
+
 const ProductForm = () => {
   const params = useParams();
   const fileInputRef = useRef(null);
   const selectInputRefTipo = useRef(null);
   const selectInputRefMarca = useRef(null);
+  const modalProductRef = useRef(null);
   const dispatch = useDispatch();
   const { error, success, products } = useSelector((state) => state.products);
   const { categories, loading } = useSelector((state) => state.categories);
@@ -141,6 +152,10 @@ const ProductForm = () => {
   }));
   const productToUpdate = products.find((item) => item._id === params.id);
   const token = localStorage.getItem("token");
+  const [onDelete, setOnDelete] = useState(null);
+  const [itemToDelete, setItemToDelete] = useState({ idProduct: "", id: "" });
+  const [section, setSection] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
   const [currentSubcategories, setCurrentSubcategories] = useState([]);
   const [image, setImage] = useState([]);
   const [errorImage, setErrorImage] = useState({});
@@ -161,6 +176,9 @@ const ProductForm = () => {
     genero: "",
     proveedor: "",
     disciplina: "",
+    isActive: true,
+    destacado: false,
+    descuento: "",
   });
 
   const [formUpdate, setFormUpdate] = useState({
@@ -171,8 +189,20 @@ const ProductForm = () => {
         }))
       : [],
     colores: productToUpdate?.colores?.length ? productToUpdate.colores : [],
+    descuento: productToUpdate?.descuento > 0 ? productToUpdate.descuento : "",
+    isActive: true,
+    destacado: false,
   });
   const [errorsForm, setErrorsForm] = useState({});
+
+  const toggleModal = (e) => {
+    modalProductRef.current.classList.toggle("modal-open");
+    document.activeElement.blur();
+    setOnDelete(!onDelete);
+    if (confirmed) {
+      setConfirmed(false);
+    }
+  };
 
   const validateOnBlur = (e) => {
     const { value, name, files } = e.target;
@@ -191,7 +221,7 @@ const ProductForm = () => {
           { ...form, [name]: value },
           products
         );
-        setErrorsForm(errorFormValidation);
+        setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
       }
     }
     if (name === "talle" || name === "cantidad") {
@@ -235,9 +265,12 @@ const ProductForm = () => {
       genero: "",
       proveedor: "",
       disciplina: "",
+      isActive: true,
+      destacado: false,
+      descuento: "",
     });
     if (params?.id?.length) {
-      setFormUpdate({});
+      setFormUpdate({ descuento: "", isActive: true, destacado: false });
     }
     setErrorColor({});
     setErrorSize({});
@@ -298,10 +331,6 @@ const ProductForm = () => {
   const handleImageRemove = (index) => {
     setImage((prevImages) => prevImages.filter((img, i) => i !== index));
     return;
-  };
-  const handleImageDelete = (img) => {
-    console.log(img);
-    dispatch(deleteImgProductsAction({ id: img }));
   };
 
   const handleColorChange = (e) => {
@@ -409,21 +438,60 @@ const ProductForm = () => {
         categoriesNameAndId.find((category) => category.id === value)
       );
       if (currentSubcategories?.subcategorias?.length === 1) {
-        setForm((prev) => ({
-          ...prev,
-          marca: currentSubcategories.subcategorias[0]._id,
-        }));
+        if (params?.id?.length) {
+          setFormUpdate((prev) => ({
+            ...prev,
+            marca: currentSubcategories.subcategorias[0]._id,
+          }));
+        } else {
+          setForm((prev) => ({
+            ...prev,
+            marca: currentSubcategories.subcategorias[0]._id,
+          }));
+        }
       }
     }
 
     if (params?.id?.length) {
-      setFormUpdate((prev) => ({ ...prev, [name]: value }));
+      if (name === "destacado") {
+        setFormUpdate((prev) => ({ ...prev, [name]: !formUpdate.destacado }));
+      } else if (name === "isActive") {
+        setFormUpdate((prev) => ({ ...prev, [name]: !formUpdate.isActive }));
+      } else if (name === "descuento" && value) {
+        setFormUpdate((prev) => ({ ...prev, [name]: Number(value) }));
+        if (value > 100) {
+          let errorObj = validateDiscount(value);
+          setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+        } else {
+          setErrorsForm((prev) => ({ ...prev, descuento: "" }));
+        }
+      } else {
+        setFormUpdate((prev) => ({ ...prev, [name]: value }));
+      }
     } else {
-      setForm((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      if (name === "destacado") {
+        setForm((prev) => ({ ...prev, [name]: !form.destacado }));
+      } else if (name === "isActive") {
+        setForm((prev) => ({ ...prev, [name]: !form.isActive }));
+      } else if (name === "descuento" && value) {
+        setForm((prev) => ({ ...prev, [name]: Number(value) }));
+        if (value > 100) {
+          let errorObj = validateDiscount(value);
+          setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+        } else {
+          setErrorsForm((prev) => ({ ...prev, descuento: "" }));
+        }
+      } else {
+        setForm((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+
       let errorObj = validateProduct({ ...form, [name]: value }, products);
+      if (errorObj?.descuento?.length) {
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+      }
       setErrorsForm(errorObj);
     }
   };
@@ -432,9 +500,17 @@ const ProductForm = () => {
     e.preventDefault();
     let formToSubmit = productToUpdate?._id?.length
       ? formUpdate?.precio?.length
-        ? { ...formUpdate, precio: Number(formUpdate.precio) }
-        : formUpdate
-      : { ...form, precio: Number(form.precio) };
+        ? {
+            ...formUpdate,
+            precio: Number(formUpdate.precio),
+            descuento: Number(formUpdate.descuento),
+          }
+        : { ...formUpdate, descuento: Number(formUpdate.descuento) }
+      : {
+          ...form,
+          precio: Number(form.precio),
+          descuento: Number(form.descuento),
+        };
     async function post() {
       await dispatch(postProductAction(formToSubmit, token));
     }
@@ -537,61 +613,58 @@ const ProductForm = () => {
             Añadir
           </button>
         </form>
-        {form.colores.length > 0 ||
-          (formUpdate?.colores?.length > 0 && (
-            <div className="flex flex-col w-2/3 justify-center items-center">
-              {form?.colores?.length > 0 &&
-                form.colores.map((item, index) => (
-                  <div
-                    className="w-2/3 flex justify-center items-center border rounded p-4"
-                    key={index + "talle"}
-                  >
-                    <div className="w-full flex items-center justify-around text-lg text-fontDark">
-                      {" "}
-                      <span>Color: {item}</span>
-                    </div>
-                    <button
-                      className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
-                      onClick={() =>
-                        setForm((prev) => ({
-                          ...prev,
-                          colores: form.colores.filter(
-                            (color) => color !== item
-                          ),
-                        }))
-                      }
-                    >
-                      x
-                    </button>
-                  </div>
-                ))}
-              {formUpdate?.colores?.length > 0 &&
-                formUpdate.colores.map((item, index) => (
-                  <div
-                    className="w-2/3 flex justify-between items-center border rounded p-2"
-                    key={index + "talle"}
-                  >
-                    <div className="w-2/3 flex items-center justify-between px-4 text-lg text-fontDark">
-                      {" "}
-                      <span>Color: {item}</span>
-                    </div>
-                    <button
-                      className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
-                      onClick={() =>
-                        setFormUpdate((prev) => ({
-                          ...prev,
-                          colores: formUpdate.colores.filter(
-                            (color) => color !== item
-                          ),
-                        }))
-                      }
-                    >
-                      x
-                    </button>
-                  </div>
-                ))}
-            </div>
-          ))}
+
+        <div className="flex flex-col w-1/3 justify-center items-center">
+          {form?.colores?.length > 0 &&
+            form.colores.map((item, index) => (
+              <div
+                className="w-2/3 flex justify-center items-center border rounded p-2"
+                key={index + "talle"}
+              >
+                <div className="w-full flex items-center justify-around text-lg text-fontDark">
+                  {" "}
+                  <span>Color: {item}</span>
+                </div>
+                <button
+                  className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      colores: form.colores.filter((color) => color !== item),
+                    }))
+                  }
+                >
+                  x
+                </button>
+              </div>
+            ))}
+          {formUpdate?.colores?.length > 0 &&
+            formUpdate.colores.map((item, index) => (
+              <div
+                className="w-2/3 flex justify-between items-center border rounded p-2"
+                key={index + "talle"}
+              >
+                <div className="w-2/3 flex items-center justify-between px-4 text-lg text-fontDark">
+                  {" "}
+                  <span>Color: {item}</span>
+                </div>
+                <button
+                  className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
+                  onClick={() =>
+                    setFormUpdate((prev) => ({
+                      ...prev,
+                      colores: formUpdate.colores.filter(
+                        (color) => color !== item
+                      ),
+                    }))
+                  }
+                >
+                  x
+                </button>
+              </div>
+            ))}
+        </div>
+
         <form
           className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start 2xl:flex-row 2xl:items-end"
           onSubmit={handleSizeSubmit}
@@ -622,7 +695,7 @@ const ProductForm = () => {
           </div>
           <div
             className={`flex flex-col w-40 sm:w-full lg:w-1/2 ${
-              errorSize.cantidad?.length > 0 ? "pb-0" : "2xl:pb-8"
+              errorSize.cantidad?.length > 0 ? "pb-0" : "2xl:pb-7"
             }`}
           >
             <label className="label pt-2 pb-0">
@@ -749,12 +822,20 @@ const ProductForm = () => {
                   <img
                     src={img}
                     alt={`edit ${index}`}
-                    className="w-full h-full object-contain rounded-md  "
+                    className="w-full h-64 object-contain rounded-md  "
                   />
                   <button
                     className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-fontDark text-xl relative flex px-2 transition-all"
                     type="button"
-                    onClick={() => handleImageDelete(img)}
+                    onClick={() => {
+                      setItemToDelete({
+                        nombre: "imagen",
+                        idProduct: productToUpdate._id,
+                        id: img,
+                      });
+                      setSection("formProductos");
+                      toggleModal();
+                    }}
                   >
                     X
                   </button>
@@ -889,6 +970,62 @@ const ProductForm = () => {
               {errorsForm.precio}
             </small>
           )}
+          <div className={`flex flex-col w-full `}>
+            <label className="label pt-2 pb-0">
+              <span>Aplicar descuento</span>
+            </label>
+            <input
+              autoComplete="off"
+              type="number"
+              min={0}
+              className="input bg-fontGrey"
+              name="descuento"
+              value={
+                productToUpdate?._id?.length
+                  ? formUpdate.descuento
+                  : form.descuento
+              }
+              onChange={handleChangeForm}
+              placeholder="Ingresar descuento"
+            />
+            {errorsForm?.descuento?.length > 0 && (
+              <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                {errorsForm.descuento}
+              </small>
+            )}
+          </div>
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div className="flex flex-row items-center gap-2 pt-4 px-2">
+              <input
+                className="checkbox checkbox-warning checkbox-sm rounded"
+                type="checkbox"
+                name="destacado"
+                id=""
+                onChange={handleChangeForm}
+                checked={
+                  productToUpdate?._id?.length
+                    ? formUpdate.destacado
+                    : form.destacado
+                }
+              />
+              <span>Destacar producto</span>
+            </div>
+            <div className="flex flex-row items-center gap-2 pt-4 px-2">
+              <input
+                className="checkbox checkbox-warning checkbox-sm rounded"
+                type="checkbox"
+                name="isActive"
+                id=""
+                onChange={handleChangeForm}
+                checked={
+                  productToUpdate?._id?.length
+                    ? formUpdate.isActive
+                    : form.isActive
+                }
+              />
+              <span>Activar o desactivar producto</span>
+            </div>
+          </div>
           <label className="label pt-2 pb-0">
             <span>Código</span>
           </label>
@@ -986,6 +1123,26 @@ const ProductForm = () => {
           </button>
         </form>
       </>
+      <dialog ref={modalProductRef} className="modal bg-grey/40">
+        <div className="modal-box bg-grey">
+          <button
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+            onClick={toggleModal}
+          >
+            ✕
+          </button>
+
+          <ConfirmationComponent
+            onDelete={onDelete}
+            toggleModal={toggleModal}
+            confirmed={confirmed}
+            setConfirmed={setConfirmed}
+            itemToDelete={itemToDelete}
+            setItemToDelete={setItemToDelete}
+            section={section}
+          />
+        </div>
+      </dialog>
       {error && <ServerError error={error} />}
       {success && <ServerSuccess success={success} />}
     </div>

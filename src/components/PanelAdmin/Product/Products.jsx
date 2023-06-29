@@ -144,9 +144,9 @@ const Products = () => {
                                 item.imagenes.map((image, index) => (
                                   <div
                                     key={index + "imagen"}
-                                    className="flex flex-row gap-1 flex-wrap "
+                                    className="flex flex-row flex-wrap"
                                   >
-                                    <img src={image} className="w-16" />
+                                    <img src={image} className="w-16 m-1" />
                                   </div>
                                 ))
                               ) : (

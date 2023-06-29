@@ -20,6 +20,13 @@ const Home = () => {
     };
     getProducts();
   }, []);
+  let fechaActual = new Date();
+  let mes = String(fechaActual.getMonth() + 1).padStart(2, "0"); // Los meses en JavaScript comienzan en 0
+  let destacados = products?.filter((prod) => prod.destacado === true);
+  let lanzamientos = products?.filter(
+    (prod) => prod.productoDate.split("-")[1] === mes
+  );
+  let recomendados = products?.filter((prod) => prod.descuento > 0);
 
   return (
     <div className=" w-full flex flex-col justify-center items-center gap-6 ">
@@ -33,7 +40,7 @@ const Home = () => {
             ver todo
           </button>
         </div>
-        <CardsSlider data={products} />
+        <CardsSlider data={lanzamientos} mounth={mes} />
       </div>
       <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col">
         <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
@@ -42,7 +49,7 @@ const Home = () => {
             ver todo
           </button>
         </div>
-        <CardsSlider data={products} />
+        <CardsSlider data={recomendados} mounth={mes} />
       </div>
       <div className="w-full 2xl:w-[75%] flex flex-row justify-center items-center p-5 md:px-12  md:py-10 2xl:pr-12 mt-5 md:mt-10 gap-3">
         <div className="border rounded-md shadow p-2 h-[70px] w-full bg-white flex justify-center items-center">
@@ -95,7 +102,7 @@ const Home = () => {
             ver todo
           </button>
         </div>
-        <CardsSlider data={products} />
+        <CardsSlider data={destacados} mounth={mes} />
       </div>
     </div>
   );

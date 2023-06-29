@@ -47,7 +47,13 @@ export const ConfirmationComponent = ({
             className="text-xl text-center text-fontDark font-semibold mb-4"
             style={{ userSelect: "none" }}
           >
-            {`¿Estás seguro que desea eliminar ${itemToDelete?.nombre} de ${section}?`}
+            {itemToDelete.nombre !== "imagen"
+              ? `¿Estás seguro que desea eliminar ${itemToDelete?.nombre} de ${section}?`
+              : `¿Estás seguro que desea eliminar la imagen ${
+                  section === "formProductos"
+                    ? "del producto"
+                    : "de la categoría"
+                }?`}
           </h1>
           <div className="w-full flex justify-between">
             <button
@@ -142,14 +148,30 @@ export const DeleteComponent = ({
         }
 
         if (isInOneCat.length) {
-          isInOneCat.forEach((sub) => {
-            dispatch(deleteSubCategoriesAction(sub._id));
-            dispatch(deleteImgSubcategoriesAction({ id: sub.imagen[0] }));
-          });
+          for (let i = 0; i < isInOneCat.length; i++) {
+            await dispatch(
+              deleteImgSubcategoriesAction(
+                {
+                  id: isInOneCat[i].imagen[0],
+                  idSubcategory: isInOneCat[i]._id,
+                },
+                false
+              )
+            );
+            dispatch(deleteSubCategoriesAction(isInOneCat[i]._id));
+          }
         }
 
+        await dispatch(
+          deleteImgCategoriesAction(
+            {
+              id: categoryToDelete.imagen[0],
+              idCategory: categoryToDelete._id,
+            },
+            false
+          )
+        );
         dispatch(deleteCategoriesAction(itemToDelete.id, token));
-        dispatch(deleteImgCategoriesAction({ id: categoryToDelete.imagen[0] }));
       } else if (section.includes("Subcategorías")) {
         let isInMoreThanOneCat = categories.map((item) =>
           item.subcategorias.filter((item) => item._id === itemToDelete.id)
@@ -157,6 +179,17 @@ export const DeleteComponent = ({
         isInMoreThanOneCat = [
           ...isInMoreThanOneCat.filter((item) => item.length).flat(Infinity),
         ];
+
+        if (isInMoreThanOneCat.length === 1) {
+          console.log(itemToDelete);
+          await dispatch(
+            deleteImgSubcategoriesAction({
+              id: isInMoreThanOneCat[0].imagen[0],
+              idSubcategory: isInMoreThanOneCat[0]._id,
+            })
+          );
+          dispatch(deleteSubCategoriesAction(itemToDelete.id));
+        }
 
         dispatch(
           deleteCategoriesSubCategoryAction(
@@ -167,17 +200,33 @@ export const DeleteComponent = ({
             token
           )
         );
-
-        if (isInMoreThanOneCat.length === 1) {
-          dispatch(deleteSubCategoriesAction(itemToDelete.id));
-        }
       } else if (section === "Productos") {
-        let productToDelete = products.filter(
+        let productToDelete = products.find(
           (item) => item._id === itemToDelete.id
         );
+        for (let i = 0; i < productToDelete.imagenes.length; i++) {
+          await dispatch(
+            deleteImgProductsAction(
+              { id: productToDelete.imagenes[i], idProduct: itemToDelete.id },
+              false
+            )
+          );
+        }
+
         dispatch(deleteProductAction(itemToDelete.id, token));
-        productToDelete?.imagenes?.forEach((elem) =>
-          dispatch(deleteImgProductsAction({ id: elem }))
+      } else if (section === "formProductos") {
+        dispatch(
+          deleteImgProductsAction({
+            id: itemToDelete.id,
+            idProduct: itemToDelete.idProduct,
+          })
+        );
+      } else if (section === "formCategoria") {
+        dispatch(
+          deleteImgCategoriesAction({
+            id: itemToDelete.id,
+            idCategory: itemToDelete.idCategory,
+          })
         );
       }
       setItemToDelete({ nombre: "", id: "" });
@@ -193,7 +242,9 @@ export const DeleteComponent = ({
           className="text-2xl text-fontDark font-semibold mb-4 "
           style={{ userSelect: "none" }}
         >
-          {`Eliminar ${itemToDelete?.nombre} de ${section}:`}
+          {itemToDelete.nombre !== "imagen"
+            ? `Eliminar ${itemToDelete?.nombre} de ${section}:`
+            : `Eliminar ${itemToDelete?.nombre} del producto:`}
         </h1>
         <small
           className="h-auto text-lg text-fontDark w-full flex self-start mb-1 "
@@ -203,7 +254,7 @@ export const DeleteComponent = ({
         </small>
         <input
           type="text"
-          className="border  rounded px-4 py-2 bg-fontDark text-white w-full  border-nav focus:border-nav
+          className="border rounded px-4 py-2 bg-fontDark text-white w-full  border-nav focus:border-nav
           focus:outline-none
           appearance-none"
           value={name}

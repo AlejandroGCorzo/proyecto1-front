@@ -78,7 +78,7 @@ const settings = {
 };
 ////////////////////////////SettingSlider//////////////////////////////////////
 
-const CardsSlider = ({ data }) => {
+const CardsSlider = ({ data, mounth }) => {
   const { subcategorias } = useSelector((state) => state.categories);
   let productBrands = [...new Set(data?.map((item) => item.marca))];
   let brandImg = subcategorias.filter((item) =>
@@ -92,16 +92,36 @@ const CardsSlider = ({ data }) => {
           {data?.length &&
             data.map((item, index) => (
               <Link to={`/detail/${item._id}`} key={item._id}>
-                <div className="sm:max-w-[250px] border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
-                  <div className="mb-1">
-                    <span className=" absolute text-white bg-header p-1 ">
-                      NUEVO
-                    </span>
+                <div className="h-96 sm:max-w-[280px] border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
+                  <div className="mb-1 flex flex-col justify-start items-center">
+                    <div className="absolute sm:w-48 md:w-52 lg:w-60 flex items-start justify-between">
+                      {item.descuento > 0 && (
+                        <span className="text-white bg-header py-1 px-2">
+                          - {item.descuento}%
+                        </span>
+                      )}
+
+                      {item.talle.length > 0 &&
+                      item.talle
+                        .map((item) => item.cantidad)
+                        .reduce((elem, acc) => (acc += elem)) === 1 ? (
+                        <span className="text-fontDark px-2 bg-grid">
+                          ÚLTIMA UNIDAD
+                        </span>
+                      ) : (
+                        item.productoDate.split("-")[1] === mounth && (
+                          <span className="text-white bg-header p-1">
+                            NUEVO
+                          </span>
+                        )
+                      )}
+                    </div>
+
                     {item.imagenes.length && (
                       <img
                         src={item.imagenes[0]}
                         alt={item.modelo}
-                        className="h-full aspect-auto object-contain"
+                        className="h-auto max-h-52 w-52 aspect-auto object-contain"
                       />
                     )}
                   </div>
@@ -109,7 +129,7 @@ const CardsSlider = ({ data }) => {
                     brandImg.map(
                       (brand) =>
                         brand.nombre === item.marca && (
-                          <div key={brand._id} className="p-2">
+                          <div key={brand._id} className="p-2 ">
                             <img
                               src={brand.imagen[0]}
                               alt={brand.nombre}

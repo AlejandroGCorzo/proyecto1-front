@@ -16,6 +16,7 @@ import {
 import SubCategoriesForm from "../SubCategory/SubCategoriesForm";
 
 import { toBase64 } from "../../../utils/FileToBase64";
+import { ConfirmationComponent } from "../../../utils/DeleteSteps";
 
 const CategoriesForm = () => {
   const params = useParams();
@@ -27,7 +28,7 @@ const CategoriesForm = () => {
   );
   const categoryToUpdate = categories.find((item) => item._id === params.id);
   const categoriesNames = categories.map((item) => item.nombre.toUpperCase());
-
+  const modalRef = useRef(null);
   const token = localStorage.getItem("token");
   const [errorName, setErrorName] = useState({});
   const [errorImage, setErrorImage] = useState({});
@@ -37,6 +38,19 @@ const CategoriesForm = () => {
     imagen: [],
   });
   const [formUpdate, setFormUpdate] = useState({});
+  const [onDelete, setOnDelete] = useState(null);
+  const [itemToDelete, setItemToDelete] = useState({ nombre: "", id: "" });
+  const [section, setSection] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
+
+  const toggleModal = (e) => {
+    modalRef.current.classList.toggle("modal-open");
+    document.activeElement.blur();
+    setOnDelete(!onDelete);
+    if (confirmed) {
+      setConfirmed(false);
+    }
+  };
 
   const clearReducer = () => {
     dispatch(setErrorCategory(""));
@@ -109,10 +123,6 @@ const CategoriesForm = () => {
     setForm((prev) => ({ ...prev, imagen: [] }));
     return;
   };
-  const handleImageDelete = (img) => {
-    console.log(img);
-     dispatch(deleteImgCategoriesAction({id: img}));
-  };
   const handleChangeForm = (e) => {
     e.preventDefault();
     const { name, value, files } = e.target;
@@ -166,7 +176,9 @@ const CategoriesForm = () => {
         );
         if (formUpdate?.imagen?.length && categoryToUpdate?.imagen?.length) {
           console.log(categoryToUpdate.imagen[0]);
-           dispatch(deleteImgCategoriesAction({id: categoryToUpdate.imagen[0]}))
+          dispatch(
+            deleteImgCategoriesAction({ id: categoryToUpdate.imagen[0] })
+          );
         }
       } else {
         await dispatch(postCategoryAction(form, token));
@@ -187,7 +199,7 @@ const CategoriesForm = () => {
       : false;
   let isFormUpdateDisabled =
     !Object.values(formUpdate).join("").length ||
-    !categoryToUpdate?.imagen?.length ||
+    (!categoryToUpdate?.imagen?.length && !image.length) ||
     Object.values(errorName).join("").length ||
     Object.values(errorImage).join("").length
       ? true
@@ -312,7 +324,15 @@ const CategoriesForm = () => {
                 <button
                   className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-fontDark text-xl relative flex px-2 transition-all"
                   type="button"
-                  onClick={() => handleImageDelete(img)}
+                  onClick={() => {
+                    setItemToDelete({
+                      nombre: "imagen",
+                      idCategory: categoryToUpdate._id,
+                      id: img,
+                    });
+                    setSection("formCategoria");
+                    toggleModal();
+                  }}
                 >
                   X
                 </button>
@@ -328,6 +348,26 @@ const CategoriesForm = () => {
         </button>
       </form>
       {!params?.id?.length && <SubCategoriesForm />}
+      <dialog ref={modalRef} className="modal bg-grey/40">
+        <div className="modal-box bg-grey">
+          <button
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+            onClick={toggleModal}
+          >
+            ✕
+          </button>
+
+          <ConfirmationComponent
+            onDelete={onDelete}
+            toggleModal={toggleModal}
+            confirmed={confirmed}
+            setConfirmed={setConfirmed}
+            itemToDelete={itemToDelete}
+            setItemToDelete={setItemToDelete}
+            section={section}
+          />
+        </div>
+      </dialog>
     </div>
   );
 };
