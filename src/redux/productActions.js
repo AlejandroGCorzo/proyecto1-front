@@ -1,5 +1,5 @@
 import axios from "axios";
-import { addProduct, setError, setLoading, setProduct } from "./productSlice";
+import { addProduct, setError, setLoading, setProduct, setFeaturedProducts } from "./productSlice";
 const url = import.meta.env.VITE_REACT_APP_API;
 
 //accion de creacion de producto
@@ -51,7 +51,7 @@ export const fetchAllProducts = () => async (dispatch) => {
     const response = await axios.get(`${url}/productos`);
     const products = response.data;
 console.log(products)
-    dispatch(setProduct(products));
+    dispatch(setFeaturedProducts(products));
     dispatch(setLoading(false));
   } catch (error) {
     dispatch(setError(true));
