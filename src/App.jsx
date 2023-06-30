@@ -1,19 +1,48 @@
 import Header from "./components/Header/Header";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Home from "./components/Home/Home";
 import Footer from "./components/Footer.jsx/Footer";
 import UserDropdown from "./components/Header/UserDropdown";
 import PanelHome from "./components/PanelAdmin/PanelHome";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import Profile from "./components/Session/Profile";
-import ProductDetail from './components/ProductDetail';
+import ProductDetail from "./components/ProductDetail";
+import { useEffect } from "react";
+import FilterProducts from "./components/Home/FilterProducts";
+import { useDispatch } from "react-redux";
+import { getProductsAction } from "./redux/productActions";
+import {
+  getCategoriesAction,
+  getSubCategoriesAction,
+} from "./redux/categoriesActions";
+
+export function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [pathname]);
+
+  return null;
+}
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const getProducts = () => {
+      dispatch(getProductsAction());
+      dispatch(getCategoriesAction());
+      dispatch(getSubCategoriesAction());
+    };
+    getProducts();
+  }, []);
+
   return (
-    <div className="flex flex-col w-full h-auto bg-grey">
+    <div className="flex flex-col w-full m-auto bg-grey">
       <Header />
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/:filter" element={<FilterProducts />} />
         <Route path="/login" element={<UserDropdown />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route element={<PrivateRoutes />}>

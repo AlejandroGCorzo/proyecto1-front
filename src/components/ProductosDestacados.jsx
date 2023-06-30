@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllProducts } from "../redux/productActions";
+import { getProductsAction } from "../redux/productActions";
 import { useSwipeable } from "react-swipeable";
 import { Link } from "react-router-dom";
 
@@ -10,10 +10,12 @@ const ProductosDestacados = ({ productType }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    dispatch(fetchAllProducts());
+    dispatch(getProductsAction());
   }, [dispatch]);
 
-  const filteredProducts = allProducts.filter((product) => product.tipo === productType);
+  const filteredProducts = allProducts.filter(
+    (product) => product.tipo === productType
+  );
 
   const handlePrevClick = () => {
     setCurrentIndex((prevIndex) => Math.max(prevIndex - 5, 0));
@@ -25,7 +27,10 @@ const ProductosDestacados = ({ productType }) => {
     );
   };
 
-  const visibleProducts = filteredProducts.slice(currentIndex, currentIndex + 5);
+  const visibleProducts = filteredProducts.slice(
+    currentIndex,
+    currentIndex + 5
+  );
 
   const handlers = useSwipeable({
     onSwipedLeft: handleNextClick,

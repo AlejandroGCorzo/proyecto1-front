@@ -11,7 +11,6 @@ body,
   width: 100%;
   height: 100vh;
   background-color: white;
-  overflow-x: hidden;
 }
 
 .container {
@@ -52,7 +51,6 @@ body,
 
 .contentScroll {
   padding: 1px;
-  max-height: 450px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;

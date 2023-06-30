@@ -8,6 +8,8 @@ import ResetPassword from "../Session/ResetPassword";
 import Session from "../Session/Session";
 import { useDispatch, useSelector } from "react-redux";
 import { logOutAction } from "../../redux/userActions";
+import ServerError from "../../utils/ServerError";
+import { setUserError } from "../../redux/userSlice";
 
 function validatePassword(input) {
   const regexUpperCase = /^(?=.*[A-Z])/;
@@ -69,7 +71,9 @@ const UserDropdown = () => {
   const dropdownRef = useRef(null);
   const dispatch = useDispatch();
   const currentPath = useLocation();
-  const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
+  const { isLoggedIn, userRole, userError, loading } = useSelector(
+    (state) => state.users
+  );
   const condition = currentPath.pathname === "/login";
   const [logIn, setLogIn] = useState(false);
   const [resetPass, setResetPass] = useState(false);
@@ -96,6 +100,18 @@ const UserDropdown = () => {
       setLogIn(false);
     }
   };
+  const handleRedirect = (e) => {
+    e.preventDefault();
+    const { value } = e.target;
+    if (value === "loginCode") {
+      setLogInCode(true);
+    } else if (value === "login") {
+      setLogIn(true);
+    }
+    if (userError) {
+      dispatch(setUserError(""));
+    }
+  };
 
   const handleLogOut = (e) => {
     e.preventDefault();
@@ -105,10 +121,10 @@ const UserDropdown = () => {
   return (
     <>
       {condition ? (
-        <div className="flex flex-col justify-center items-center mt-52 bg-grey">
+        <div className="flex flex-col justify-center items-center mt-52 bg-grey flex-1 md:flex-auto">
           {condition && isLoggedIn && <Navigate to="/" replace={true} />}
           <ul
-            className={` text-nav w-96 font-medium flex flex-col justify-center items-center p-4  ${
+            className={` text-nav w-96 font-medium flex flex-col justify-center items-center p-4 text-base ${
               isLoggedIn ? "gap-2" : "gap-4"
             }`}
           >
@@ -147,6 +163,11 @@ const UserDropdown = () => {
                 validatePassword={validatePassword}
               />
             ) : null}
+            {loading && (
+              <div className="z-50 flex w-36 h-36 justify-center items-center ">
+                <span className="loading loading-spinner loading-lg"></span>
+              </div>
+            )}
             {!register &&
             !logIn &&
             !logInCode &&
@@ -154,7 +175,8 @@ const UserDropdown = () => {
             !code &&
             !codeReset &&
             !codeSignUp &&
-            !isLoggedIn ? (
+            !isLoggedIn &&
+            !loading ? (
               <>
                 <li className="py-2 font-semibold">
                   Elija una opción para ingresar
@@ -166,7 +188,8 @@ const UserDropdown = () => {
                 >
                   <button
                     className="w-80 h-10 text-center flex justify-center items-center focus:bg-blue-100"
-                    onClick={() => setLogInCode(true)}
+                    onClick={handleRedirect}
+                    value="loginCode"
                   >
                     Recibir codigo de acceso por e-mail
                   </button>
@@ -178,7 +201,8 @@ const UserDropdown = () => {
                 >
                   <button
                     className="w-80 h-10 text-center flex justify-center items-center focus:bg-blue-100"
-                    onClick={() => setLogIn(true)}
+                    onClick={handleRedirect}
+                    value="login"
                   >
                     Entrar con e-mail y contraseña
                   </button>
@@ -192,12 +216,12 @@ const UserDropdown = () => {
               !codeReset &&
               !codeSignUp &&
               isLoggedIn ? (
-              <Session handleLogOut={handleLogOut} />
+              <Session handleLogOut={handleLogOut} userRole={userRole} />
             ) : null}
           </ul>
         </div>
       ) : (
-        <div className="dropdown dropdown-end " ref={dropdownRef}>
+        <div className="dropdown dropdown-end" ref={dropdownRef}>
           <div
             tabIndex={0}
             className="btn m-1"
@@ -212,7 +236,7 @@ const UserDropdown = () => {
           </div>
           <ul
             tabIndex={0}
-            className={`dropdown-content menu bg-white text-nav w-96 font-medium flex justify-center items-center p-4 shadow-2xl ${
+            className={`dropdown-content menu focus-visible:outline-none bg-white text-nav w-96 font-medium flex justify-center items-center p-4 shadow-2xl text-base border-none  ${
               isLoggedIn ? "gap-2" : "gap-4"
             }`}
           >
@@ -252,6 +276,11 @@ const UserDropdown = () => {
                 validatePassword={validatePassword}
               />
             ) : null}
+            {loading && (
+              <div className="z-50 flex w-36 h-36 justify-center items-center">
+                <span className="loading loading-spinner loading-lg text-neutral"></span>
+              </div>
+            )}
             {!register &&
             !logIn &&
             !logInCode &&
@@ -259,7 +288,8 @@ const UserDropdown = () => {
             !code &&
             !codeSignUp &&
             !codeReset &&
-            !isLoggedIn ? (
+            !isLoggedIn &&
+            !loading ? (
               <>
                 <li className="py-2 font-semibold">
                   Elija una opción para ingresar
@@ -271,7 +301,8 @@ const UserDropdown = () => {
                 >
                   <button
                     className="w-80 h-10 text-center flex justify-center focus:bg-blue-100"
-                    onClick={() => setLogInCode(true)}
+                    onClick={handleRedirect}
+                    value="loginCode"
                   >
                     Recibir codigo de acceso por e-mail
                   </button>
@@ -283,7 +314,8 @@ const UserDropdown = () => {
                 >
                   <button
                     className="w-80 h-10 text-center flex justify-center focus:bg-blue-100"
-                    onClick={() => setLogIn(true)}
+                    onClick={handleRedirect}
+                    value="login"
                   >
                     Entrar con e-mail y contraseña
                   </button>
@@ -297,8 +329,9 @@ const UserDropdown = () => {
               !codeSignUp &&
               !codeReset &&
               isLoggedIn ? (
-              <Session handleLogOut={handleLogOut} />
+              <Session handleLogOut={handleLogOut} userRole={userRole} />
             ) : null}
+            {userError.length > 0 && <ServerError error={userError} />}
           </ul>
         </div>
       )}
