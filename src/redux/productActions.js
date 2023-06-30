@@ -50,7 +50,7 @@ export const fetchAllProducts = () => async (dispatch) => {
 
     const response = await axios.get(`${url}/productos`);
     const products = response.data;
-console.log(products)
+
     dispatch(setFeaturedProducts(products));
     dispatch(setLoading(false));
   } catch (error) {

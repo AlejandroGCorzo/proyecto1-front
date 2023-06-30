@@ -31,10 +31,10 @@ const ProductosDestacados = ({ productType }) => {
     onSwipedLeft: handleNextClick,
     onSwipedRight: handlePrevClick,
   });
-console.log(allProducts)
+
 return (
     <div>
-    <h2 className="text-2xl font-bold mb-4">También te puede interesar</h2>
+    <h2 className="text-2xl font-bold mx-4 my-4 px-2 py-2 ">Productos Relacionados</h2>
     <div className="flex flex-col items-center sm:flex-row sm:justify-between">
       <div
         {...handlers}
@@ -61,7 +61,7 @@ return (
             </svg>
           </button>
         )}
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-5 overflow-x-auto">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 overflow-x-auto">
           {visibleProducts.map((product) => (
             <Link
               key={product._id}
@@ -110,6 +110,7 @@ return (
 };
 
 export default ProductosDestacados;
+
 
 
 
