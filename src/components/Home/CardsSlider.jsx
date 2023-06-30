@@ -91,7 +91,7 @@ const CardsSlider = ({ data, mounth }) => {
         <Slider {...settings}>
           {data?.length &&
             data.map((item, index) => (
-              <Link to={`/detail/${item._id}`} key={item._id}>
+              <Link to={`/product/${item._id}`} key={item._id}>
                 <div className="h-96 sm:max-w-[280px] border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
                   <div className="mb-1 flex flex-col justify-start items-center">
                     <div className="absolute sm:w-48 md:w-52 lg:w-60 flex items-start justify-between">

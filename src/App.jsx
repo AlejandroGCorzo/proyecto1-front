@@ -5,11 +5,12 @@ import Footer from "./components/Footer.jsx/Footer";
 import UserDropdown from "./components/Header/UserDropdown";
 import PanelHome from "./components/PanelAdmin/PanelHome";
 import PrivateRoutes from "./utils/PrivateRoutes";
+import Profile from "./components/Session/Profile";
 import ProductDetail from "./components/ProductDetail";
 import { useEffect } from "react";
 import FilterProducts from "./components/Home/FilterProducts";
 import { useDispatch } from "react-redux";
-import { getProductAction } from "./redux/productActions";
+import { getProductsAction } from "./redux/productActions";
 import {
   getCategoriesAction,
   getSubCategoriesAction,
@@ -28,7 +29,7 @@ function App() {
   const dispatch = useDispatch();
   useEffect(() => {
     const getProducts = () => {
-      dispatch(getProductAction());
+      dispatch(getProductsAction());
       dispatch(getCategoriesAction());
       dispatch(getSubCategoriesAction());
     };
@@ -42,10 +43,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/:filter" element={<FilterProducts />} />
-        <Route path="/detail/:id" element={<ProductDetail />} />
         <Route path="/login" element={<UserDropdown />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
         <Route element={<PrivateRoutes />}>
           <Route path="/admin/*" element={<PanelHome />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
       <Footer />
