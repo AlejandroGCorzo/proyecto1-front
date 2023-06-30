@@ -16,7 +16,7 @@ const Filters = () => {
     (state) => state.products
   );
 
-  let productBrands = [...new Set(productsFilter?.map((item) => item.marca))];
+  let productBrands = [...new Set(products?.map((item) => item.marca))];
   let productColors = [
     ...new Set(
       products?.map((item) => item.colores.map((color) => color)).flat(Infinity)
@@ -83,7 +83,6 @@ const Filters = () => {
   const handleName = (e) => {
     const { name, value } = e.target;
     if (name === "removeNombre") {
-      console.log("entre remove nombre");
       setFiltersState((prev) => ({ ...prev, nombre: [] }));
       if (viewportSize.width > 1024) {
         dispatch(

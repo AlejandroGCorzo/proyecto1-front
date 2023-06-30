@@ -111,7 +111,6 @@ export const postProductAction = (values, token) => {
 
 //accion de creacion de producto
 export const patchProductAction = (values, token, id) => {
-  console.log(values, "action");
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
@@ -137,8 +136,6 @@ export const patchProductAction = (values, token, id) => {
 
 //accion para eliminar imagenes de productos
 export const deleteImgProductsAction = (value, update = true) => {
-  console.log(value);
-  console.log("entre delete");
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
@@ -149,9 +146,7 @@ export const deleteImgProductsAction = (value, update = true) => {
         },
         data: value,
       });
-      console.log(res.data);
       if (update) {
-        console.log("entre");
         dispatch(updateProduct(res.data.productById));
       }
       dispatch(setLoading(false));

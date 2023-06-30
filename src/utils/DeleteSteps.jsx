@@ -49,10 +49,12 @@ export const ConfirmationComponent = ({
           >
             {itemToDelete.nombre !== "imagen"
               ? `¿Estás seguro que desea eliminar ${itemToDelete?.nombre} de ${section}?`
-              : `¿Estás seguro que desea eliminar la imagen ${
+              : ` ${
                   section === "formProductos"
-                    ? "del producto"
-                    : "de la categoría"
+                    ? "¿Está seguro que desea eliminar la imagen del producto"
+                    : section === "formCategoria"
+                    ? "¿Está seguro que desea eliminar la imagen de la categoría"
+                    : "Esta acción eliminara la imagen actual ¿Está seguro que desea continuar"
                 }?`}
           </h1>
           <div className="w-full flex justify-between">
@@ -181,7 +183,6 @@ export const DeleteComponent = ({
         ];
 
         if (isInMoreThanOneCat.length === 1) {
-          console.log(itemToDelete);
           await dispatch(
             deleteImgSubcategoriesAction({
               id: isInMoreThanOneCat[0].imagen[0],
@@ -228,6 +229,13 @@ export const DeleteComponent = ({
             idCategory: itemToDelete.idCategory,
           })
         );
+      } else if (section === "inputCategoria") {
+        dispatch(
+          deleteImgCategoriesAction({
+            id: itemToDelete.id,
+            idCategory: itemToDelete.idCategory,
+          })
+        );
       }
       setItemToDelete({ nombre: "", id: "" });
     }
@@ -244,7 +252,7 @@ export const DeleteComponent = ({
         >
           {itemToDelete.nombre !== "imagen"
             ? `Eliminar ${itemToDelete?.nombre} de ${section}:`
-            : `Eliminar ${itemToDelete?.nombre} del producto:`}
+            : `Eliminar ${itemToDelete?.nombre}:`}
         </h1>
         <small
           className="h-auto text-lg text-fontDark w-full flex self-start mb-1 "

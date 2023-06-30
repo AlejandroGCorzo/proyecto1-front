@@ -7,15 +7,18 @@ import {
   clearFiltersAction,
   orderProductsAction,
 } from "../../redux/productActions";
+import Loading from "../../utils/Loading";
 
 const FilterProducts = () => {
   const distpatch = useDispatch();
-  const { productsFilter } = useSelector((state) => state.products);
+  const { productsFilter, loading } = useSelector((state) => state.products);
   const { subcategorias } = useSelector((state) => state.categories);
   let productBrands = [...new Set(productsFilter?.map((item) => item.marca))];
   let brandImg = subcategorias.filter((item) =>
     productBrands.includes(item.nombre)
   );
+  let fechaActual = new Date();
+  let mounth = String(fechaActual.getMonth() + 1).padStart(2, "0");
 
   const [maxSlice, setMaxSlice] = useState(5);
 
@@ -30,10 +33,10 @@ const FilterProducts = () => {
 
   const handleSlice = (e) => {
     if (
-      maxSlice === productsFilter.length ||
-      maxSlice + 5 > productsFilter.length
+      maxSlice === productsFilter?.length ||
+      maxSlice + 5 > productsFilter?.length
     ) {
-      setMaxSlice(productsFilter.length);
+      setMaxSlice(productsFilter?.length);
     } else {
       setMaxSlice(maxSlice + 5);
     }
@@ -48,20 +51,20 @@ const FilterProducts = () => {
     <section className="w-full h-auto flex flex-col justify-center items-center max-h-max mt-[40%] sm:mt-[21%] md:max-lg:mt-[15.5%] lg:mt-[15%] 2xl:mt-[9.5%]">
       <div
         className={`flex flex-row justify-center  gap-2 w-full ${
-          productsFilter.length === 0
+          productsFilter?.length === 0
             ? "h-auto sm:min-h-[550px] lg:h-[380px] items-center"
             : "h-auto items-start"
         }`}
       >
         <aside className="w-72 pt-7 pl-2 hidden lg:block">
-          {productsFilter.length > 0 && <Filters />}
+          {productsFilter?.length > 0 && <Filters />}
         </aside>
         <aside className="flex flex-col justify-center items-center w-full md:max-w-5xl lg:max-w-7xl">
           <div className=" flex flex-row-reverse lg:flex-row justify-between items-center pt-4 pb-2 px-1 2xl:py-4 lg:px-4 text-lg gap-2 lg:gap-0 w-[95%]">
             <p className="hidden lg:block">
               {productsFilter?.length} Productos
             </p>
-            {productsFilter.length > 0 && (
+            {productsFilter?.length > 0 && (
               <div className="drawer drawer-end lg:hidden grid w-1/2">
                 <input
                   id="my-drawer-4"
@@ -88,39 +91,39 @@ const FilterProducts = () => {
                 </div>
               </div>
             )}
-            {productsFilter.length > 0 && (
+            {productsFilter?.length > 0 && (
               <details className="dropdown w-1/2 lg:w-auto focus-within:outline-none">
                 <summary className="select py-0 flex lg:justify-center items-center lg:max-w-max w-full bg-white text-base text-gray-600 font-normal whitespace-nowrap focus:outline-none">
                   Ordenar por
                 </summary>
-                <ul className="text-lg shadow p-4 dropdown-content z-[1] rounded-box w-full bg-white flex flex-col gap-2 text-fontDark">
-                  {/* <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
-                  <button
-                    onClick={handleOrder}
-                    className=" hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
-                    value={"relevancia"}
-                  >
-                    Relevancia
-                  </button>
-                </li>
-                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
-                  <button
-                    onClick={handleOrder}
-                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
-                    value={"nuevo"}
-                  >
-                    Más reciente
-                  </button>
-                </li>
-                <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
-                  <button
-                    onClick={handleOrder}
-                    className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
-                    value={"descuento"}
-                  >
-                    Descuento
-                  </button>
-                </li> */}
+                <ul className="text-lg shadow p-4 dropdown-content z-[1] rounded-box bg-white flex flex-col gap-2 text-fontDark w-max">
+                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                    <button
+                      onClick={handleOrder}
+                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      value={"relevancia"}
+                    >
+                      Relevancia
+                    </button>
+                  </li>
+                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                    <button
+                      onClick={handleOrder}
+                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      value={"nuevo"}
+                    >
+                      Más reciente
+                    </button>
+                  </li>
+                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                    <button
+                      onClick={handleOrder}
+                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      value={"descuento"}
+                    >
+                      Descuento
+                    </button>
+                  </li>
                   <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
                     <button
                       onClick={handleOrder}
@@ -165,16 +168,36 @@ const FilterProducts = () => {
             {productsFilter?.length > 0 ? (
               productsFilter?.slice(0, maxSlice).map((item, index) => (
                 <Link to={`/detail/${item._id}`} key={item._id}>
-                  <div className="sm:max-w-[300px] border border-nav/20 rounded px-3 py-5 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header  bg-white ">
-                    <div className="mb-1">
-                      <span className=" absolute text-white bg-header p-1 ">
-                        NUEVO
-                      </span>
+                  <div className="h-96 sm:max-w-[300px] w-72 border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
+                    <div className="mb-1 flex flex-col justify-start items-center">
+                      <div className="absolute sm:w-48 md:w-52 lg:w-56 flex items-start justify-between">
+                        {item.descuento > 0 && (
+                          <span className="text-white bg-header py-1 px-2">
+                            - {item.descuento}%
+                          </span>
+                        )}
+
+                        {item.talle.length > 0 &&
+                        item.talle
+                          .map((item) => item.cantidad)
+                          .reduce((elem, acc) => (acc += elem)) === 1 ? (
+                          <span className="text-fontDark px-2 bg-grid">
+                            ÚLTIMA UNIDAD
+                          </span>
+                        ) : (
+                          item.productoDate.split("-")[1] === mounth && (
+                            <span className="text-white bg-header p-1">
+                              NUEVO
+                            </span>
+                          )
+                        )}
+                      </div>
+
                       {item.imagenes.length && (
                         <img
                           src={item.imagenes[0]}
                           alt={item.modelo}
-                          className="h-full aspect-auto object-contain"
+                          className="h-auto max-h-52 w-52 aspect-auto object-contain"
                         />
                       )}
                     </div>
@@ -208,6 +231,10 @@ const FilterProducts = () => {
                   </div>
                 </Link>
               ))
+            ) : loading ? (
+              <div className="h-96 flex justify-center items-center">
+                <Loading />
+              </div>
             ) : (
               <>
                 <div className="flex flex-1 flex-col md:flex-row justify-evenly items-center p-6">
@@ -243,7 +270,7 @@ const FilterProducts = () => {
               </>
             )}
           </div>
-          {productsFilter.length > 0 && maxSlice < productsFilter.length && (
+          {productsFilter?.length > 0 && maxSlice < productsFilter?.length && (
             <div className="w-full flex justify-center items-center p-10">
               <button
                 className="px-6 py-2 border border-orange text-orange uppercase font-medium"

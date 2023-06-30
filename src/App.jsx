@@ -8,6 +8,12 @@ import PrivateRoutes from "./utils/PrivateRoutes";
 import ProductDetail from "./components/ProductDetail";
 import { useEffect } from "react";
 import FilterProducts from "./components/Home/FilterProducts";
+import { useDispatch } from "react-redux";
+import { getProductAction } from "./redux/productActions";
+import {
+  getCategoriesAction,
+  getSubCategoriesAction,
+} from "./redux/categoriesActions";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -19,6 +25,16 @@ export function ScrollToTop() {
 }
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const getProducts = () => {
+      dispatch(getProductAction());
+      dispatch(getCategoriesAction());
+      dispatch(getSubCategoriesAction());
+    };
+    getProducts();
+  }, []);
+
   return (
     <div className="flex flex-col w-full m-auto bg-grey">
       <Header />

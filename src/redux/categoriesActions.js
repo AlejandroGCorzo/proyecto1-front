@@ -204,7 +204,6 @@ export const getSubCategoriesAction = () => {
 
 //accion de creacion de subcategorias
 export const postSubCategoryAction = (values, token) => {
-  console.log(values, "action");
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
@@ -240,10 +239,8 @@ export const deleteImgCategoriesAction = (value, update = true) => {
         },
         data: value,
       });
-      console.log(res, "antes de if");
       if (update) {
-        console.log(res, "update");
-        /* dispatch(updateCategory(res.data)); */
+        dispatch(updateCategory(res.data.catOrSub));
       }
 
       dispatch(setLoading(false));
@@ -259,7 +256,6 @@ export const deleteImgCategoriesAction = (value, update = true) => {
 };
 //accion para eliminar imagenes de subcategorias
 export const deleteImgSubcategoriesAction = (value) => {
-  console.log(value);
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
@@ -270,9 +266,6 @@ export const deleteImgSubcategoriesAction = (value) => {
         },
         data: value,
       });
-      console.log(res, "sub");
-      /*     dispatch(updateProduct(res.data)); */
-      /* dispatch(setSuccessProduct("Producto actualizado con exito.")); */
       dispatch(setLoading(false));
     } catch (error) {
       dispatch(setLoading(false));

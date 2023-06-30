@@ -30,6 +30,7 @@ const productSlice = createSlice({
     setProduct: (state, action) => {
       state.products = action.payload;
       state.productsSearch = action.payload;
+      state.productsFilter = action.payload;
     },
     setFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
@@ -51,6 +52,44 @@ const productSlice = createSlice({
       if (action.payload === "Z-A") {
         orderedProducts = orderedProducts.sort((a, b) =>
           b.modelo.localeCompare(a.modelo)
+        );
+      }
+      if (action.payload === "relevancia") {
+        let relevantes = orderedProducts.filter(
+          (prod) =>
+            prod.destacado === true ||
+            prod.descuento > 0 ||
+            (prod.talle.length > 0 &&
+              prod.talle
+                .map((item) => item.cantidad)
+                .reduce((elem, acc) => (acc += elem)) === 1)
+        );
+        let noRelevantes = orderedProducts.filter(
+          (prod) =>
+            prod.destacado === false &&
+            prod.descuento === 0 &&
+            prod.talle.length > 0 &&
+            prod.talle
+              .map((item) => item.cantidad)
+              .reduce((elem, acc) => (acc += elem)) > 1
+        );
+
+        orderedProducts = [...relevantes, ...noRelevantes];
+      }
+      if (action.payload === "descuento") {
+        let productsWithDiscount = orderedProducts.filter(
+          (prod) => prod.descuento > 0
+        );
+        let productsWithoutDiscount = orderedProducts.filter(
+          (prod) => prod.descuento === 0
+        );
+        orderedProducts = [...productsWithDiscount, ...productsWithoutDiscount];
+      }
+      if (action.payload === "nuevo") {
+        orderedProducts = orderedProducts.sort(
+          (a, b) =>
+            a.productoDate.split("-")[2].slice(0, 2) -
+            b.productoDate.split("-")[2].slice(0, 2)
         );
       }
 
