@@ -187,6 +187,21 @@ export const deleteProductAction = (id, token) => {
   };
 };
 
+export const fetchAllProducts = () => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+
+    const response = await axios.get(`${url}/productos`);
+    const featuredProducts = response.data;
+
+    dispatch(setFeaturedProducts(featuredProducts));
+    dispatch(setLoading(false));
+  } catch (error) {
+    dispatch(setError(true));
+    dispatch(setLoading(false));
+  }
+};
+
 export const fetchProductById = (productId) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
