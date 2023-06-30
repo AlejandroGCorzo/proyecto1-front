@@ -226,6 +226,9 @@ const productSlice = createSlice({
     setDetail: (state, action) => {
       state.detail = action.payload;
     },
+    clearDetail: (state, action) => {
+      state.detail = null;
+    },
   },
 });
 
@@ -236,6 +239,7 @@ export const {
   deleteProduct,
   setProduct,
   setDetail,
+  clearDetail,
   setFeaturedProducts,
   setSearchProducts,
   setFilters,

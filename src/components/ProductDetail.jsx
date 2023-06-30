@@ -1,15 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById, getProductsAction } from "../redux/productActions";
 import { useParams } from "react-router-dom";
 import Modal from "./Modal";
 import { useSwipeable } from "react-swipeable";
 import ProductosDestacados from "./ProductosDestacados";
+import { clearDetail } from "../redux/productSlice";
+import { addToCartAction } from "../redux/shoppingCartActions";
+import { Link } from "react-router-dom";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const modalRef = useRef(null);
   const detailProduct = useSelector((state) => state.products.detail);
+  const { items } = useSelector((state) => state.cart);
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [isCambioOpen, setIsCambioOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
@@ -17,9 +24,12 @@ const ProductDetail = () => {
   const [isEnvioOpen, setIsEnvioOpen] = useState(false);
   const [isTalleOpen, setIsTalleOpen] = useState(false);
   useEffect(() => {
-    dispatch(getProductsAction());
     dispatch(fetchProductById(id));
-  }, [dispatch, id]);
+
+    return () => {
+      dispatch(clearDetail());
+    };
+  }, []);
   const brandLogos = {
     puma: "/puma.webp",
     nike: "/nike.png",
@@ -33,8 +43,52 @@ const ProductDetail = () => {
   const logoPath = brandLogos[brand] ? `${brandLogos[brand]}` : null;
 
   const [selectedImage, setSelectedImage] = useState(
-    detailProduct && detailProduct?.imagenes ? detailProduct?.imagenes[0] : null
+    detailProduct && detailProduct?.imagenes.length
+      ? detailProduct?.imagenes[0]
+      : null
   );
+
+  //////////////////////////////Carrito/////////////////////////////
+  const toggleModal = () => {
+    modalRef.current.classList.toggle("modal-open");
+    document.activeElement.blur();
+  };
+
+  const handleAddToCart = async () => {
+    if (selectedSize.length) {
+      let itemToAdd = items.filter(
+        (el) => el.product._id === id && el.size === selectedSize
+      );
+      if (
+        itemToAdd.length &&
+        itemToAdd[0].quantity ===
+          Number(
+            detailProduct.talle.find((elem) => elem.talle === selectedSize)
+              .cantidad
+          )
+      ) {
+        setError(true);
+        toggleModal();
+      } else {
+        if (error) {
+          setError(false);
+        }
+        setSuccess(true);
+        await dispatch(
+          addToCartAction({
+            quantity: 1,
+            size: selectedSize,
+            product: detailProduct,
+          })
+        );
+        toggleModal();
+      }
+    } else {
+      setSuccess(false);
+      toggleModal();
+    }
+  };
+  /////////////////////////////Carrito/////////////////////////////
 
   const handleToggleTooltip = () => {
     setIsTooltipOpen(!isTooltipOpen);
@@ -101,7 +155,77 @@ const ProductDetail = () => {
   };
 
   return detailProduct ? (
-    <div className="flex flex-col xsm:flex xsm:w-full xsm:mt-36 sm:flex-row sm:mr-20 w-screen mt-10 lg:mt-1 xl:mt-1 lg:w-full xl:w-full">
+    <div className="flex flex-col xsm:flex xsm:w-full sm:flex-row sm:mr-20 w-screen lg:w-full xl:w-full mt-[38%] sm:mt-[20.8%] md:max-lg:mt-[15.5%] lg:mt-[9.5%]">
+      <dialog ref={modalRef} className="modal bg-grey/40">
+        <div className="modal-box bg-grey">
+          <button
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+            onClick={toggleModal}
+          >
+            ✕
+          </button>
+
+          {error && (
+            <div className="alert alert-warning w-[97%]">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span>
+                Ha agregado todos los productos en stock del Talle seleccionado.
+              </span>
+            </div>
+          )}
+          {selectedSize?.length === 0 && !success && (
+            <div className="alert alert-warning w-[97%]">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span>Debe seleccionar un Talle.</span>
+            </div>
+          )}
+          {items.length &&
+            !error &&
+            items.filter((el) => el.product._id === id).length && (
+              <div className="flex flex-col w-[97%] justify-between items-center p-6 gap-8">
+                <h2 className="uppercase text-lg w-full text-header text-center font-medium">
+                  El producto fue agregado al carrito
+                </h2>
+                <Link
+                  to={"/"}
+                  className="btn underline text-white bg-orange hover:bg-orange/80 border-none focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
+                >
+                  ir al carrito
+                </Link>
+                <button
+                  onClick={toggleModal}
+                  className="btn hover:opacity-80 text-white focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
+                >
+                  seguir comprando
+                </button>
+              </div>
+            )}
+        </div>
+      </dialog>
       <div className=" w-full xsm:hidden sm:hidden md:hidden md:w-1/5 lg:block lg:w-1/4 xl:block xl:w-1/4"></div>
       <div className="flex flex-col w-1/2 h-full xsm:w-full">
         <div className="flex flex-row h-full md:h-1/2">
@@ -601,7 +725,10 @@ const ProductDetail = () => {
               ))}
             </div>
           </div>
-          <button className="bg-black text-white py-2 px-0 mt-8 rounded-md w-1/2 hover:bg-orange hover:text-white text-sm transition-colors duration-300">
+          <button
+            className="bg-black text-white py-2 px-0 mt-8 rounded-md w-1/2 hover:bg-orange hover:text-white text-sm transition-colors duration-300"
+            onClick={handleAddToCart}
+          >
             AGREGAR AL CARRITO
           </button>
 
