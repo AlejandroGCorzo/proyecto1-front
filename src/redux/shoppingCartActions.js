@@ -1,6 +1,8 @@
 const url = import.meta.env.VITE_REACT_APP_API;
 import axios from "axios";
+
 import {
+  setLoading,
   addItem,
   removeItem,
   updateQuantity,
@@ -19,7 +21,9 @@ export const updateCartAction = (values) => {
 };
 export const removeFromCartAction = (values) => {
   return function (dispatch) {
+    dispatch(setLoading(true));
     dispatch(removeItem(values));
+    setTimeout(() => dispatch(setLoading(false)), 500);
   };
 };
 export const clearCartAction = () => {

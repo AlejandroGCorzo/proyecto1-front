@@ -15,7 +15,7 @@ const ProductDetail = () => {
   const dispatch = useDispatch();
   const modalRef = useRef(null);
   const detailProduct = useSelector((state) => state.products.detail);
-  const { items } = useSelector((state) => state.cart);
+  const { productos } = useSelector((state) => state.cart);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
@@ -25,12 +25,13 @@ const ProductDetail = () => {
   const [isEnvioOpen, setIsEnvioOpen] = useState(false);
   const [isTalleOpen, setIsTalleOpen] = useState(false);
   useEffect(() => {
+    dispatch(getProductsAction());
     dispatch(fetchProductById(id));
 
     return () => {
       dispatch(clearDetail());
     };
-  }, []);
+  }, [dispatch, id]);
   const brandLogos = {
     puma: "/puma.webp",
     nike: "/nike.png",
@@ -50,6 +51,7 @@ const ProductDetail = () => {
   );
 
   //////////////////////////////Carrito/////////////////////////////
+
   const toggleModal = () => {
     modalRef.current.classList.toggle("modal-open");
     document.activeElement.blur();
@@ -57,8 +59,8 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
     if (selectedSize.length) {
-      let itemToAdd = items.filter(
-        (el) => el.product._id === id && el.size === selectedSize
+      let itemToAdd = productos.filter(
+        (el) => el.product === id && el.size === selectedSize
       );
       if (
         itemToAdd.length &&
@@ -74,14 +76,16 @@ const ProductDetail = () => {
         if (error) {
           setError(false);
         }
-        setSuccess(true);
         await dispatch(
           addToCartAction({
+            id: id + selectedSize,
             quantity: 1,
             size: selectedSize,
-            product: detailProduct,
+            productData: detailProduct,
+            product: id,
           })
         );
+        setSuccess(true);
         toggleModal();
       }
     } else {
@@ -206,15 +210,15 @@ const ProductDetail = () => {
                 <span>Debe seleccionar un Talle.</span>
               </div>
             )}
-            {items.length &&
+            {productos.length &&
               !error &&
-              items.filter((el) => el.product._id === id).length && (
+              productos.filter((el) => el.product === id).length && (
                 <div className="flex flex-col w-[97%] justify-between items-center p-6 gap-8">
                   <h2 className="uppercase text-lg w-full text-header text-center font-medium">
                     El producto fue agregado al carrito
                   </h2>
                   <Link
-                    to={"/"}
+                    to={"/checkout"}
                     className="btn underline text-white bg-orange hover:bg-orange/80 border-none focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
                   >
                     ir al carrito

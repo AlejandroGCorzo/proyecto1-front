@@ -11,6 +11,7 @@ import {
   deleteImgProductsAction,
   deleteProductAction,
 } from "../redux/productActions";
+import { removeFromCartAction } from "../redux/shoppingCartActions";
 
 export const ConfirmationComponent = ({
   onDelete,
@@ -21,11 +22,22 @@ export const ConfirmationComponent = ({
   setItemToDelete,
   section,
 }) => {
-  const handleConfirm = (e) => {
+  const dispatch = useDispatch();
+  const handleConfirm = async (e) => {
     e.preventDefault();
     const { value } = e.target;
     if (value === "true") {
-      setConfirmed(true);
+      if (section === "carrito de compras") {
+        await dispatch(
+          removeFromCartAction({
+            id: itemToDelete.id,
+          })
+        );
+
+        toggleModal();
+      } else {
+        setConfirmed(true);
+      }
     } else {
       setConfirmed(false);
       toggleModal();
@@ -40,6 +52,7 @@ export const ConfirmationComponent = ({
           itemToDelete={itemToDelete}
           setItemToDelete={setItemToDelete}
           section={section}
+          toggleModal={toggleModal}
         />
       ) : (
         <div className="flex flex-col items-center justify-center w-2/3">
@@ -254,12 +267,26 @@ export const DeleteComponent = ({
             ? `Eliminar ${itemToDelete?.nombre} de ${section}:`
             : `Eliminar ${itemToDelete?.nombre}:`}
         </h1>
-        <small
-          className="h-auto text-lg text-fontDark w-full flex self-start mb-1 "
-          style={{ userSelect: "none" }}
-        >
-          {`Para confirmar, ingrese ${itemToDelete?.nombre} en el campo de texto`}
-        </small>
+        <div className="w-full flex flex-row flex-wrap justify-start sm:flex-nowrap">
+          <small
+            className="h-full text-lg text-fontDark w-max flex self-start mb-1 whitespace-nowrap px-1"
+            style={{ userSelect: "none" }}
+          >
+            Para confirmar, ingrese
+          </small>
+          <small
+            className="h-full text-lg text-fontDark w-max flex self-start mb-1 px-1 sm:px-0"
+            style={{ userSelect: "none" }}
+          >
+            <strong>{itemToDelete?.nombre}</strong>
+          </small>
+          <small
+            className="h-full text-lg text-fontDark w-max flex self-start mb-1 whitespace-nowrap px-1"
+            style={{ userSelect: "none" }}
+          >
+            en el campo de texto
+          </small>
+        </div>
         <input
           type="text"
           className="border rounded px-4 py-2 bg-fontDark text-white w-full  border-nav focus:border-nav

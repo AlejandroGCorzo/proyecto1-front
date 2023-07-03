@@ -223,7 +223,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="category"
-                      id=""
                       value={item}
                       onChange={handleFilters}
                       checked={filtersState.category.includes(item)}
@@ -241,7 +240,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="color"
-                      id=""
                       value={color}
                       onChange={handleFilters}
                       checked={filters.color.includes(color)}
@@ -261,7 +259,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="disciplina"
-                      id=""
                       value={dis}
                       onChange={handleFilters}
                       checked={filters.disciplina.includes(dis)}
@@ -279,7 +276,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="genero"
-                      id=""
                       value={gen}
                       onChange={handleFilters}
                       checked={filters.genero.includes(gen)}
@@ -297,7 +293,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="marca"
-                      id=""
                       value={mar}
                       onChange={handleFilters}
                       checked={filters.marca.includes(mar)}
@@ -315,7 +310,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="talle"
-                      id=""
                       value={tall}
                       onChange={handleFilters}
                       checked={filters.talle.includes(tall)}
@@ -348,7 +342,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="category"
-                      id=""
                       value={category}
                       onChange={handleFilters}
                       checked={filtersState.category.includes(category)}
@@ -376,7 +369,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="color"
-                      id=""
                       value={color}
                       onChange={handleFilters}
                       checked={filtersState.color.includes(color)}
@@ -407,7 +399,6 @@ const Filters = () => {
                       type="checkbox"
                       name="disciplina"
                       value={disciplina}
-                      id=""
                       onChange={handleFilters}
                       checked={filtersState.disciplina.includes(disciplina)}
                     />
@@ -437,7 +428,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="genero"
-                      id=""
                       value={genero}
                       onChange={handleFilters}
                       checked={filtersState.genero.includes(genero)}
@@ -465,7 +455,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="marca"
-                      id=""
                       value={brand}
                       onChange={handleFilters}
                       checked={filtersState.marca.includes(brand)}
@@ -495,7 +484,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="talle"
-                      id=""
                       onChange={handleFilters}
                       value={size}
                       checked={filtersState.talle.includes(size)}

@@ -15,6 +15,7 @@ import {
   getCategoriesAction,
   getSubCategoriesAction,
 } from "./redux/categoriesActions";
+import ShoppingCartPage from "./components/Home/ShoppingCartPage";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -45,6 +46,7 @@ function App() {
         <Route path="/:filter" element={<FilterProducts />} />
         <Route path="/login" element={<UserDropdown />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/checkout" element={<ShoppingCartPage />} />
         <Route element={<PrivateRoutes />}>
           <Route path="/admin/*" element={<PanelHome />} />
           <Route path="/profile" element={<Profile />} />

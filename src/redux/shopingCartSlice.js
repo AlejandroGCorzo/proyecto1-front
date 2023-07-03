@@ -1,97 +1,130 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+let getStorage = JSON.parse(localStorage.getItem("cart"));
+
 const initialState = {
-  items: [], // Array de productos en el carrito
-  totalItems: 0, // Total de productos en el carrito
-  totalPrice: 0, // Valor total de la compra
+  loading: false,
+  productos:
+    getStorage?.productos && getStorage.productos?.length > 0
+      ? getStorage.productos
+      : [], // Array de productos en el carrito
+  totalSinDescuento:
+    getStorage?.totalSinDescuento && getStorage?.totalSinDescuento > 0
+      ? getStorage?.totalSinDescuento
+      : 0, // Valor total de la compra
+  totalConDescuento:
+    getStorage?.totalConDescuento && getStorage.totalConDescuento > 0
+      ? getStorage.totalConDescuento
+      : 0,
+  tipoDePago:
+    getStorage?.tipoDePago && getStorage.tipoDePago.length
+      ? getStorage.tipoDePago
+      : "MERCADOPAGO",
+  envio: getStorage?.envio && getStorage.envio > 0 ? getStorage.envio : true,
+  isFacturaA:
+    getStorage?.isFacturaA && getStorage.isFacturaA > 0
+      ? getStorage.isFacturaA
+      : false,
 };
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
     addItem: (state, action) => {
-      const newItem = action.payload;
-      const existingItem = state.items.find(
-        (item) =>
-          item.product._id === newItem.product._id && item.size === newItem.size
-      );
+      let newItem = action.payload;
+      let existingItem;
+
+      if (newItem.id?.length) {
+        existingItem = state.productos.find((item) => item.id === newItem.id);
+      }
 
       if (existingItem) {
         // Si el producto ya existe en el carrito, incrementa su cantidad
         existingItem.quantity += newItem.quantity;
       } else {
         // Si el producto no existe, agrégalo al carrito
-        state.items.push(newItem);
+        state.productos.push(newItem);
       }
 
-      // Actualiza el total de productos y el valor total de la compra
-      state.totalItems += newItem.quantity;
-      state.totalPrice += newItem.product.precio * newItem.quantity;
+      // Actualiza el valor total de la compra
+      state.totalSinDescuento += newItem.productData.precio * newItem.quantity;
 
       localStorage.setItem(
         "cart",
         JSON.stringify({
-          items: state.items,
-          totalPrice: state.totalPrice,
-          totalItems: state.totalItems,
+          productos: state.productos,
+          totalSinDescuento: state.totalSinDescuento,
+          totalConDescuento: 0,
+          tipoDePago: "MERCADOPAGO",
+          envio: true,
+          isFacturaA: false,
         })
       );
     },
     removeItem: (state, action) => {
       const itemId = action.payload.id;
-      const itemSize = action.payload.size;
-      const itemToRemove = state.items.find(
-        (item) => item.size === itemSize && item.product._id === itemId
-      );
+      const itemToRemove = state.productos.find((item) => item.id === itemId);
 
-      if (itemToRemove?.product) {
-        // Reduce la cantidad del producto y actualiza el total de productos y el valor total de la compra
-        state.totalItems -= itemToRemove.quantity;
-        state.totalPrice -= itemToRemove.product.precio * itemToRemove.quantity;
+      if (itemToRemove?.productData) {
+        // Reduce el valor total de la compra
+        state.totalSinDescuento -=
+          itemToRemove.productData.precio * itemToRemove.quantity;
 
-        state.items = state.items.filter(
-          (item) => item.size !== itemToRemove.size
+        state.productos = state.productos.filter(
+          (item) => item.id !== itemToRemove.id
         );
 
         localStorage.setItem(
           "cart",
           JSON.stringify({
-            items: state.items,
-            totalPrice: state.totalPrice,
-            totalItems: state.totalItems,
+            productos: state.productos,
+            totalSinDescuento: state.totalSinDescuento,
+            totalConDescuento: 0,
+            tipoDePago: "MERCADOPAGO",
+            envio: true,
+            isFacturaA: false,
           })
         );
       }
     },
     updateQuantity: (state, action) => {
       const { itemId, quantity } = action.payload;
-      const itemToUpdate = state.items.find(
-        (item) => item.product._id === itemId
-      );
+      const itemToUpdate = state.productos.find((item) => item.id === itemId);
 
-      /* if (itemToUpdate?.product) {
+      if (itemToUpdate?.productData) {
         // Actualiza la cantidad del producto y recalcula el valor total de la compra
-        state.totalItems = state.totalItems - itemToUpdate.quantity + quantity;
-        state.totalPrice =
-          state.totalPrice -
-          itemToUpdate.product.precio * itemToUpdate.quantity +
-          itemToUpdate.product.precio * quantity;
+        state.totalSinDescuento =
+          state.totalSinDescuento -
+          itemToUpdate.productData.precio * itemToUpdate.quantity +
+          itemToUpdate.productData.precio * quantity;
 
         itemToUpdate.quantity = quantity;
 
-
-      } */
+        localStorage.setItem(
+          "cart",
+          JSON.stringify({
+            productos: state.productos,
+            totalSinDescuento: state.totalSinDescuento,
+            totalConDescuento: 0,
+            tipoDePago: "MERCADOPAGO",
+            envio: true,
+            isFacturaA: false,
+          })
+        );
+      }
     },
     clearCart: (state) => {
-      state.items = [];
-      state.totalItems = 0;
-      state.totalPrice = 0;
+      state.productos = [];
+      state.totalSinDescuento = 0;
     },
   },
 });
 
-export const { addItem, removeItem, updateQuantity, clearCart } =
+export const { setLoading, addItem, removeItem, updateQuantity, clearCart } =
   cartSlice.actions;
 
 export default cartSlice.reducer;

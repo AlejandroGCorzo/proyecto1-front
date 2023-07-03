@@ -3,7 +3,7 @@ import { IoIosSearch } from "react-icons/io";
 import { FiShoppingCart } from "react-icons/fi";
 import { TbMapPinFilled } from "react-icons/tb";
 import { FaRegUser } from "react-icons/fa";
-import ShoppingCart from "./ShoppingCart";
+import ShoppingCartPreview from "./ShoppingCartPreview";
 import SearchBar from "./SearchMobile";
 import Dropdown from "./Dropdown";
 import UserDropdown from "./UserDropdown";
@@ -27,7 +27,7 @@ const Header = () => {
   const { products, loading, errorSearch } = useSelector(
     (state) => state.products
   );
-  const { items } = useSelector((state) => state.cart);
+  const { productos } = useSelector((state) => state.cart);
   const [navbar, setNavbar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -72,7 +72,10 @@ const Header = () => {
   return (
     <>
       {isOpen && (
-        <ShoppingCart isOpen={isOpen} toggleShoppingCart={toggleShoppingCart} />
+        <ShoppingCartPreview
+          isOpen={isOpen}
+          toggleShoppingCart={toggleShoppingCart}
+        />
       )}
       {isSearchOpen && (
         <SearchBar
@@ -116,9 +119,9 @@ const Header = () => {
               Sucursales
             </button>
             <div className="lg:hidden indicator">
-              {items.length > 0 && (
+              {productos.length > 0 && (
                 <span className="indicator-item badge badge-warning -left-1">
-                  {items.length}
+                  {productos.length}
                 </span>
               )}
               <button
@@ -222,9 +225,9 @@ const Header = () => {
               </div>
               <div className=" lg:flex hidden flex-row-reverse justify-between items-center ">
                 <div className="indicator">
-                  {items.length > 0 && (
+                  {productos.length > 0 && (
                     <span className="indicator-item badge badge-warning -left-1">
-                      {items.length}
+                      {productos.length}
                     </span>
                   )}
                   <button onClick={toggleShoppingCart}>

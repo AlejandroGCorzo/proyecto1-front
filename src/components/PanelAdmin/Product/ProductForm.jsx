@@ -1000,7 +1000,6 @@ const ProductForm = () => {
                 className="checkbox checkbox-warning checkbox-sm rounded"
                 type="checkbox"
                 name="destacado"
-                id=""
                 onChange={handleChangeForm}
                 checked={
                   productToUpdate?._id?.length
@@ -1015,7 +1014,6 @@ const ProductForm = () => {
                 className="checkbox checkbox-warning checkbox-sm rounded"
                 type="checkbox"
                 name="isActive"
-                id=""
                 onChange={handleChangeForm}
                 checked={
                   productToUpdate?._id?.length
