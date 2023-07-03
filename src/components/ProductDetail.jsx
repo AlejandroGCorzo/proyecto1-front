@@ -102,10 +102,10 @@ const ProductDetail = () => {
   };
  
   return detailProduct ? (
-    <><div className="flex flex-col  mt-[38%] sm:mt-[20.8%] md:mt-[16%] md:max-lg:mt-[15.5%] lg:mt-[12.5%] xsm:flex xsm:w-full xsm:mt-36 sm:flex-row sm:mr-20 w-screen xl:mt-[8.5%] lg:w-full xl:w-full">
+    <><div className="flex flex-col bg-white  mt-[38%] sm:mt-[20.8%] md:mt-[16%] md:max-lg:mt-[15.5%] lg:mt-[12.5%] xsm:flex xsm:w-full xsm:mt-36 sm:flex-row sm:mr-20 w-screen xl:mt-[8.5%] lg:w-full xl:w-full">
       <div className=" w-full xsm:hidden sm:hidden md:hidden md:w-1/5 lg:block lg:w-1/4 xl:block xl:w-1/4"></div>
       <div className="flex flex-col w-1/2 h-full xsm:w-full">
-        <div className="flex flex-row h-full md:h-1/2">
+        <div className="flex flex-row h-full mt-12 xsm:mt-2 sm:mt-6 md:mt-6 lg:mt-8 xl:mt-24 md:h-1/2 ">
           <div className="h-1/3 w-1/5 flex md:h-1/3 md:w-1/5 lg:h-1/3 lg:w-1/5 xsm:mt-2  ">
             {/* Aquí se oculta en dispositivos xsm y sm */}
             {detailProduct && detailProduct?.imagenes && (
@@ -116,7 +116,7 @@ const ProductDetail = () => {
                 {detailProduct?.imagenes.map((imageName, index) => (
                   <img
                     key={index}
-                    className={`w-full mt-0 ${selectedImage === imageName
+                    className={`w-full mt-0 px-1 py-1 ${selectedImage === imageName
                         ? "border border-black"
                         : "border border-white"} cursor-pointer`}
                     src={imageName}
@@ -132,7 +132,7 @@ const ProductDetail = () => {
               src={selectedImage ||
                 (detailProduct?.imagenes && detailProduct?.imagenes[0])}
               alt={detailProduct?.modelo}
-              className="w-1/2 items-end xsm:w-full " />
+              className="w-1/2 items-end xsm:w-full px-5 py-5 " />
 
             {/* Navegación */}
             <div className="lg:hidden flex justify-between mt-2">
@@ -196,7 +196,7 @@ const ProductDetail = () => {
                       <th className="bg-gray-100 text-left px-4 py-2">
                         Color:
                       </th>
-                      <td className="bg-gray-100 text-left px-4 py-2">
+                      <td className="bg-gray-50 text-left px-4 py-2">
                         {detailProduct?.colores
                           .map((color) => color)
                           .join("," + " ")}
@@ -214,7 +214,7 @@ const ProductDetail = () => {
                       <th className="bg-gray-100 text-left px-4 py-2">
                         Disciplina:
                       </th>
-                      <td className="bg-gray-100 text-left px-4 py-2">
+                      <td className="bg-gray-50 text-left px-4 py-2">
                         {detailProduct?.disciplina}
                       </td>
                     </tr>
@@ -233,8 +233,8 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
-      <div className=" flex flex-col w-1/4 mr-36 my-1 xsm:w-full lg:w-1/2 md:mr-10">
-        <aside className="flex-1 w-full py-1 px-1 my-1 mx-1 lg:p-1">
+      <div className=" flex flex-col w-1/4 mr-36 my-1 xsm:w-full lg:w-1/2 md:mr-10 md:mt-10 lg:mt-14 xl:mt-0">
+        <aside className="flex-1 w-full py-1 px-1 my-1 mx-1 lg:p-1 lg:mt-16">
           <h1 className="font-bold tracking-tight text-gray-400 text-1xl mt-0 xsm:mt.0">
             {detailProduct?.marca}
           </h1>
@@ -790,7 +790,7 @@ const ProductDetail = () => {
           </div>
         </aside>
       </div>
-    </div><div className="flex justify-center w-full h-auto">
+    </div><div className="flex justify-center w-full h-auto bg-white">
         <div className="w-3/4 h-auto">
           <div>
             <ProductosDestacados productType={detailProduct?.tipo} />
