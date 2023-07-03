@@ -109,7 +109,7 @@ const CardsSlider = ({ data, mounth }) => {
                           ÚLTIMA UNIDAD
                         </span>
                       ) : (
-                        item.productoDate.split("-")[1] === mounth && (
+                        item.productoDate && item.productoDate.split("-")[1] === mounth && (
                           <span className="text-white bg-header p-1">
                             NUEVO
                           </span>
