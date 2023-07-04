@@ -51,7 +51,7 @@ const cartSlice = createSlice({
       }
 
       // Actualiza el valor total de la compra
-      state.totalSinDescuento += newItem.productData.precio * newItem.quantity;
+      state.totalSinDescuento += newItem.precio * newItem.quantity;
 
       localStorage.setItem(
         "cart",
@@ -69,10 +69,9 @@ const cartSlice = createSlice({
       const itemId = action.payload.id;
       const itemToRemove = state.productos.find((item) => item.id === itemId);
 
-      if (itemToRemove?.productData) {
+      if (itemToRemove) {
         // Reduce el valor total de la compra
-        state.totalSinDescuento -=
-          itemToRemove.productData.precio * itemToRemove.quantity;
+        state.totalSinDescuento -= itemToRemove.precio * itemToRemove.quantity;
 
         state.productos = state.productos.filter(
           (item) => item.id !== itemToRemove.id
@@ -95,12 +94,12 @@ const cartSlice = createSlice({
       const { itemId, quantity } = action.payload;
       const itemToUpdate = state.productos.find((item) => item.id === itemId);
 
-      if (itemToUpdate?.productData) {
+      if (itemToUpdate) {
         // Actualiza la cantidad del producto y recalcula el valor total de la compra
         state.totalSinDescuento =
           state.totalSinDescuento -
-          itemToUpdate.productData.precio * itemToUpdate.quantity +
-          itemToUpdate.productData.precio * quantity;
+          itemToUpdate.precio * itemToUpdate.quantity +
+          itemToUpdate.precio * quantity;
 
         itemToUpdate.quantity = quantity;
 
@@ -117,9 +116,8 @@ const cartSlice = createSlice({
         );
       }
     },
-    clearCart: (state) => {
-      state.productos = [];
-      state.totalSinDescuento = 0;
+    clearCart: (state, action) => {
+      state = initialState;
     },
   },
 });
