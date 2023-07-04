@@ -984,15 +984,13 @@ const ProductDetail = () => {
           </aside>
         </div>
       </div>
-      <div className="flex justify-center w-full h-auto bg-white">
-        <div className="w-3/4 h-auto">
-          <div>
-            <ProductosDestacados productType={detailProduct?.tipo} />
-          </div>
-          <div>
-            <OtrosProductosInteres currentProductType={detailProduct?.tipo} />
-          </div>
-        </div>
+      <div className="flex justify-center w-full h-auto bg-white flex-col">
+        <>
+          <ProductosDestacados productType={detailProduct?.tipo} />
+        </>
+        <>
+          <OtrosProductosInteres currentProductType={detailProduct?.tipo} />
+        </>
       </div>
     </>
   ) : (
