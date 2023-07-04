@@ -6,22 +6,25 @@ import {
   setSuccessProduct,
   setLoading,
   setProduct,
+  setFeaturedProducts,
   deleteProduct,
   setFilters,
   filterProducts,
   setSearchProducts,
   orderProducts,
   setEmptyFilters,
+  setDetail,
 } from "./productSlice";
 const url = import.meta.env.VITE_REACT_APP_API;
 
 //accion de creacion de producto
-export const getProductAction = () => {
+export const getProductsAction = () => {
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
       const res = await axios.get(`${url}/productos`);
       dispatch(setProduct(res.data));
+      dispatch(setFeaturedProducts(res.data));
       dispatch(setLoading(false));
     } catch (error) {
       dispatch(setLoading(false));
@@ -182,4 +185,22 @@ export const deleteProductAction = (id, token) => {
       }
     }
   };
+};
+
+export const fetchProductById = (productId) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+
+    const response = await axios.get(`${url}/productos/${productId}`);
+    const product = response.data;
+    dispatch(setDetail(product));
+    dispatch(setLoading(false));
+  } catch (error) {
+    dispatch(setLoading(false));
+    if (error.response) {
+      dispatch(setErrorProduct(error.response.data?.message));
+    } else {
+      dispatch(setErrorProduct(error.message));
+    }
+  }
 };

@@ -2,6 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   products: null,
+  detail: null,
+  featuredProducts: [],
   productsSearch: null,
   productsFilter: null,
   filters: {
@@ -218,6 +220,15 @@ const productSlice = createSlice({
     setSuccessProduct: (state, action) => {
       state.success = action.payload;
     },
+    setFeaturedProducts: (state, action) => {
+      state.featuredProducts = action.payload;
+    },
+    setDetail: (state, action) => {
+      state.detail = action.payload;
+    },
+    clearDetail: (state, action) => {
+      state.detail = null;
+    },
   },
 });
 
@@ -227,6 +238,9 @@ export const {
   updateProduct,
   deleteProduct,
   setProduct,
+  setDetail,
+  clearDetail,
+  setFeaturedProducts,
   setSearchProducts,
   setFilters,
   filterProducts,

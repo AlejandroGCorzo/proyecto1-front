@@ -3,7 +3,7 @@ import { IoIosSearch } from "react-icons/io";
 import { FiShoppingCart } from "react-icons/fi";
 import { TbMapPinFilled } from "react-icons/tb";
 import { FaRegUser } from "react-icons/fa";
-import ShoppingCart from "./ShoppingCart";
+import ShoppingCartPreview from "./ShoppingCartPreview";
 import SearchBar from "./SearchMobile";
 import Dropdown from "./Dropdown";
 import UserDropdown from "./UserDropdown";
@@ -27,6 +27,7 @@ const Header = () => {
   const { products, loading, errorSearch } = useSelector(
     (state) => state.products
   );
+  const { productos } = useSelector((state) => state.cart);
   const [navbar, setNavbar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -71,7 +72,10 @@ const Header = () => {
   return (
     <>
       {isOpen && (
-        <ShoppingCart isOpen={isOpen} toggleShoppingCart={toggleShoppingCart} />
+        <ShoppingCartPreview
+          isOpen={isOpen}
+          toggleShoppingCart={toggleShoppingCart}
+        />
       )}
       {isSearchOpen && (
         <SearchBar
@@ -114,12 +118,19 @@ const Header = () => {
               <TbMapPinFilled className="pr-2 text-grid text-xl" />
               Sucursales
             </button>
-            <button
-              className=" lg:hidden flex pr-6"
-              onClick={toggleShoppingCart}
-            >
-              <FiShoppingCart color="white" fontSize={26} />
-            </button>
+            <div className="lg:hidden indicator">
+              {productos.length > 0 && (
+                <span className="indicator-item badge badge-warning -left-1">
+                  {productos.length}
+                </span>
+              )}
+              <button
+                className=" lg:hidden flex pr-6"
+                onClick={toggleShoppingCart}
+              >
+                <FiShoppingCart color="white" fontSize={26} />
+              </button>
+            </div>
           </div>
         </section>
         <nav className="h-full w-full  bg-header flex flex-col items-center justify-center">
@@ -213,9 +224,17 @@ const Header = () => {
                 )}
               </div>
               <div className=" lg:flex hidden flex-row-reverse justify-between items-center ">
-                <button className="pr-6 " onClick={toggleShoppingCart}>
-                  <FiShoppingCart color="white" fontSize={22} />
-                </button>
+                <div className="indicator">
+                  {productos.length > 0 && (
+                    <span className="indicator-item badge badge-warning -left-1">
+                      {productos.length}
+                    </span>
+                  )}
+                  <button onClick={toggleShoppingCart}>
+                    <FiShoppingCart color="white" fontSize={22} />
+                  </button>
+                </div>
+
                 <UserDropdown />
               </div>
             </div>
