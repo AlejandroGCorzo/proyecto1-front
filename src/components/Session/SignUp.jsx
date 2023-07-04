@@ -241,7 +241,7 @@ const SignUp = ({
               value="sendCode"
               type="submit"
               className="w-full border border-header bg-header 
-            text-white hover:bg-white hover:text-nav transition-all ease-in-out duration-300 h-10 rounded disabled:bg-header/80 disabled:text-fontLigth"
+            text-white hover:bg-white hover:text-nav transition-all ease-in-out duration-300 h-10 rounded disabled:bg-header/80 disabled:text-fontGrey"
               disabled={isDisabled}
             >
               Enviar

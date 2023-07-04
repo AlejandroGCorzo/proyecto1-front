@@ -230,7 +230,7 @@ const CategoriesForm = () => {
               <AiOutlineArrowLeft className="pr-1" fontSize={20} /> Volver
             </Link>
             <button
-              className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out self-center justify-end"
+              className="btn mt-1 2xl:mt-0 text-white hover:bg-white hover:text-header transition-all ease-in-out self-center justify-end"
               onClick={clearForm}
             >
               Limpiar formulario
@@ -238,13 +238,13 @@ const CategoriesForm = () => {
           </div>
           {error.length > 0 && <ServerError error={error} />}
           {success.length > 0 && <ServerSuccess success={success} />}
-          <h2 className="pt-2 h-10 font-semibold text-fontDark underline text-xl md:text-2xl flex self-center sm:w-2/3">
+          <h2 className="pt-2 h-10 font-semibold text-header underline text-xl md:text-2xl flex self-center sm:w-2/3">
             {categoryToUpdate?._id?.length
               ? "Editar categoría:"
               : "Crear categoría:"}
           </h2>
           <form
-            className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start "
+            className="form-control w-2/3 gap-4 p-4 text-header text-lg flex flex-col justify-between items-start "
             onSubmit={handleSubmitForm}
           >
             <div className="flex flex-col w-40 sm:w-full">
@@ -253,7 +253,7 @@ const CategoriesForm = () => {
               </label>
               <input
                 type="text"
-                className="input bg-fontGrey"
+                className="input bg-white"
                 name="nombre"
                 value={params?.id?.length ? formUpdate.nombre : form.nombre}
                 onChange={handleChangeForm}
@@ -283,7 +283,7 @@ const CategoriesForm = () => {
               <input
                 ref={fileInputRef}
                 type="file"
-                className="file-input-xs sm:file-input bg-fontGrey w-full text-white"
+                className="file-input-xs sm:file-input bg-white w-full text-white"
                 name="imagenFile"
                 onChange={handleChangeForm}
                 onFocus={validateOnBlur}
@@ -313,7 +313,7 @@ const CategoriesForm = () => {
                       className="w-full h-full object-contain rounded-md  "
                     />
                     <button
-                      className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-fontDark text-xl relative flex px-2 transition-all"
+                      className="border rounded-full hover:bg-nav hover:text-grey bg-white text-header text-xl relative flex px-2 transition-all"
                       type="button"
                       onClick={() => handleImageRemove(index)}
                     >
@@ -334,7 +334,7 @@ const CategoriesForm = () => {
                       className="w-full h-full object-contain rounded-md  "
                     />
                     <button
-                      className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-fontDark text-xl relative flex px-2 transition-all"
+                      className="border rounded-full hover:bg-nav hover:text-grey bg-white text-header text-xl relative flex px-2 transition-all"
                       type="button"
                       onClick={() => {
                         setItemToDelete({
@@ -353,7 +353,7 @@ const CategoriesForm = () => {
             </div>
             <button
               type="submit"
-              className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+              className="btn mt-1 2xl:mt-0 text-white hover:bg-white hover:text-header transition-all ease-in-out disabled:bg-header/80 disabled:text-fontGrey"
               disabled={
                 params?.id?.length ? isFormUpdateDisabled : isFormDisabled
               }
@@ -362,10 +362,10 @@ const CategoriesForm = () => {
             </button>
           </form>
           {!params?.id?.length && <SubCategoriesForm />}
-          <dialog ref={modalRef} className="modal bg-grey/40">
-            <div className="modal-box bg-grey">
+          <dialog ref={modalRef} className="modal bg-white/40">
+            <div className="modal-box bg-white">
               <button
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-header text-xl"
                 onClick={toggleModal}
               >
                 ✕

@@ -35,7 +35,7 @@ const Home = () => {
 
   return (
     <div className=" w-full flex flex-col justify-center items-center gap-6 ">
-      <div className="w-full max-h-max mt-[38%] sm:mt-[20.8%] md:max-lg:mt-[15.5%] lg:mt-[9.5%]">
+      <div className="w-full max-h-max mt-[15%] md:mt-[12%] lg:mt-[10%] xl:mt-[8%]">
         <Slide />
       </div>
       {loading ? (
@@ -45,7 +45,7 @@ const Home = () => {
           <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col">
             <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
               <p className="text-lg md:text-2xl py-1">LANZAMIENTOS</p>
-              <button className="border border-orange py-1 px-3 rounded-full text-sm md:text-base text-orange hover:text-white hover:bg-orange transition-all ease-in-out">
+              <button className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out">
                 ver todo
               </button>
             </div>
@@ -54,7 +54,7 @@ const Home = () => {
           <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col">
             <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
               <p className="text-lg md:text-2xl py-1">RECOMENDADOS</p>
-              <button className="border border-orange py-1 px-3 rounded-full text-sm md:text-base text-orange hover:text-white hover:bg-orange transition-all ease-in-out">
+              <button className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out">
                 ver todo
               </button>
             </div>
@@ -155,7 +155,7 @@ const Home = () => {
           <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col">
             <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between  text-nav font-semibold">
               <p className="text-lg md:text-2xl py-1">DESTACADOS</p>
-              <button className="border border-orange py-1 px-3 rounded-full text-sm md:text-base text-orange hover:text-white hover:bg-orange transition-all ease-in-out">
+              <button className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out">
                 ver todo
               </button>
             </div>

@@ -46,7 +46,7 @@ const FooterOptions = () => {
                 }}
               >
                 <div className="collapse-title text-lg border-t border-t-white rounded-none">
-                  grid
+                  Reyes del Oeste
                 </div>
                 <div className="collapse-content rounded-none flex flex-col justify-start items-start bg-grey text-nav text-base px-0 pb-0">
                   <a

@@ -7,7 +7,7 @@ const SearchBarAdmin = ({ searchValue, setSearchValue, error = null }) => {
       <input
         type="text"
         placeholder="Search"
-        className="input input-bordered w-full md:w-auto mb-1"
+        className="input input-bordered w-full md:w-auto mb-1 focus-visible:outline-none"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
         autoFocus

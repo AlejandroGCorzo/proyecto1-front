@@ -3,7 +3,7 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     screens: {
-      xsm: "300px",
+      xsm: "280px",
       sm: "640px",
       md: "780px",
       lg: "1026px",
@@ -12,16 +12,11 @@ export default {
     },
     extend: {
       colors: {
-        header: "#1c1c1c",
+        header: "#0d0d0d",
         nav: "#3e3e3e",
-        mark: "#23b9d6",
-        grid: "#fbc827",
-        dash: "#5c5cff",
-        orange: "#ed6800",
+        yellow: "#f2cb57",
         grey: "#f5f5f5",
-        fontGrey: "#e4e4e4",
-        fontDark: "#424e5b",
-        fontLigth: "#979899",
+        fontGrey: "#f2f2f2",
       },
     },
   },

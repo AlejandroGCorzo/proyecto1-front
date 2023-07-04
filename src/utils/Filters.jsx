@@ -180,7 +180,7 @@ const Filters = () => {
         </span>
         {filters?.nombre?.length > 0 && viewportSize.width > 1024 && (
           <div className="flex flex-row justify-between items-center pb-6 px-6 gap-4">
-            <p className="font-medium text-fontDark ">
+            <p className="font-medium text-header ">
               {params.filter.toUpperCase()}
             </p>
             <button
@@ -197,11 +197,11 @@ const Filters = () => {
             <div className="collapse-title text-sm font-medium uppercase text-nav border-y lg:border-t rounded">
               Filtros aplicados
             </div>
-            <div className=" w-full text-fontDark px-4 py-0 max-h-80 contentScroll flex items-start sm:py-0 border-b">
+            <div className=" w-full text-header px-4 py-0 max-h-80 contentScroll flex items-start sm:py-0 border-b">
               {filtersState?.nombre?.length > 0 &&
                 viewportSize.width <= 1024 && (
                   <div className="flex flex-row justify-between items-center py-2 px-2 w-full">
-                    <p className="font-medium text-fontDark ">
+                    <p className="font-medium text-header ">
                       {params.filter.toUpperCase()}
                     </p>
                     <button
@@ -223,7 +223,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="category"
-                      id=""
                       value={item}
                       onChange={handleFilters}
                       checked={filtersState.category.includes(item)}
@@ -241,7 +240,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="color"
-                      id=""
                       value={color}
                       onChange={handleFilters}
                       checked={filters.color.includes(color)}
@@ -261,7 +259,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="disciplina"
-                      id=""
                       value={dis}
                       onChange={handleFilters}
                       checked={filters.disciplina.includes(dis)}
@@ -279,7 +276,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="genero"
-                      id=""
                       value={gen}
                       onChange={handleFilters}
                       checked={filters.genero.includes(gen)}
@@ -297,7 +293,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="marca"
-                      id=""
                       value={mar}
                       onChange={handleFilters}
                       checked={filters.marca.includes(mar)}
@@ -315,7 +310,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="talle"
-                      id=""
                       value={tall}
                       onChange={handleFilters}
                       checked={filters.talle.includes(tall)}
@@ -333,7 +327,7 @@ const Filters = () => {
           <div className="collapse-title text-sm font-medium uppercase text-nav  rounded">
             Categoría
           </div>
-          <div className="collapse-content border-t text-fontDark p-0 max-h-80 sm:p-0">
+          <div className="collapse-content border-t text-header p-0 max-h-80 sm:p-0">
             {productCategory?.length > 0 &&
               productCategory.map((category) => (
                 <div
@@ -348,7 +342,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="category"
-                      id=""
                       value={category}
                       onChange={handleFilters}
                       checked={filtersState.category.includes(category)}
@@ -364,7 +357,7 @@ const Filters = () => {
           <div className="collapse-title text-sm font-medium uppercase text-nav  rounded">
             Color
           </div>
-          <div className="collapse-content border-t text-fontDark p-0 max-h-80 contentScroll sm:p-0">
+          <div className="collapse-content border-t text-header p-0 max-h-80 contentScroll sm:p-0">
             {productColors?.length > 0 &&
               productColors.map((color) => (
                 <div
@@ -376,7 +369,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="color"
-                      id=""
                       value={color}
                       onChange={handleFilters}
                       checked={filtersState.color.includes(color)}
@@ -394,7 +386,7 @@ const Filters = () => {
           <div className="collapse-title text-sm font-medium uppercase text-nav  rounded">
             Disciplina
           </div>
-          <div className="collapse-content border-t text-fontDark p-0 max-h-80 contentScroll sm:p-0">
+          <div className="collapse-content border-t text-header p-0 max-h-80 contentScroll sm:p-0">
             {productDisciplines?.length > 0 &&
               productDisciplines.map((disciplina) => (
                 <div
@@ -407,7 +399,6 @@ const Filters = () => {
                       type="checkbox"
                       name="disciplina"
                       value={disciplina}
-                      id=""
                       onChange={handleFilters}
                       checked={filtersState.disciplina.includes(disciplina)}
                     />
@@ -425,7 +416,7 @@ const Filters = () => {
           <div className="collapse-title text-sm font-medium uppercase text-nav  rounded">
             Género
           </div>
-          <div className="collapse-content border-t text-fontDark p-0 max-h-80 contentScroll sm:p-0">
+          <div className="collapse-content border-t text-header p-0 max-h-80 contentScroll sm:p-0">
             {productGenders?.length > 0 &&
               productGenders.map((genero) => (
                 <div
@@ -437,7 +428,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="genero"
-                      id=""
                       value={genero}
                       onChange={handleFilters}
                       checked={filtersState.genero.includes(genero)}
@@ -453,7 +443,7 @@ const Filters = () => {
           <div className="collapse-title text-sm font-medium uppercase text-nav  rounded">
             Marca
           </div>
-          <div className="collapse-content border-t text-fontDark p-0 max-h-80 contentScroll sm:p-0">
+          <div className="collapse-content border-t text-header p-0 max-h-80 contentScroll sm:p-0">
             {productBrands?.length > 0 &&
               productBrands.map((brand) => (
                 <div
@@ -465,7 +455,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="marca"
-                      id=""
                       value={brand}
                       onChange={handleFilters}
                       checked={filtersState.marca.includes(brand)}
@@ -483,7 +472,7 @@ const Filters = () => {
           <div className="collapse-title text-sm font-medium uppercase text-nav  rounded">
             Talle
           </div>
-          <div className="collapse-content border-t text-fontDark p-0 max-h-80 contentScroll sm:p-0">
+          <div className="collapse-content border-t text-header p-0 max-h-80 contentScroll sm:p-0">
             {productSizes?.length > 0 &&
               productSizes.map((size) => (
                 <div
@@ -495,7 +484,6 @@ const Filters = () => {
                       className="checkbox checkbox-warning checkbox-sm rounded"
                       type="checkbox"
                       name="talle"
-                      id=""
                       onChange={handleFilters}
                       value={size}
                       checked={filtersState.talle.includes(size)}
@@ -511,8 +499,8 @@ const Filters = () => {
           <div className="collapse-title text-sm font-medium uppercase text-nav  rounded">
             Gama de precios
           </div>
-          <div className="collapse-content border-t text-fontDark max-h-80 px-2">
-            <div className="text-fontDark flex flex-col items-center justify-center p-6 lg:w-full lg:px-0 lg:pt-6 lg:pb-2">
+          <div className="collapse-content border-t text-header max-h-80 px-2">
+            <div className="text-header flex flex-col items-center justify-center p-6 lg:w-full lg:px-0 lg:pt-6 lg:pb-2">
               <input
                 type="range"
                 min={minPrice}
@@ -532,7 +520,7 @@ const Filters = () => {
       </div>
       <div className="lg:hidden flex flex-row justify-between items-end w-full h-max p-4 bg-white  ">
         <button
-          className="btn w-[40%] bg-white text-lg text-fontDark"
+          className="btn w-[40%] bg-white text-lg text-header"
           onClick={clearFilters}
         >
           Limpiar

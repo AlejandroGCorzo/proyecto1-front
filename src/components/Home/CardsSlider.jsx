@@ -91,10 +91,13 @@ const CardsSlider = ({ data, mounth }) => {
         <Slider {...settings}>
           {data?.length &&
             data.map((item, index) => (
-              <Link to={`/detail/${item._id}`} key={item._id}>
-                <div className="h-96 sm:max-w-[280px] border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
+              <div
+                key={item._id}
+                className="h-96 sm:max-w-[280px border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white"
+              >
+                <Link to={`/product/${item._id}`}>
                   <div className="mb-1 flex flex-col justify-start items-center">
-                    <div className="absolute sm:w-48 md:w-52 lg:w-60 flex items-start justify-between">
+                    <div className="absolute w-64 sm:w-48 md:w-60 xl:w-48 2xl:w-56 flex items-center justify-between">
                       {item.descuento > 0 && (
                         <span className="text-white bg-header py-1 px-2">
                           - {item.descuento}%
@@ -105,10 +108,11 @@ const CardsSlider = ({ data, mounth }) => {
                       item.talle
                         .map((item) => item.cantidad)
                         .reduce((elem, acc) => (acc += elem)) === 1 ? (
-                        <span className="text-fontDark px-2 bg-grid">
+                        <span className="text-header px-2 bg-yellow">
                           ÚLTIMA UNIDAD
                         </span>
                       ) : (
+                        item.productoDate &&
                         item.productoDate.split("-")[1] === mounth && (
                           <span className="text-white bg-header p-1">
                             NUEVO
@@ -139,7 +143,7 @@ const CardsSlider = ({ data, mounth }) => {
                           </div>
                         )
                     )}
-                  <p className="text-gray-400 py-2 uppercase font-medium h-16">
+                  <p className="text-gray-400 py-2 uppercase font-medium h-20 w-full ">
                     {item.modelo}
                   </p>
                   <p className="text-xl">
@@ -149,11 +153,11 @@ const CardsSlider = ({ data, mounth }) => {
                     <strong>3</strong> cuotas de{" "}
                     <strong>${(item.precio / 3).toFixed(2)}</strong>
                   </p>
-                  <p className="font-medium text-orange text-sm">
+                  <p className="font-medium text-yellow text-sm">
                     ENVÍO GRATIS
                   </p>
-                </div>
-              </Link>
+                </Link>
+              </div>
             ))}
         </Slider>
       </div>

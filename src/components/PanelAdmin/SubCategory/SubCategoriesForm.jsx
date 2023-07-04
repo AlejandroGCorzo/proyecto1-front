@@ -168,7 +168,7 @@ const SubCategoriesForm = () => {
           text-xl text-blue-400 ml-4 mt-4"
       >
         <button
-          className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out self-center justify-end"
+          className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-header transition-all ease-in-out self-center justify-end"
           onClick={clearForm}
         >
           Limpiar formulario
@@ -176,11 +176,11 @@ const SubCategoriesForm = () => {
       </div>
       {errorSub.length > 0 && <ServerError error={errorSub} />}
       {successSub.length > 0 && <ServerSuccess success={successSub} />}
-      <h2 className="pt-2 h-10 font-semibold text-fontDark underline text-xl md:text-2xl flex self-center sm:w-2/3">
+      <h2 className="pt-2 h-10 font-semibold text-header underline text-xl md:text-2xl flex self-center sm:w-2/3">
         Crear Subcategoría:{" "}
       </h2>
       <form
-        className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start "
+        className="form-control w-2/3 gap-4 p-4 text-header text-lg flex flex-col justify-between items-start "
         onSubmit={handleSubmitForm}
       >
         <div className="flex flex-col w-40 sm:w-full ">
@@ -192,7 +192,7 @@ const SubCategoriesForm = () => {
             automáticamente a la categoría elegida.
           </small>
           <select
-            className="select select-bordered bg-fontGrey"
+            className="select select-bordered bg-white"
             name="categoria"
             ref={selectInputRef}
             onChange={handleChangeForm}
@@ -227,7 +227,7 @@ const SubCategoriesForm = () => {
           </label>
           <input
             type="text"
-            className="input bg-fontGrey"
+            className="input bg-white text-header"
             name="nombre"
             value={form.nombre}
             onChange={handleChangeForm}
@@ -257,7 +257,7 @@ const SubCategoriesForm = () => {
           <input
             ref={fileInputRef}
             type="file"
-            className="file-input-xs sm:file-input bg-fontGrey w-full text-white"
+            className="file-input-xs sm:file-input bg-white w-full text-header"
             name="imagenFile"
             onChange={handleChangeForm}
             onFocus={validateOnBlur}
@@ -287,7 +287,7 @@ const SubCategoriesForm = () => {
                   className="w-full h-full object-contain rounded-md  "
                 />
                 <button
-                  className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-fontDark text-xl relative flex px-2 transition-all"
+                  className="border rounded-full hover:bg-nav hover:text-grey bg-white text-header text-xl relative flex px-2 transition-all"
                   type="button"
                   onClick={() => handleImageRemove(index)}
                 >
@@ -298,7 +298,7 @@ const SubCategoriesForm = () => {
         </div>
         <button
           type="submit"
-          className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+          className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-header transition-all ease-in-out disabled:bg-header/80 disabled:text-fontGrey"
           disabled={isFormDisabled}
         >
           Añadir

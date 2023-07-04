@@ -6,36 +6,36 @@ const Footer = () => {
   return (
     <div className="w-full h-auto mt-10 lg:mt-18 text-fontGrey text-sm items-end justify-end flex bg-grey relative bottom-0">
       <div className="h-auto lg:h-[420px] w-full flex flex-col justify-end items-center">
-        <div className="w-full h-auto lg:h-36 bg-grid flex flex-row justify-center items-center py-2">
+        <div className="w-full h-auto lg:h-36 bg-header flex flex-row justify-center items-center py-2">
           <div className="h-full w-3/4 flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
-            <div className="uppercase font-semibold text-nav text-lg w-full lg:w-1/3 flex justify-center">
+            <div className="uppercase font-semibold text-fontGrey text-lg w-full lg:w-auto flex justify-center">
               <p>suscribite al newsletter</p>
             </div>
-            <form className="w-full md:w-2/3 lg:w-1/3 flex justify-center">
+            <form className="w-full sm:w-2/3 lg:w-1/3 flex justify-center">
               <input
                 type="email"
                 name="email"
                 id="newsletter"
-                placeholder="Ingresá tu E-mail"
-                className="w-3/4 md:w-2/3 h-10 rounded-tl rounded-bl p-4 bg-grey text-nav border-none focus:border-none
+                placeholder="Ingresá tu e-mail"
+                className="w-3/4 lg:w-2/3 h-10 rounded-tl rounded-bl p-4 bg-grey text-nav border-none focus:border-none
                 focus:outline-none
                 appearance-none"
               />
               <button
                 type="submit"
-                className="bg-header w-1/4 md:w-1/3 rounded-tr rounded-br uppercase font-semibold text-base"
+                className="bg-yellow w-1/4 md:w-1/3 rounded-tr rounded-br uppercase font-semibold text-base text-header"
               >
                 Enviar
               </button>
             </form>
-            <div className="flex flex-row justify-center items-center w-full lg:w-1/4 gap-4">
+            <div className="flex flex-row justify-center items-center w-full lg:w-auto gap-4 ">
               <img
-                src="https://grid0.vtexassets.com/assets/vtex/assets-builder/grid0.theme/1.0.73/Img/Header/grid-small___04d11d3aa7baa9d8d3abf8fa29402b11.svg"
-                alt="GRID icon"
-                className=""
+                src="/coronasinfondo.png"
+                alt="Reyes del Oeste icono"
+                className="w-16 rounded-full"
               />
-              <FaFacebookF className="text-header text-xl" />
-              <GrInstagram className="text-header text-xl" />
+              <FaFacebookF className="text-fontGrey text-xl" />
+              <GrInstagram className="text-fontGrey text-xl" />
             </div>
           </div>
         </div>
