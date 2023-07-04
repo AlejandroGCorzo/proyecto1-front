@@ -161,7 +161,7 @@ const ProductDetail = () => {
 
   return detailProduct ? (
     <>
-      <div className="flex flex-col bg-white  mt-[38%] sm:mt-[20.8%] md:mt-[16%] md:max-lg:mt-[15.5%] lg:mt-[12.5%] xsm:flex xsm:w-full xsm:mt-36 sm:flex-row sm:mr-20 w-screen xl:mt-[8.5%] lg:w-full xl:w-full">
+      <div className="flex flex-col bg-white  mt-[38%] sm:mt-[20.8%] md:mt-[16%] md:max-lg:mt-[15.5%] lg:mt-[12.5%] xsm:flex xsm:w-full xsm:mt-36 sm:flex-row sm:mr-20 w-screen xl:mt-[6%] lg:w-full xl:w-full">
         <dialog ref={modalRef} className="modal bg-grey/40">
           <div className="modal-box bg-grey">
             <button
