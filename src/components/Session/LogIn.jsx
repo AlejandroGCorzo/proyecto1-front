@@ -3,6 +3,16 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useDispatch } from "react-redux";
 import { logInAction } from "../../redux/userActions";
 import { encode } from "js-base64";
+function validateEmail(input) {
+  let errors = {};
+  if (input.email.length && !/\S+@\S+\.\S+/.test(input.email)) {
+    errors.email = "Ingresa un email valido, por ejemplo: nombre@ejemplo.com";
+  }
+  if (!input.email) {
+    errors.email = "Email requerido";
+  }
+  return errors;
+}
 
 const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
   const dispatch = useDispatch();
@@ -10,22 +20,39 @@ const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
     email: "",
     password: "",
   });
+  let [errorEmail, setErrorEmail] = useState({ email: "" });
   let [errorLogIn, setErrorLogIn] = useState({
     upperCase: "",
     lowerCase: "",
     number: "",
     passwordLength: "",
   });
-
+  const validateOnBlur = (e) => {
+    const { name, value } = e.target;
+    if (name === "email" && !inputLogIn.email.length) {
+      setInputLogIn((prev) => ({ ...prev, [name]: value }));
+      let errorObjEmail = validateEmail({
+        [name]: value,
+      });
+      setErrorEmail(errorObjEmail);
+    }
+  };
   const handleInputChangeLogIn = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
+    if (name === "email") {
+      setInputLogIn((prev) => ({ ...prev, [name]: value }));
+      let errorObjEmail = validateEmail({
+        [name]: value,
+      });
+      setErrorEmail(errorObjEmail);
+    }
     setInputLogIn((prev) => ({ ...prev, [name]: value }));
     let errorObj = validatePassword({
       ...inputLogIn,
       [name]: value,
     });
-    setErrorLogIn((prev) => errorObj);
+    setErrorLogIn((prev) => ({ ...prev, ...errorObj }));
   };
   const handleSubmitLogIn = (e) => {
     e.preventDefault();
@@ -36,6 +63,17 @@ const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
       logInAction({ email: encriptedEmail, password: encriptedPassword })
     );
   };
+
+  let isDisabled =
+    !inputLogIn.email.length ||
+    !inputLogIn.password.length ||
+    errorLogIn.lowerCase?.length ||
+    errorLogIn.upperCase?.length ||
+    errorLogIn.number?.length ||
+    errorLogIn.passwordLength?.length ||
+    errorEmail?.email?.length
+      ? true
+      : false;
 
   return (
     <div className="flex flex-col justify-center items-center w-full px-8">
@@ -48,9 +86,15 @@ const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
           placeholder="Ej.: ejemplo@gmail.com"
           className="bg-white border w-full h-10 
           focus:outline-none
-          appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
+          appearance-none py-2 px-5 text-start flex justify-start items-start mb-2"
           onChange={handleInputChangeLogIn}
+          onBlur={validateOnBlur}
         />
+        {errorEmail?.email?.length ? (
+          <small className="h-auto text-red-600 w-full flex self-start mb-2">
+            {errorEmail.email}
+          </small>
+        ) : null}
         <input
           type="password"
           name="password"
@@ -61,22 +105,22 @@ const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
           appearance-none py-2 px-5 text-start flex justify-start items-start"
           onChange={handleInputChangeLogIn}
         />
-        {errorLogIn.upperCase ? (
+        {errorLogIn.upperCase?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorLogIn.upperCase}
           </small>
         ) : null}
-        {errorLogIn.lowerCase ? (
+        {errorLogIn.lowerCase?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorLogIn.lowerCase}
           </small>
         ) : null}
-        {errorLogIn.number ? (
+        {errorLogIn.number?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorLogIn.number}
           </small>
         ) : null}
-        {errorLogIn.passwordLength ? (
+        {errorLogIn.passwordLength?.length ? (
           <small className="h-6 text-red-600 w-full flex self-start mb-1">
             {errorLogIn.passwordLength}
           </small>
@@ -96,7 +140,8 @@ const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
         <button
           type="submit"
           className="w-full border border-header bg-header 
-            text-white hover:bg-white hover:text-nav transition-all ease-in-out duration-300 h-10 rounded"
+            text-white hover:bg-white hover:text-nav transition-all ease-in-out duration-300 h-10 rounded disabled:bg-header/80 disabled:text-fontLigth"
+          disabled={isDisabled}
         >
           Enviar
         </button>

@@ -1,10 +1,22 @@
 import React from "react";
 import { IoIosSearch } from "react-icons/io";
+import SearchItems from "../../utils/SearchItems";
 
-const SearchBar = ({ isSearchOpen, toggleSearchBar }) => {
+const SearchBar = ({
+  isSearchOpen,
+  setIsSearchOpen,
+  toggleSearchBar,
+  searchValue,
+  setSearchValue,
+  showItems,
+  setShowItems,
+  setNavbar,
+  debouncedSearchValue,
+  error,
+}) => {
   return (
     <div
-      className={`fixed inset-0 flex flex-1 z-50 justify-center lg:hidden ${
+      className={`fixed inset-0 flex flex-1 z-[9999] justify-center lg:hidden ${
         isSearchOpen ? "flex" : "hidden"
       }`}
     >
@@ -25,20 +37,47 @@ const SearchBar = ({ isSearchOpen, toggleSearchBar }) => {
             />
           </svg>
         </button>
-        <div className="flex bg-nav w-1/2 pr-2">
+        <div className="flex bg-nav w-2/3 pr-2">
           <input
+            autoComplete="off"
             type="text"
             name="search"
-            id="search"
+            id="searchMobile"
             className="bg-nav text-white w-full p-2 border-nav focus:border-nav
               focus:outline-none
               appearance-none
               "
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
-          <button>
-            <IoIosSearch color="white" fontSize={32} />
-          </button>
+          {!searchValue.length ? (
+            <button>
+              <IoIosSearch color="white" fontSize={32} />
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setSearchValue("");
+                setShowItems(false);
+              }}
+              className="p-1 text-white text-xl"
+            >
+              X
+            </button>
+          )}
         </div>
+        {showItems && (
+          <SearchItems
+            isSearchOpen={isSearchOpen}
+            setIsSearchOpen={setIsSearchOpen}
+            showItems={showItems}
+            setShowItems={setShowItems}
+            error={error}
+            debouncedSearchValue={debouncedSearchValue}
+            setNavbar={setNavbar}
+            setSearchValue={setSearchValue}
+          />
+        )}
       </div>
     </div>
   );
