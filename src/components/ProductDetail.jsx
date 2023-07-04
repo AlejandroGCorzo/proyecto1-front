@@ -753,7 +753,7 @@ const ProductDetail = () => {
                 {detailProduct?.talle.map((size) => (
                   <div
                     key={size.talle}
-                    className={`border border-gray-300 rounded-md xsm:mx-4 sm:mx-4 md:mr-0 lg:p-2 xl:p-3 ${
+                    className={`border border-gray-300 rounded-md xsm:mx-4 sm:mx-4 md:mr-0 p-2 xl:p-3 ${
                       selectedSize === size.talle
                         ? "bg-black text-white"
                         : "bg-white text-black"
