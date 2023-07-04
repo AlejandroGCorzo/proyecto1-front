@@ -629,7 +629,7 @@ function Profile() {
                     className="bg-white border w-full h-10 focus:outline-none appearance-none py-2 px-5 text-start flex justify-start items-start mb-4"
                   />
                   <p>Por favor, introduzca su nueva contraseña</p>
-                  <div className="grid grid-cols-2">
+                  <div className="yellow yellow-cols-2">
                     <input
                       type={showPassword ? "text" : "password"}
                       value={Password}

@@ -5,7 +5,7 @@ const Dropdown = ({ isDropdownOpen, toggleDropdown }) => {
     <div className="relative flex flex-row justify-start items-start w-full bg-nav py-2">
       <div className="w-full  border-t-[0.5px] border-t-gray-500/50 flex flex-row justify-evenly items-center">
         <ul className="py-1 ">
-          <li className="px-4 py-1  transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid text-grid ">
+          <li className="px-4 py-1  transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-yellow text-yellow ">
             Title
           </li>
           <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
@@ -19,7 +19,7 @@ const Dropdown = ({ isDropdownOpen, toggleDropdown }) => {
           </li>
         </ul>
         <ul className="py-1 text-white">
-          <li className="px-4 py-1  transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid text-grid ">
+          <li className="px-4 py-1  transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-yellow text-yellow ">
             Title
           </li>
           <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">
@@ -33,7 +33,7 @@ const Dropdown = ({ isDropdownOpen, toggleDropdown }) => {
           </li>
         </ul>
         <ul className="py-1 text-white">
-          <li className="px-4 py-1 transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid text-grid ">
+          <li className="px-4 py-1 transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-yellow text-yellow ">
             Title
           </li>
           <li className="px-4 py-1 hover:border-b hover:border-b-white text-white">

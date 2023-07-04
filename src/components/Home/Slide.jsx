@@ -82,7 +82,7 @@ const settings = {
 const Slide = () => {
   return (
     <div className="container">
-      <div className="w-[95%]">
+      <div className="w-[95%] h-64 sm:h-80 md:h-auto">
         <Slider {...settings}>
           <img
             src={"/hero1.webp"}

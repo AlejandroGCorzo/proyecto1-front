@@ -57,7 +57,7 @@ export const ConfirmationComponent = ({
       ) : (
         <div className="flex flex-col items-center justify-center w-2/3">
           <h1
-            className="text-xl text-center text-fontDark font-semibold mb-4"
+            className="text-xl text-center text-header font-semibold mb-4"
             style={{ userSelect: "none" }}
           >
             {itemToDelete.nombre !== "imagen"
@@ -260,7 +260,7 @@ export const DeleteComponent = ({
     <div className="flex flex-col items-center justify-center p-4">
       <form onSubmit={handleDelete}>
         <h1
-          className="text-2xl text-fontDark font-semibold mb-4 "
+          className="text-2xl text-header font-semibold mb-4 "
           style={{ userSelect: "none" }}
         >
           {itemToDelete.nombre !== "imagen"
@@ -269,19 +269,19 @@ export const DeleteComponent = ({
         </h1>
         <div className="w-full flex flex-row flex-wrap justify-start sm:flex-nowrap">
           <small
-            className="h-full text-lg text-fontDark w-max flex self-start mb-1 whitespace-nowrap px-1"
+            className="h-full text-lg text-header w-max flex self-start mb-1 whitespace-nowrap px-1"
             style={{ userSelect: "none" }}
           >
             Para confirmar, ingrese
           </small>
           <small
-            className="h-full text-lg text-fontDark w-max flex self-start mb-1 px-1 sm:px-0"
+            className="h-full text-lg text-header w-max flex self-start mb-1 px-1 sm:px-0"
             style={{ userSelect: "none" }}
           >
             <strong>{itemToDelete?.nombre}</strong>
           </small>
           <small
-            className="h-full text-lg text-fontDark w-max flex self-start mb-1 whitespace-nowrap px-1"
+            className="h-full text-lg text-header w-max flex self-start mb-1 whitespace-nowrap px-1"
             style={{ userSelect: "none" }}
           >
             en el campo de texto
@@ -289,7 +289,7 @@ export const DeleteComponent = ({
         </div>
         <input
           type="text"
-          className="border rounded px-4 py-2 bg-fontDark text-white w-full  border-nav focus:border-nav
+          className="border rounded px-4 py-2 bg-header text-white w-full  border-nav focus:border-nav
           focus:outline-none
           appearance-none"
           value={name}

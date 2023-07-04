@@ -564,7 +564,7 @@ const ProductForm = () => {
           <Loading />
         </div>
       ) : (
-        <div className="flex flex-col w-full justify-start items-center mt-4">
+        <div className="flex flex-col w-full justify-start items-center ">
           {error && <ServerError error={error} />}
           {success && <ServerSuccess success={success} />}
           <>
@@ -580,20 +580,20 @@ const ProductForm = () => {
                 <AiOutlineArrowLeft className="pr-1" fontSize={20} /> Volver
               </Link>
               <button
-                className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out self-center justify-end"
+                className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-header transition-all ease-in-out self-center justify-end"
                 onClick={clearForm}
               >
                 Limpiar formulario
               </button>
             </div>
-            <h2 className="pt-2 h-10 font-semibold text-fontDark underline text-2xl flex self-center sm:w-2/3">
+            <h2 className="pt-2 h-10 font-semibold text-header underline text-2xl flex self-center sm:w-2/3">
               {productToUpdate?._id?.length
                 ? "Editar producto:"
                 : "Crear producto:"}
             </h2>
 
             <form
-              className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col lg:flex-row justify-around items-start lg:items-end"
+              className="form-control w-2/3 gap-4 p-4 text-header text-lg flex flex-col lg:flex-row justify-around items-start lg:items-end"
               onSubmit={handleColorSubmit}
             >
               <div className="flex flex-col w-40 sm:w-full">
@@ -603,7 +603,7 @@ const ProductForm = () => {
                 <input
                   autoComplete="off"
                   type="text"
-                  className="input bg-fontGrey w-full"
+                  className="input bg-white w-full"
                   name="color"
                   value={color}
                   onChange={handleColorChange}
@@ -618,7 +618,7 @@ const ProductForm = () => {
               </div>
               <button
                 type="submit"
-                className="btn mt-1 lg:mt-0  text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+                className="btn mt-1 lg:mt-0  text-white hover:bg-grey hover:text-header transition-all ease-in-out disabled:bg-header/80 disabled:text-fontGrey"
                 disabled={isColorDisabled}
               >
                 Añadir
@@ -632,12 +632,12 @@ const ProductForm = () => {
                     className="w-2/3 flex justify-center items-center border rounded p-2"
                     key={index + "talle"}
                   >
-                    <div className="w-full flex items-center justify-around text-lg text-fontDark">
+                    <div className="w-full flex items-center justify-around text-lg text-header">
                       {" "}
                       <span>Color: {item}</span>
                     </div>
                     <button
-                      className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
+                      className="btn btn-circle hover:bg-grey hover:text-header text-xl"
                       onClick={() =>
                         setForm((prev) => ({
                           ...prev,
@@ -657,12 +657,12 @@ const ProductForm = () => {
                     className="w-2/3 flex justify-between items-center border rounded p-2"
                     key={index + "talle"}
                   >
-                    <div className="w-2/3 flex items-center justify-between px-4 text-lg text-fontDark">
+                    <div className="w-2/3 flex items-center justify-between px-4 text-lg text-header">
                       {" "}
                       <span>Color: {item}</span>
                     </div>
                     <button
-                      className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
+                      className="btn btn-circle hover:bg-grey hover:text-header text-xl"
                       onClick={() =>
                         setFormUpdate((prev) => ({
                           ...prev,
@@ -679,7 +679,7 @@ const ProductForm = () => {
             </div>
 
             <form
-              className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg flex flex-col justify-between items-start 2xl:flex-row 2xl:items-end"
+              className="form-control w-2/3 gap-4 p-4 text-header text-lg flex flex-col justify-between items-start 2xl:flex-row 2xl:items-end"
               onSubmit={handleSizeSubmit}
             >
               <div className="flex flex-col w-40 sm:w-full lg:w-1/2">
@@ -689,7 +689,7 @@ const ProductForm = () => {
                 <input
                   autoComplete="off"
                   type="text"
-                  className="input bg-fontGrey"
+                  className="input bg-white"
                   name="talle"
                   value={size.talle}
                   onChange={handleSizeChange}
@@ -718,7 +718,7 @@ const ProductForm = () => {
                 <input
                   autoComplete="off"
                   type="text"
-                  className="input bg-fontGrey"
+                  className="input bg-white"
                   name="cantidad"
                   value={size.cantidad}
                   onChange={handleSizeChange}
@@ -733,7 +733,7 @@ const ProductForm = () => {
               </div>
               <button
                 type="submit"
-                className="btn mt-1 2xl:mb-8 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+                className="btn mt-1 2xl:mb-8 2xl:mt-0 text-white hover:bg-grey hover:text-header transition-all ease-in-out disabled:bg-header/80 disabled:text-fontGrey"
                 disabled={isSizeDisabled}
               >
                 Añadir
@@ -746,14 +746,14 @@ const ProductForm = () => {
                     className="w-2/3 flex justify-center items-center border rounded p-4"
                     key={index + "talle"}
                   >
-                    <div className="w-full flex items-center justify-around text-lg text-fontDark">
+                    <div className="w-full flex items-center justify-around text-lg text-header">
                       {" "}
                       <span>Talle: {item.talle}</span>{" "}
                       <span>Cantidad: {item.cantidad}</span>
                     </div>
                     <button
                       type="button"
-                      className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
+                      className="btn btn-circle hover:bg-grey hover:text-header text-xl"
                       onClick={handleSizeEdition}
                       value={`talle: ${item.talle}, cantidad: ${item.cantidad}`}
                     >
@@ -767,14 +767,14 @@ const ProductForm = () => {
                     className="w-2/3 flex justify-between items-center border rounded p-2"
                     key={index + "talle"}
                   >
-                    <div className="w-2/3 flex items-center justify-between px-4 text-lg text-fontDark">
+                    <div className="w-2/3 flex items-center justify-between px-4 text-lg text-header">
                       {" "}
                       <span>Talle: {item.talle}</span>{" "}
                       <span>Cantidad: {item.cantidad}</span>
                     </div>
                     <button
                       type="button"
-                      className="btn btn-circle hover:bg-grey hover:text-fontDark text-xl"
+                      className="btn btn-circle hover:bg-grey hover:text-header text-xl"
                       onClick={handleSizeEdition}
                       value={`talle: ${item.talle}, cantidad: ${item.cantidad}`}
                     >
@@ -784,16 +784,16 @@ const ProductForm = () => {
                 ))}
             </div>
             <form
-              className="form-control w-2/3 gap-4 p-4 text-fontDark text-lg"
+              className="form-control w-2/3 gap-4 p-4 text-header text-lg"
               onSubmit={handleFormSubmit}
             >
               <div className="flex flex-col w-40 sm:w-full">
-                <label className="label  text-fontDark ">
+                <label className="label  text-header ">
                   <span>Imagen</span>
                 </label>
                 <input
                   type="file"
-                  className="file-input-xs sm:file-input bg-fontGrey w-full text-white"
+                  className="file-input-xs sm:file-input bg-grey w-full text-white"
                   name="image"
                   onChange={handleImageChange}
                   onFocus={validateOnBlur}
@@ -819,7 +819,7 @@ const ProductForm = () => {
                         className="w-full h-full object-contain rounded-md  "
                       />
                       <button
-                        className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-fontDark text-xl relative flex px-2 transition-all"
+                        className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-header text-xl relative flex px-2 transition-all"
                         type="button"
                         onClick={() => handleImageRemove(index)}
                       >
@@ -839,7 +839,7 @@ const ProductForm = () => {
                         className="w-full h-64 object-contain rounded-md  "
                       />
                       <button
-                        className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-fontDark text-xl relative flex px-2 transition-all"
+                        className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-header text-xl relative flex px-2 transition-all"
                         type="button"
                         onClick={() => {
                           setItemToDelete({
@@ -861,7 +861,7 @@ const ProductForm = () => {
               </label>
               <select
                 ref={selectInputRefTipo}
-                className="input bg-fontGrey"
+                className="input bg-white"
                 placeholder="Tipo de producto"
                 name="tipo"
                 onChange={handleChangeForm}
@@ -889,7 +889,7 @@ const ProductForm = () => {
               <input
                 autoComplete="off"
                 type="text"
-                className="input bg-fontGrey"
+                className="input bg-white"
                 placeholder="Modelo"
                 name="modelo"
                 value={
@@ -908,7 +908,7 @@ const ProductForm = () => {
               </label>
               <select
                 ref={selectInputRefMarca}
-                className="input bg-fontGrey"
+                className="input bg-white"
                 placeholder="Marca"
                 name="marca"
                 onChange={handleChangeForm}
@@ -948,7 +948,7 @@ const ProductForm = () => {
               <input
                 type="text"
                 autoComplete="off"
-                className="textarea h-20 bg-fontGrey"
+                className="textarea h-20 bg-grey"
                 name="descripcion"
                 value={
                   productToUpdate?._id?.length
@@ -970,7 +970,7 @@ const ProductForm = () => {
               <input
                 type="text"
                 autoComplete="off"
-                className="input bg-fontGrey"
+                className="input bg-white"
                 name="precio"
                 value={
                   productToUpdate?._id?.length ? formUpdate.precio : form.precio
@@ -992,7 +992,7 @@ const ProductForm = () => {
                   autoComplete="off"
                   type="number"
                   min={0}
-                  className="input bg-fontGrey"
+                  className="input bg-white"
                   name="descuento"
                   value={
                     productToUpdate?._id?.length
@@ -1044,7 +1044,7 @@ const ProductForm = () => {
               <input
                 autoComplete="off"
                 type="text"
-                className="input bg-fontGrey"
+                className="input bg-white"
                 name="codigo"
                 value={
                   productToUpdate?._id?.length ? formUpdate.codigo : form.codigo
@@ -1064,7 +1064,7 @@ const ProductForm = () => {
               <input
                 type="text"
                 autoComplete="off"
-                className="input bg-fontGrey"
+                className="input bg-white"
                 name="genero"
                 value={
                   productToUpdate?._id?.length ? formUpdate.genero : form.genero
@@ -1084,7 +1084,7 @@ const ProductForm = () => {
               <input
                 type="text"
                 autoComplete="off"
-                className="input bg-fontGrey"
+                className="input bg-white"
                 name="proveedor"
                 value={
                   productToUpdate?._id?.length
@@ -1106,7 +1106,7 @@ const ProductForm = () => {
               <input
                 type="text"
                 autoComplete="off"
-                className="input bg-fontGrey mb-4"
+                className="input bg-white mb-4"
                 name="disciplina"
                 value={
                   productToUpdate?._id?.length
@@ -1124,7 +1124,7 @@ const ProductForm = () => {
               )}
               <button
                 type="submit"
-                className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth"
+                className="btn text-white hover:bg-grey hover:text-header transition-all ease-in-out disabled:bg-header/80 disabled:text-fontGrey"
                 disabled={
                   productToUpdate?._id?.length
                     ? isFormUpdateDisabled
@@ -1136,9 +1136,9 @@ const ProductForm = () => {
             </form>
           </>
           <dialog ref={modalProductRef} className="modal bg-grey/40">
-            <div className="modal-box bg-grey">
+            <div className="modal-box bg-white">
               <button
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-header text-xl"
                 onClick={toggleModal}
               >
                 ✕

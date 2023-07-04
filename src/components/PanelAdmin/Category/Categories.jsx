@@ -84,7 +84,7 @@ const Categories = () => {
       <div className="w-full max-w-[350px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-between gap-1 mb-2">
         <Link
           to="/admin/categories/form"
-          className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out w-1/3 md:w-auto"
+          className="btn text-white hover:bg-grey hover:text-header transition-all ease-in-out w-1/3 md:w-auto"
         >
           Crear categoría
         </Link>
@@ -108,9 +108,9 @@ const Categories = () => {
                 >
                   <div className="collapse p-2">
                     <input type="checkbox" />
-                    <div className="collapse-title font-medium  text-fontDark w-full p-4 pr-4">
+                    <div className="collapse-title font-medium  text-header w-full p-4 pr-4">
                       <div className="flex flex-row justify-start items-center w-full">
-                        <div className="text-fontDark bg-grey w-10">
+                        <div className="text-header bg-grey w-10">
                           <p>{index + 1}</p>
                         </div>
                         <div className="max-w-[100px] w-24 sm:max-w-full sm:w-full">
@@ -124,7 +124,7 @@ const Categories = () => {
                       </div>
                     </div>
                     <div className="collapse-content ">
-                      <div className="flex flex-col text-fontDark items-start justify-center w-full">
+                      <div className="flex flex-col text-header items-start justify-center w-full">
                         <div className=" overflow-hidden flex flex-col justify-center items-center md:items-start w-full">
                           <h2 className="underline py-1">Imagen:</h2>
                           {item.imagen.length ? (
@@ -141,7 +141,7 @@ const Categories = () => {
                           </h2>
                           <button
                             name="addSub"
-                            className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out"
+                            className="btn text-white hover:bg-grey hover:text-header transition-all ease-in-out"
                             value={item._id}
                             onClick={toggleModalAddSub}
                             onKeyDown={(e) => {
@@ -168,7 +168,7 @@ const Categories = () => {
                                 </p>
                                 <button
                                   name="deleteSub"
-                                  className=" md:p-1 flex justify-center items-center text-fontDark text-lg ml-1 w-8 h-8"
+                                  className=" md:p-1 flex justify-center items-center text-header text-lg ml-1 w-8 h-8"
                                   onClick={toggleModal}
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter" || e.key === " ") {
@@ -207,7 +207,7 @@ const Categories = () => {
                       {" "}
                       <Link
                         to={`/admin/categories/form/${item._id}`}
-                        className=" p-1 flex justify-center items-center text-fontDark text-base ml-1 w-8 h-8"
+                        className=" p-1 flex justify-center items-center text-header text-base ml-1 w-8 h-8"
                       >
                         <MdOutlineEdit
                           className="w-full h-full"
@@ -218,7 +218,7 @@ const Categories = () => {
 
                     <button
                       name="deleteCategory"
-                      className=" flex justify-center items-center text-fontDark text-lg ml-2 w-8 h-8 "
+                      className=" flex justify-center items-center text-header text-lg ml-2 w-8 h-8 "
                       onClick={toggleModal}
                     >
                       <MdDeleteOutline
@@ -237,9 +237,9 @@ const Categories = () => {
                 </div>
               ))}
             <dialog ref={modalRef} className="modal bg-grey/40">
-              <div className="modal-box bg-grey">
+              <div className="modal-box bg-white">
                 <button
-                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-header text-xl"
                   onClick={toggleModal}
                 >
                   ✕
@@ -257,9 +257,9 @@ const Categories = () => {
               </div>
             </dialog>
             <dialog ref={modalRefSub} className="modal bg-grey/40">
-              <div className="modal-box bg-grey">
+              <div className="modal-box bg-white">
                 <button
-                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-header text-xl"
                   onClick={toggleModalAddSub}
                 >
                   ✕

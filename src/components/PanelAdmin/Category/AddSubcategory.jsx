@@ -62,7 +62,7 @@ const AddSubcategory = ({ subForm, setSubForm, errorSub, setErrorSub }) => {
     <>
       <form onSubmit={handleSubmit} className="flex flex-col">
         <div className="flex flex-col w-40 sm:w-full mb-4">
-          <label className="label text-xl text-fontDark font-medium">
+          <label className="label text-xl text-header font-medium">
             <span>Añadir subcategorías.</span>
           </label>
           <small className="h-auto text-gray-500 w-full flex self-start mb-1 text-base">
@@ -70,7 +70,7 @@ const AddSubcategory = ({ subForm, setSubForm, errorSub, setErrorSub }) => {
             categoría seleccionada.
           </small>
           <select
-            className="select select-bordered bg-fontDark mt-2"
+            className="select select-bordered bg-header mt-2"
             name="subcategoria"
             ref={selectInputRef}
             onChange={handleChangeForm}
@@ -101,7 +101,7 @@ const AddSubcategory = ({ subForm, setSubForm, errorSub, setErrorSub }) => {
         </div>
         <button
           type="submit"
-          className="btn mt-1 2xl:mt-0 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out disabled:bg-header/80 disabled:text-fontLigth max-w-[25%]"
+          className="btn mt-1 2xl:mt-0 text-white hover:bg-white hover:text-header transition-all ease-in-out disabled:bg-header/80 disabled:text-fontGrey max-w-[25%]"
           disabled={isFormDisabled}
         >
           Añadir

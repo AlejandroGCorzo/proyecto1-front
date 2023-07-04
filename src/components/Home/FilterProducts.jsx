@@ -48,7 +48,7 @@ const FilterProducts = () => {
   };
 
   return (
-    <section className="w-full h-auto flex flex-col justify-center items-center max-h-max mt-[40%] sm:mt-[21%] md:max-lg:mt-[15.5%] lg:mt-[15%] 2xl:mt-[9.5%]">
+    <section className="w-full h-auto flex flex-col justify-center items-center max-h-max mt-[35%] sm:mt-[20%] md:mt-[14%] lg:mt-[8%]">
       <div
         className={`flex flex-row justify-center  gap-2 w-full ${
           productsFilter?.length === 0
@@ -65,7 +65,7 @@ const FilterProducts = () => {
               {productsFilter?.length} Productos
             </p>
             {productsFilter?.length > 0 && (
-              <div className="drawer drawer-end lg:hidden grid w-1/2">
+              <div className="drawer drawer-end lg:hidden yellow w-1/2">
                 <input
                   id="my-drawer-4"
                   type="checkbox"
@@ -96,65 +96,65 @@ const FilterProducts = () => {
                 <summary className="select py-0 flex lg:justify-center items-center lg:max-w-max w-full bg-white text-base text-gray-600 font-normal whitespace-nowrap focus:outline-none">
                   Ordenar por
                 </summary>
-                <ul className="text-lg shadow p-4 dropdown-content z-[1] rounded-box bg-white flex flex-col gap-2 text-fontDark w-max">
-                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                <ul className="text-lg shadow p-4 dropdown-content z-[1] rounded-box bg-white flex flex-col gap-2 text-header w-max">
+                  <li className="hover:text-yellow transition-all cursor-pointer px-2 focus-visible:outline-none">
                     <button
                       onClick={handleOrder}
-                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      className="hover:bg-white hover:text-yellow focus:bg-white focus:text-yellow"
                       value={"relevancia"}
                     >
                       Relevancia
                     </button>
                   </li>
-                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <li className="hover:text-yellow transition-all cursor-pointer px-2 focus-visible:outline-none">
                     <button
                       onClick={handleOrder}
-                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      className="hover:bg-white hover:text-yellow focus:bg-white focus:text-yellow"
                       value={"nuevo"}
                     >
                       Más reciente
                     </button>
                   </li>
-                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <li className="hover:text-yellow transition-all cursor-pointer px-2 focus-visible:outline-none">
                     <button
                       onClick={handleOrder}
-                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      className="hover:bg-white hover:text-yellow focus:bg-white focus:text-yellow"
                       value={"descuento"}
                     >
                       Descuento
                     </button>
                   </li>
-                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <li className="hover:text-yellow transition-all cursor-pointer px-2 focus-visible:outline-none">
                     <button
                       onClick={handleOrder}
-                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      className="hover:bg-white hover:text-yellow focus:bg-white focus:text-yellow"
                       value={"A-Z"}
                     >
                       Ordenar A-Z
                     </button>
                   </li>
-                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <li className="hover:text-yellow transition-all cursor-pointer px-2 focus-visible:outline-none">
                     <button
                       onClick={handleOrder}
-                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      className="hover:bg-white hover:text-yellow focus:bg-white focus:text-yellow"
                       value={"Z-A"}
                     >
                       Ordenar Z-A
                     </button>
                   </li>
-                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <li className="hover:text-yellow transition-all cursor-pointer px-2 focus-visible:outline-none">
                     <button
                       onClick={handleOrder}
-                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      className="hover:bg-white hover:text-yellow focus:bg-white focus:text-yellow"
                       value={"asc"}
                     >
                       Precio más alto
                     </button>
                   </li>
-                  <li className="hover:text-orange transition-all cursor-pointer px-2 focus-visible:outline-none">
+                  <li className="hover:text-yellow transition-all cursor-pointer px-2 focus-visible:outline-none">
                     <button
                       onClick={handleOrder}
-                      className="hover:bg-white hover:text-orange focus:bg-white focus:text-orange"
+                      className="hover:bg-white hover:text-yellow focus:bg-white focus:text-yellow"
                       value={"desc"}
                     >
                       Precio más bajo
@@ -164,10 +164,10 @@ const FilterProducts = () => {
               </details>
             )}
           </div>
-          <div className="flex flex-row flex-wrap w-full justify-center gap-4 p-6 md:p-0 text-fontDark ">
+          <div className="flex flex-row flex-wrap w-full justify-center gap-4 p-6 md:p-0 text-header ">
             {productsFilter?.length > 0 ? (
               productsFilter?.slice(0, maxSlice).map((item, index) => (
-                <Link to={`/detail/${item._id}`} key={item._id}>
+                <Link to={`/product/${item._id}`} key={item._id}>
                   <div className="h-96 sm:max-w-[300px] w-72 border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
                     <div className="mb-1 flex flex-col justify-start items-center">
                       <div className="absolute sm:w-48 md:w-52 lg:w-56 flex items-start justify-between">
@@ -181,7 +181,7 @@ const FilterProducts = () => {
                         item.talle
                           .map((item) => item.cantidad)
                           .reduce((elem, acc) => (acc += elem)) === 1 ? (
-                          <span className="text-fontDark px-2 bg-grid">
+                          <span className="text-header px-2 bg-yellow">
                             ÚLTIMA UNIDAD
                           </span>
                         ) : (
@@ -225,7 +225,7 @@ const FilterProducts = () => {
                       <strong>3</strong> cuotas de{" "}
                       <strong>${(item.precio / 3).toFixed(2)}</strong>
                     </p>
-                    <p className="font-medium text-orange text-sm">
+                    <p className="font-medium text-yellow text-sm">
                       ENVÍO GRATIS
                     </p>
                   </div>
@@ -239,16 +239,16 @@ const FilterProducts = () => {
               <>
                 <div className="flex flex-1 flex-col md:flex-row justify-evenly items-center p-6">
                   <div>
-                    <h2 className="text-5xl uppercase font-bold text-fontLigth">
+                    <h2 className="text-5xl uppercase font-bold text-header/70">
                       Oops!
                     </h2>
                   </div>
                   <div className="flex flex-col justify-between items-start gap-4">
-                    <p className="font-bold text-lg text-center md:text-xl text-fontDark/80 overflow-ellipsis pt-6 md:pt-0">
+                    <p className="font-bold text-lg text-center md:text-xl text-header/80 overflow-ellipsis pt-6 md:pt-0">
                       No hemos encontrado ningún resultado para los filtros
                       selecionados.
                     </p>
-                    <ul className="flex flex-col gap-2 text-fontLigth font-semibold text-base md:text-lg items-start justify-center">
+                    <ul className="flex flex-col gap-2 text-header/70 font-semibold text-base md:text-lg items-start justify-center">
                       <li>¿Qué hago?</li>
                       <div className="px-6 md:px-14 py-4 flex flex-col gap-6 justify-center items-center w-full">
                         <li className="list-disc">
@@ -258,7 +258,7 @@ const FilterProducts = () => {
                         <li>
                           <button
                             onClick={clearErrorFilters}
-                            className="btn text-orange bg-grey border-orange px-6 hover:bg-orange hover:text-white transition-all hover:border-orange"
+                            className="btn text-yellow bg-grey border-yellow px-6 hover:bg-yellow hover:text-white transition-all hover:border-yellow"
                           >
                             Limpiar filtros
                           </button>
@@ -273,7 +273,7 @@ const FilterProducts = () => {
           {productsFilter?.length > 0 && maxSlice < productsFilter?.length && (
             <div className="w-full flex justify-center items-center p-10">
               <button
-                className="px-6 py-2 border border-orange text-orange uppercase font-medium"
+                className="px-6 py-2 border border-yellow text-yellow uppercase font-medium"
                 onClick={handleSlice}
               >
                 Ver más productos

@@ -81,7 +81,7 @@ const ProductDetail = () => {
             id: id + selectedSize,
             quantity: 1,
             size: selectedSize,
-            productData: detailProduct,
+            precio: detailProduct.precio,
             product: id,
           })
         );
@@ -219,7 +219,7 @@ const ProductDetail = () => {
                   </h2>
                   <Link
                     to={"/checkout"}
-                    className="btn underline text-white bg-orange hover:bg-orange/80 border-none focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
+                    className="btn underline text-white bg-yellow hover:bg-yellow/80 border-none focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
                   >
                     ir al carrito
                   </Link>
@@ -371,7 +371,7 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
-        <div className=" flex flex-col w-1/4 mr-36 my-1 xsm:w-full lg:w-1/2 md:mr-10 md:mt-10 lg:mt-14 xl:mt-0">
+        <div className=" flex flex-col w-1/4 lg:mr-36 my-1 xsm:w-full lg:w-1/2 md:mr-10 md:mt-10 lg:mt-14 xl:mt-0">
           <aside className="flex-1 w-full py-1 px-1 my-1 mx-1 lg:p-1 lg:mt-16">
             <h1 className="font-bold tracking-tight text-gray-400 text-1xl mt-0 xsm:mt.0">
               {detailProduct?.marca}
@@ -768,7 +768,7 @@ const ProductDetail = () => {
               </div>
             </div>
             <button
-              className="bg-black text-white py-2 px-0 mt-8 rounded-md w-1/2 hover:bg-orange hover:text-white text-sm transition-colors duration-300"
+              className="bg-black text-white py-2 px-0 mt-8 rounded-md w-1/2 hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
               onClick={handleAddToCart}
             >
               AGREGAR AL CARRITO
@@ -984,13 +984,13 @@ const ProductDetail = () => {
           </aside>
         </div>
       </div>
-      <div className="flex justify-center w-full h-auto bg-white flex-col">
-        <>
+      <div className="flex justify-center items-center w-full h-auto bg-white flex-col">
+        <div className="w-full 2xl:w-3/4">
           <ProductosDestacados productType={detailProduct?.tipo} />
-        </>
-        <>
+        </div>
+        <div className="w-full 2xl:w-3/4">
           <OtrosProductosInteres currentProductType={detailProduct?.tipo} />
-        </>
+        </div>
       </div>
     </>
   ) : (

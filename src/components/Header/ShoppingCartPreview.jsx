@@ -164,7 +164,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
           )}
         </div>
       </dialog>
-      <div className="flex flex-col w-3/4 sm:w-1/2 lg:w-[40%] xl:w-[30%] bg-white transform transition-transform duration-300 ease-in-out">
+      <div className="flex flex-col w-3/4 sm:w-1/2 lg:w-[40%] xl:w-[35%] 2xl:w-[20%] bg-white transform transition-transform duration-300 ease-in-out">
         <div className="flex justify-between items-center px-4 py-3 bg-gray-200">
           <h1 className="text-xl text-header font-semibold">Carrito</h1>
 

@@ -24,21 +24,18 @@ const Sidebar = () => {
 
   return (
     <>
-      <div className="lg:hidden w-max">
-        <button
-          onClick={() => setNavbar(!navbar)}
-          className="p-4 text-fontDark"
-        >
+      <div className="lg:hidden w-max ">
+        <button onClick={() => setNavbar(!navbar)} className="p-4 text-header">
           <AiOutlineMenuUnfold fontSize={36} />
         </button>
         <nav
-          className={`fixed flex flex-col top-40 left-0 h-full bg-white p-2 transition-transform duration-200 ease-in-out transform w-60  min-w-[150px] z-10 ${
+          className={`fixed flex flex-col top-32 left-0 h-full bg-white p-2 transition-transform duration-200 ease-in-out transform w-60  min-w-[150px] z-10 ${
             navbar ? "translate-x-0" : "-translate-x-full"
           }`}
         >
           <button
             onClick={() => setNavbar(!navbar)}
-            className="p-4 text-fontDark flex self-end justify-end"
+            className="p-4 text-header flex self-end justify-end"
           >
             {navbar && <MdOutlineClose fontSize={36} />}
           </button>
@@ -48,13 +45,13 @@ const Sidebar = () => {
               alt="user avatar"
               className="mask mask-circle w-10 h-10"
             />
-            <span className="text-2xl text-fontDark font-semibold">Hola!</span>
+            <span className="text-2xl text-header font-semibold">Hola!</span>
           </section>
           <ul className="lg:hidden space-y-6 flex flex-col justify-center items-center text-lg pt-2">
             <li>
               <Link
                 to="/admin/products"
-                className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
+                className="w-full py-2 px-4 font-medium focus:text-header focus:border-l-4 focus:border-l-yellow"
               >
                 Productos
               </Link>
@@ -62,7 +59,7 @@ const Sidebar = () => {
             <li>
               <Link
                 to="/admin/categories"
-                className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
+                className="w-full py-2 px-4 font-medium focus:text-header focus:border-l-4 focus:border-l-yellow"
               >
                 Categorías
               </Link>
@@ -71,7 +68,7 @@ const Sidebar = () => {
             <li>
               <Link
                 to="/admin/sales"
-                className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
+                className="w-full py-2 px-4 font-medium focus:text-header focus:border-l-4 focus:border-l-yellow"
               >
                 Ventas
               </Link>
@@ -79,7 +76,7 @@ const Sidebar = () => {
             <li>
               <Link
                 to="/admin/discounts"
-                className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
+                className="w-full py-2 px-4 font-medium focus:text-header focus:border-l-4 focus:border-l-yellow"
               >
                 Descuentos
               </Link>
@@ -87,7 +84,7 @@ const Sidebar = () => {
             <li>
               <Link
                 to="/admin/clients"
-                className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
+                className="w-full py-2 px-4 font-medium focus:text-header focus:border-l-4 focus:border-l-yellow"
               >
                 Clientes
               </Link>
@@ -103,13 +100,13 @@ const Sidebar = () => {
               alt="user avatar"
               className="mask mask-circle w-10 h-10"
             />
-            <span className="text-2xl text-fontDark font-semibold">Hola!</span>
+            <span className="text-2xl text-header font-semibold">Hola!</span>
           </section>
           <ul className=" space-y-6 flex flex-col justify-center items-start text-lg pt-2">
             <li>
               <Link
                 to="/admin/products"
-                className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
+                className="w-full py-2 px-4 font-medium focus:text-header focus:border-l-4 focus:border-l-yellow"
               >
                 Productos
               </Link>
@@ -117,7 +114,7 @@ const Sidebar = () => {
             <li>
               <Link
                 to="/admin/categories"
-                className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
+                className="w-full py-2 px-4 font-medium focus:text-header focus:border-l-4 focus:border-l-yellow"
               >
                 Categorías
               </Link>
@@ -126,7 +123,7 @@ const Sidebar = () => {
             <li>
               <Link
                 to="/admin/sales"
-                className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
+                className="w-full py-2 px-4 font-medium focus:text-header focus:border-l-4 focus:border-l-yellow"
               >
                 Ventas
               </Link>
@@ -134,7 +131,7 @@ const Sidebar = () => {
             <li>
               <Link
                 to="/admin/discounts"
-                className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
+                className="w-full py-2 px-4 font-medium focus:text-header focus:border-l-4 focus:border-l-yellow"
               >
                 Descuentos
               </Link>
@@ -142,7 +139,7 @@ const Sidebar = () => {
             <li>
               <Link
                 to="/admin/clients"
-                className="w-full py-2 px-4 font-medium focus:text-fontDark focus:border-l-4 focus:border-l-orange"
+                className="w-full py-2 px-4 font-medium focus:text-header focus:border-l-4 focus:border-l-yellow"
               >
                 Clientes
               </Link>

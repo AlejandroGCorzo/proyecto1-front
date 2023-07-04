@@ -108,7 +108,7 @@ const LogInCode = ({ logInCode, setLogInCode, code, setCode }) => {
             <button
               type="submit"
               className="w-full border border-header bg-header 
-      text-white hover:bg-white hover:text-nav transition-all ease-in-out duration-300 h-10 rounded disabled:bg-header/80 disabled:text-fontLigth"
+      text-white hover:bg-white hover:text-nav transition-all ease-in-out duration-300 h-10 rounded disabled:bg-header/80 disabled:text-fontGrey"
               disabled={input.code.length ? false : true}
             >
               Confirmar
@@ -153,7 +153,7 @@ const LogInCode = ({ logInCode, setLogInCode, code, setCode }) => {
             <button
               type="submit"
               className="w-full border border-header bg-header 
-              text-white hover:bg-white  transition-all ease-in-out duration-300 h-10 rounded hover:text-fontDark  disabled:bg-header/80 disabled:text-fontLigth"
+              text-white hover:bg-white  transition-all ease-in-out duration-300 h-10 rounded hover:text-header  disabled:bg-header/80 disabled:text-fontGrey"
               disabled={isDisabled}
             >
               Enviar

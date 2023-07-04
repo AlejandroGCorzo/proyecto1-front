@@ -69,11 +69,11 @@ const Products = () => {
 
   return (
     <>
-      <div className="flex flex-col mt-3 sm:mt-6 w-full max-w-full h-full justify-center items-center lg:p-6">
+      <div className="flex flex-col  w-full max-w-full h-full justify-center items-center lg:p-6">
         <div className="w-full max-w-[350px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-between gap-1 mb-2 ">
           <Link
             to="/admin/products/form"
-            className="btn text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out w-1/3 md:w-auto"
+            className="btn text-white hover:bg-grey hover:text-header transition-all ease-in-out w-1/3 md:w-auto"
           >
             Crear producto
           </Link>
@@ -96,9 +96,9 @@ const Products = () => {
                   >
                     <div className="collapse p-2 ">
                       <input type="checkbox" />
-                      <div className="collapse-title font-medium  text-fontDark p-1 pr-1 md:p-4 md:pr-4">
+                      <div className="collapse-title font-medium  text-header p-1 pr-1 md:p-4 md:pr-4">
                         <div className="flex flex-col sm:flex-row justify-start items-start w-3/4 sm:w-full gap-2">
-                          <div className="text-fontDark bg-grey w-10">
+                          <div className="text-header bg-grey w-10">
                             <p>{index + 1}</p>
                           </div>
                           <div className="w-full md:max-w-xs md:w-1/3">
@@ -134,7 +134,7 @@ const Products = () => {
                       </div>
                       <div className="collapse-content focus:h-max ">
                         <div className="flex justify-start sm:justify-center w-full flex-col items-start sm:items-center">
-                          <div className="h-max flex flex-col sm:flex-row text-fontDark items-start justify-between sm:flex-wrap w-full">
+                          <div className="h-max flex flex-col sm:flex-row text-header items-start justify-between sm:flex-wrap w-full">
                             <div className=" overflow-hidden w-max flex flex-col justify-start sm:items-center max-w-xs md:p-2 py-2 ">
                               <h2 className="underline font-medium pb-1">
                                 Imagenes:
@@ -200,7 +200,7 @@ const Products = () => {
                             </div>
                             <Link
                               to={`/detail/${item._id}`}
-                              className="btn bg-opacity-75 text-white hover:bg-grey hover:text-fontDark transition-all ease-in-out w-full md:w-auto overflow-ellipsis my-4"
+                              className="btn bg-opacity-75 text-white hover:bg-grey hover:text-header transition-all ease-in-out w-full md:w-auto overflow-ellipsis my-4"
                             >
                               Ir al producto
                             </Link>
@@ -213,7 +213,7 @@ const Products = () => {
                         {" "}
                         <Link
                           to={`/admin/products/form/${item._id}`}
-                          className=" p-1 flex justify-center items-center text-fontDark text-base ml-1 w-8 h-8"
+                          className=" p-1 flex justify-center items-center text-header text-base ml-1 w-8 h-8"
                         >
                           <MdOutlineEdit
                             className="w-full h-full"
@@ -224,7 +224,7 @@ const Products = () => {
 
                       <button
                         name="deleteProduct"
-                        className=" flex justify-center items-center text-fontDark text-lg ml-2 w-8 h-8 "
+                        className=" flex justify-center items-center text-header text-lg ml-2 w-8 h-8 "
                         onClick={toggleModal}
                       >
                         <MdDeleteOutline
@@ -243,9 +243,9 @@ const Products = () => {
                   </div>
                 ))}
               <dialog ref={modalProductRef} className="modal bg-grey/40">
-                <div className="modal-box bg-grey">
+                <div className="modal-box bg-white">
                   <button
-                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-header text-xl"
                     onClick={toggleModal}
                   >
                     ✕

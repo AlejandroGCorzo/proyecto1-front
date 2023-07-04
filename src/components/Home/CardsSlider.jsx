@@ -108,7 +108,7 @@ const CardsSlider = ({ data, mounth }) => {
                       item.talle
                         .map((item) => item.cantidad)
                         .reduce((elem, acc) => (acc += elem)) === 1 ? (
-                        <span className="text-fontDark px-2 bg-grid">
+                        <span className="text-header px-2 bg-yellow">
                           ÚLTIMA UNIDAD
                         </span>
                       ) : (
@@ -153,7 +153,7 @@ const CardsSlider = ({ data, mounth }) => {
                     <strong>3</strong> cuotas de{" "}
                     <strong>${(item.precio / 3).toFixed(2)}</strong>
                   </p>
-                  <p className="font-medium text-orange text-sm">
+                  <p className="font-medium text-yellow text-sm">
                     ENVÍO GRATIS
                   </p>
                 </Link>

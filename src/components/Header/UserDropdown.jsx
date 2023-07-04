@@ -221,10 +221,10 @@ const UserDropdown = () => {
           </ul>
         </div>
       ) : (
-        <div className="dropdown dropdown-end" ref={dropdownRef}>
+        <div className="dropdown dropdown-end " ref={dropdownRef}>
           <div
             tabIndex={0}
-            className="btn m-1"
+            className="btn m-1 bg-header outline-none border-none "
             onClick={toggleDropdown}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {

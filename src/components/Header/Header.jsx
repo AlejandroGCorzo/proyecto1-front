@@ -92,207 +92,205 @@ const Header = () => {
         />
       )}
 
-      <header className="z-[999] w-full flex flex-col items-center justify-center fixed top-0 ">
-        <section
-          className="
-     flex flex-row justify-between lg:justify-center items-center h-16 w-full mx-auto border-b-[10px] border-grid bg-header lg:px-8"
-        >
-          <div className="flex flex-row text-white justify-between w-1/2 sm:w-1/3 lg:w-1/5 h-full pl-2">
-            <button className="w-full h-full flex justify-center items-center focus:border-r focus:border-r-white">
-              MARK
-            </button>
-
-            <button className="bg-grid w-full h-full flex justify-center items-center focus:border-x focus:border-x-white">
-              GRID
-            </button>
-
-            <button className="w-full h-full flex justify-center items-center">
-              dash
-            </button>
+      <header className="z-[999] w-full flex flex-col items-start justify-center fixed top-0 h-auto">
+        <div className="flex flex-row w-full bg-header">
+          <div
+            className={`${
+              isSearchOpen ? "hidden" : "flex"
+            } justify-center items-start bg-header w-[20%] sm:w-[15%] h-full `}
+          >
+            <Link to={"/"}>
+              <img
+                src="/reyesdeloestelogo_edited.png"
+                alt="Reyes del Oeste icono"
+                className="w-24"
+              />
+            </Link>
           </div>
-          <div className="text-white text-center text-xs font-semibold uppercase hidden lg:flex w-1/3 justify-end">
-            <p>envío gratis a partir de $29.999 - 3 cuotas sin interés</p>
-          </div>
-          <div className="w-1/3 flex justify-end">
-            <button className="text-white hidden lg:flex lg:pr-12 justify-center items-center">
-              <TbMapPinFilled className="pr-2 text-grid text-xl" />
-              Sucursales
-            </button>
-            <div className="lg:hidden indicator">
-              {productos.length > 0 && (
-                <span className="indicator-item badge badge-warning -left-1">
-                  {productos.length}
-                </span>
-              )}
-              <button
-                className=" lg:hidden flex pr-6"
-                onClick={toggleShoppingCart}
-              >
-                <FiShoppingCart color="white" fontSize={26} />
-              </button>
-            </div>
-          </div>
-        </section>
-        <nav className="h-full w-full  bg-header flex flex-col items-center justify-center">
-          <div className="p-3 w-full h-2/3 flex flex-row justify-center items-center">
-            <div className={`lg:hidden flex justify-start items-center w-1/3 `}>
-              <button
-                className=" text-white  flex justify-center items-center"
-                onClick={() => setNavbar(!navbar)}
-              >
-                {navbar ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-10 h-10 "
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-10 h-10"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                )}
-              </button>
-            </div>
-            <div className="flex flex-row justify-between items-center lg:w-[80%]">
-              <div
-                className={`${
-                  isSearchOpen ? "hidden" : "flex"
-                } justify-center items-center w-auto`}
-              >
-                <Link to={"/"}>
-                  <img
-                    src="https://grid0.vtexassets.com/assets/vtex/assets-builder/grid0.theme/1.0.69/Img/Header/grid___3f6eaa5876e60f68a28d0f2f14c68944.svg"
-                    alt="GRID icon"
-                  />
-                </Link>
+          <div className="flex flex-col w-full h-full">
+            <section
+              className="
+     flex flex-row justify-end lg:justify-center items-center h-16 w-full mx-auto border-b-[10px] border-yellow bg-header "
+            >
+              <div className="text-white text-center text-xs font-semibold uppercase hidden lg:flex w-[88%] justify-center">
+                <p>envío gratis a partir de $29.999 - 3 cuotas sin interés</p>
               </div>
-              <div className="hidden lg:flex justify-end bg-nav w-[410px] pr-2">
-                <input
-                  autoComplete="off"
-                  type="text"
-                  name="search"
-                  id="search"
-                  className="bg-nav text-white w-full p-2 border-nav focus:border-nav
-              focus:outline-none
-              appearance-none
-              "
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-
-                {!searchValue.length ? (
-                  <button>
-                    <IoIosSearch color="white" fontSize={32} />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setSearchValue("");
-                      setShowItems(false);
-                    }}
-                    className="p-1 text-white text-xl"
-                  >
-                    X
-                  </button>
-                )}
-                {showItems && (
-                  <SearchItems
-                    setShowItems={setShowItems}
-                    error={errorSearch}
-                    debouncedSearchValue={debouncedSearchValue}
-                    setNavbar={setNavbar}
-                    setSearchValue={setSearchValue}
-                  />
-                )}
-              </div>
-              <div className=" lg:flex hidden flex-row-reverse justify-between items-center ">
-                <div className="indicator">
-                  {productos.length > 0 && (
+              <div className="w-auto flex justify-center">
+                <button className="text-white hidden lg:flex justify-center items-center ">
+                  <TbMapPinFilled className=" text-yellow text-xl" />
+                  Sucursales
+                </button>
+                <div className="lg:hidden indicator ">
+                  {productos?.length > 0 && (
                     <span className="indicator-item badge badge-warning -left-1">
-                      {productos.length}
+                      {productos?.length}
                     </span>
                   )}
-                  <button onClick={toggleShoppingCart}>
-                    <FiShoppingCart color="white" fontSize={22} />
+                  <button
+                    className=" lg:hidden flex pr-6"
+                    onClick={toggleShoppingCart}
+                  >
+                    <FiShoppingCart color="white" fontSize={26} />
+                  </button>
+                </div>
+              </div>
+            </section>
+            <nav className="h-full w-full  bg-header flex flex-col items-center justify-center">
+              <div className=" w-full h-2/3 flex flex-row justify-between  items-center ">
+                <div
+                  className={`lg:hidden flex justify-center items-center w-auto px-2`}
+                >
+                  <button
+                    className=" text-white  flex justify-center items-center"
+                    onClick={() => setNavbar(!navbar)}
+                  >
+                    {navbar ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-10 h-10 "
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-10 h-10"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4 6h16M4 12h16M4 18h16"
+                        />
+                      </svg>
+                    )}
                   </button>
                 </div>
 
-                <UserDropdown />
+                <div className="flex w-[96.5%] flex-row bg-header justify-end items-center">
+                  <div className="hidden lg:flex justify-between bg-nav w-[410px] md:w-[390px] 2xl:w-1/3 pr-2">
+                    <input
+                      autoComplete="off"
+                      type="text"
+                      name="search"
+                      id="search"
+                      className="bg-nav text-white w-full p-2 border-nav focus:border-nav
+              focus:outline-none
+              appearance-none
+              "
+                      value={searchValue}
+                      onChange={(e) => setSearchValue(e.target.value)}
+                    />
+
+                    {!searchValue.length ? (
+                      <button>
+                        <IoIosSearch color="white" fontSize={32} />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setSearchValue("");
+                          setShowItems(false);
+                        }}
+                        className="p-1 text-white text-xl"
+                      >
+                        X
+                      </button>
+                    )}
+                    {showItems && (
+                      <SearchItems
+                        setShowItems={setShowItems}
+                        error={errorSearch}
+                        debouncedSearchValue={debouncedSearchValue}
+                        setNavbar={setNavbar}
+                        setSearchValue={setSearchValue}
+                      />
+                    )}
+                  </div>
+                  <div className=" lg:flex hidden flex-row-reverse items-center w-1/3">
+                    <div className="indicator">
+                      {productos.length > 0 && (
+                        <span className="indicator-item badge badge-warning -left-1">
+                          {productos.length}
+                        </span>
+                      )}
+                      <button onClick={toggleShoppingCart}>
+                        <FiShoppingCart color="white" fontSize={22} />
+                      </button>
+                    </div>
+
+                    <UserDropdown />
+                  </div>
+                </div>
+
+                <div
+                  className={`lg:hidden flex justify-center w-auto px-2 ${
+                    isSearchOpen ? "hidden" : "flex"
+                  }`}
+                >
+                  <button onClick={toggleSearchBar}>
+                    <IoIosSearch color="white" fontSize={32} />
+                  </button>
+                </div>
               </div>
-            </div>
-            <div
-              className={`lg:hidden flex justify-end w-1/3 ${
-                isSearchOpen ? "hidden" : "flex"
-              }`}
+            </nav>
+          </div>
+        </div>
+        <div
+          className="bg-nav text-white text-center text-xs font-semibold uppercase flex-col w-full h-auto justify-center lg:justify-between items-center py-2 lg:py-3 lg:px-20 hidden lg:flex "
+          style={{ fontSize: "16px" }}
+        >
+          <div className="hidden lg:flex flex-row justify-between items-center w-full">
+            <button className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center">
+              new in
+            </button>
+            <button
+              onClick={toggleDropdown}
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
             >
-              <button onClick={toggleSearchBar}>
-                <IoIosSearch color="white" fontSize={32} />
-              </button>
-            </div>
+              tus favoritos
+            </button>
+            <button
+              onClick={toggleDropdown}
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
+            >
+              hombre
+            </button>
+            <button
+              onClick={toggleDropdown}
+              className="transition-all easy-in-out pb-1 uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow"
+            >
+              mujer
+            </button>
+            <button
+              onClick={toggleDropdown}
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
+            >
+              niños
+            </button>
+            <button
+              onClick={toggleDropdown}
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
+            >
+              marcas
+            </button>
+            <button className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow ">
+              sale
+            </button>
           </div>
-          <div
-            className="bg-nav text-white text-center text-xs font-semibold uppercase flex flex-col w-full h-auto justify-center lg:justify-between items-center py-2 lg:py-4 lg:px-20"
-            style={{ fontSize: "16px" }}
-          >
-            <div className="hidden lg:flex flex-row justify-between items-center w-full pb-2">
-              <button className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid">
-                new in
-              </button>
-              <button
-                onClick={toggleDropdown}
-                className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid"
-              >
-                tus favoritos
-              </button>
-              <button
-                onClick={toggleDropdown}
-                className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid"
-              >
-                hombre
-              </button>
-              <button
-                onClick={toggleDropdown}
-                className="transition-all easy-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid"
-              >
-                mujer
-              </button>
-              <button
-                onClick={toggleDropdown}
-                className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid"
-              >
-                niños
-              </button>
-              <button
-                onClick={toggleDropdown}
-                className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid"
-              >
-                marcas
-              </button>
-              <button className="transition-all ease-in-out pb-1 uppercase hover:border-b hover:border-b-grid hover:text-grid focus:text-grid ">
-                sale
-              </button>
-            </div>
-            <p className="lg:hidden block">envío gratis a partir de $29.999</p>
-          </div>
-        </nav>
+        </div>
+        <div className="lg:hidden flex bg-nav w-full justify-center items-center text-white text-xs uppercase py-2 font-medium">
+          <p>envío gratis a partir de $29.999</p>
+        </div>
 
         {isDropdownOpen && (
           <Dropdown
@@ -340,7 +338,7 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="collapse collapse-arrow focus:bg-grid">
+              <div className="collapse collapse-arrow focus:bg-yellow">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium ">TITLE</div>
                 <div className="collapse-content">
@@ -374,7 +372,7 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="collapse collapse-arrow focus:bg-grid">
+              <div className="collapse collapse-arrow focus:bg-yellow">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium ">TITLE</div>
                 <div className="collapse-content">
