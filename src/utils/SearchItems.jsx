@@ -71,7 +71,7 @@ const SearchItems = ({
           <Link
             key={item._id}
             to={`/detail/${item._id}`}
-            className="flex flex-row gap-2 my-2 px-2 py-6 hover:bg-grey "
+            className="flex flex-row gap-2  px-2 py-6 hover:bg-grey items-center justify-center w-full"
             onClick={() => {
               setShowItems(false);
               setNavbar(false);
@@ -84,10 +84,10 @@ const SearchItems = ({
             <img
               src={item.imagen}
               alt={item.descripcion + "search"}
-              className="w-10 "
+              className="w-12 max-h-12 overflow-hidden"
             />
 
-            <p className="overflow-hidden whitespace-nowrap">
+            <p className="overflow-hidden whitespace-nowrap w-full">
               {item.descripcion}
             </p>
           </Link>
