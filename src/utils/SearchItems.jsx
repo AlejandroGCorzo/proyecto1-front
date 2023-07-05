@@ -42,7 +42,7 @@ const SearchItems = ({
       >
         <p>Buscar por "{debouncedSearchValue}"</p>
       </Link>
-      {categories.length > 0 &&
+      {/* {categories.length > 0 &&
         debouncedSearchValue.length > 0 &&
         categories.map((item) => (
           <Link
@@ -63,7 +63,8 @@ const SearchItems = ({
             <p>{debouncedSearchValue}</p>
             <p>{item}</p>
           </Link>
-        ))}
+        ))} */}
+
       {productsSearch.length > 0 &&
         !error.length &&
         productsSearch.map((item) => (
@@ -81,13 +82,14 @@ const SearchItems = ({
             }}
           >
             <img
-              src={item.imagenes[0]}
-              alt={item.modelo + "search"}
+              src={item.imagen}
+              alt={item.descripcion + "search"}
               className="w-10 "
             />
-            <p>{item.tipo}</p>
-            <p>{item.marca}</p>
-            <p className="overflow-hidden whitespace-nowrap">{item.modelo}</p>
+
+            <p className="overflow-hidden whitespace-nowrap">
+              {item.descripcion}
+            </p>
           </Link>
         ))}
       {error?.length > 0 && <ServerError error={error} />}

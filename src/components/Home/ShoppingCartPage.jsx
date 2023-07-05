@@ -9,6 +9,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { TbShoppingCartDiscount } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import Discount from "../../utils/Discount";
+import { formatearPrecio } from "../../utils/formatPrice";
 
 const ShoppingCartPage = () => {
   const dispatch = useDispatch();
@@ -27,13 +28,18 @@ const ShoppingCartPage = () => {
 
   useEffect(() => {
     if (productos.length && products?.length) {
-      let foundProduct;
+      let foundProduct = [];
       for (let i = 0; i < productos.length; i++) {
-        foundProduct = products?.filter(
-          (elem) => elem._id === productos[i].product
+        foundProduct.push(
+          products?.find((elem) => elem._id === productos[i].product)
         );
       }
+      foundProduct = foundProduct.sort((a, b) =>
+        a.descripcion.localeCompare(b.descripcion)
+      );
       setProductsInCart(foundProduct);
+    } else if (!productos?.length) {
+      setProductsInCart([]);
     }
   }, [productos, products]);
 
@@ -172,7 +178,7 @@ const ShoppingCartPage = () => {
                 productsInCart.map((elem) => (
                   <div
                     key={elem._id + "cartPage"}
-                    className=" flex flex-row justify-between items-start w-full border py-3 px-2 sm:px-6 bg-white"
+                    className=" flex flex-row justify-between items-center w-full border py-3 px-2 sm:px-6 bg-white"
                   >
                     <Link
                       to={`/product/${elem._id}`}
@@ -180,47 +186,30 @@ const ShoppingCartPage = () => {
                     >
                       <img
                         className="max-w-[100px]"
-                        src={elem.imagenes[0]}
-                        alt={elem.modelo}
+                        src={elem.imagen}
+                        alt={elem.descripcion}
                       />
                     </Link>
-                    <div className="w-full flex flex-col sm:flex-row justify-center items-center sm:justify-between sm:items-start pl-4">
+                    <div className="w-full flex flex-col sm:flex-row justify-center items-center sm:justify-between sm:items-center pl-4">
                       <Link to={`/product/${elem._id}`}>
                         <h2 className="text-header uppercase text-center w-40 md:w-44 2xl:w-96 hover:text-blue-400">
-                          {elem.modelo}
+                          {elem.descripcion}
                         </h2>
                       </Link>
-                      <p className="pb-1 uppercase text-header">
+                      {/* <p className="pb-1 uppercase text-header">
                         Talle:{" "}
                         {
                           productos.find((item) => item.product === elem._id)
                             .size
                         }
-                      </p>
+                      </p> */}
                       <p className="text-lg pb-1 font-medium text-header">
-                        $ {elem.precio},00
+                        {formatearPrecio(elem.precio)}
                       </p>
 
                       <div className="w-auto flex justify-center items-center flex-row flex-nowrap pr-2">
                         <button
-                          className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
-                          value={"+"}
-                          name={
-                            productos.find((item) => item.product === elem._id)
-                              .id
-                          }
-                          onClick={handleAmount}
-                        >
-                          +
-                        </button>
-                        <span className="py-1 px-2 text-header text-xl">
-                          {
-                            productos.find((item) => item.product === elem._id)
-                              .quantity
-                          }
-                        </span>
-                        <button
-                          className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
+                          className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
                           value={"-"}
                           name={
                             productos.find((item) => item.product === elem._id)
@@ -230,22 +219,40 @@ const ShoppingCartPage = () => {
                         >
                           -
                         </button>
+                        <span className="py-1 px-2 text-header text-xl">
+                          {
+                            productos.find((item) => item.product === elem._id)
+                              .quantity
+                          }
+                        </span>
+
+                        <button
+                          className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
+                          value={"+"}
+                          name={
+                            productos.find((item) => item.product === elem._id)
+                              .id
+                          }
+                          onClick={handleAmount}
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                     <button
-                      className="w-[10%] pt-2"
+                      className="w-[10%] "
                       onClick={handleRemove}
                       id={
                         productos.find((item) => item.product === elem._id).id
                       }
-                      name={elem.modelo}
+                      name={elem.descripcion}
                     >
                       <MdDeleteOutline
                         fontSize={20}
                         id={
                           productos.find((item) => item.product === elem._id).id
                         }
-                        name={elem.modelo}
+                        name={elem.descripcion}
                         className="w-full text-header"
                       />
                     </button>
@@ -272,12 +279,13 @@ const ShoppingCartPage = () => {
                 </div>
                 <div className="h-auto lg:h-80 w-full flex flex-col justify-start items-start px-6 py-4  bg-white">
                   <div className="flex w-full flex-row justify-between text-header text-lg">
-                    <span>Subtotal</span> <span>$ {totalSinDescuento}</span>
+                    <span>Subtotal</span>{" "}
+                    <span>{formatearPrecio(totalSinDescuento)}</span>
                   </div>
                   <span className="w-full bg-grey border"></span>
                   <div className=" flex w-full flex-row justify-between py-2 font-bold text-header text-xl mb-4">
                     <span className="uppercase">total</span>{" "}
-                    <span>$ {totalSinDescuento}</span>
+                    <span>{formatearPrecio(totalSinDescuento)}</span>
                   </div>
                   <button className="uppercase border-2 bg-white text-header/70 w-full py-2 rounded-md font-medium ">
                     Calcular envío
@@ -289,14 +297,11 @@ const ShoppingCartPage = () => {
                   </button>
                 </div>
               </div>
-              <div className="w-full justify-center flex py-2 text-blue-400 text-lg font-medium">
-                <Link to={"/"}>{"< Continuar comprando"}</Link>
-              </div>
             </div>
           </div>
         ) : (
           <div className=" flex flex-grow items-center justify-center flex-col">
-            <div className=" flex flex-col justify-center items-center text-gray-500 h-64">
+            <div className=" flex flex-col justify-center items-center text-gray-500 h-64 lg:h-72">
               <FaShoppingCart fontSize={80} />
               <p>Su carrito está vacío.</p>
             </div>

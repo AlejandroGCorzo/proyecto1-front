@@ -33,6 +33,8 @@ const Products = () => {
   const [confirmed, setConfirmed] = useState(false);
   const debouncedSearchValue = useDebounce(searchValue);
 
+  const [maxSlice, setMaxSlice] = useState(5);
+
   useEffect(() => {
     const getCategories = () => {
       dispatch(getCategoriesAction());
@@ -57,6 +59,17 @@ const Products = () => {
     };
     getProducts();
   }, [debouncedSearchValue]);
+
+  const handleSlice = (e) => {
+    if (
+      maxSlice === productsSearch?.length ||
+      maxSlice + 5 > productsSearch?.length
+    ) {
+      setMaxSlice(productsSearch?.length);
+    } else {
+      setMaxSlice(maxSlice + 5);
+    }
+  };
 
   const toggleModal = (e) => {
     modalProductRef.current.classList.toggle("modal-open");
@@ -89,7 +102,7 @@ const Products = () => {
           ) : (
             <div className="overflow-x-auto w-full flex-col flex px-4">
               {productsSearch?.length > 0 &&
-                productsSearch.map((item, index) => (
+                productsSearch.slice(0, maxSlice).map((item, index) => (
                   <div
                     key={item._id}
                     className="bg-grey flex flex-row justify-start items-start md:text-lg border w-full"
@@ -103,33 +116,37 @@ const Products = () => {
                           </div>
                           <div className="w-full md:max-w-xs md:w-1/3">
                             <p className="overflow-ellipsis">
-                              {item.modelo
+                              {item.descripcion
                                 ?.slice(0, 1)
                                 .toUpperCase()
-                                .concat(item.modelo.slice(1))}
+                                .concat(item.descripcion.slice(1))}
                             </p>
                           </div>
                           <div className="w-full md:max-w-xs md:w-1/3 flex flex-row md:justify-center ">
                             <p>Código: {item.codigo}</p>
                           </div>
-                          <div className="w-full md:max-w-xs md:w-1/3 flex flex-row md:justify-center ">
-                            <p>
-                              Tipo:{" "}
-                              {item.tipo
-                                .slice(0, 1)
-                                .toUpperCase()
-                                .concat(item.tipo.slice(1).toLowerCase())}
-                            </p>
-                          </div>
-                          <div className="w-full md:max-w-xs md:w-1/3 flex flex-row md:justify-center ">
-                            <p>
-                              Marca:{" "}
-                              {item.marca
-                                .slice(0, 1)
-                                .toUpperCase()
-                                .concat(item.marca.slice(1))}
-                            </p>
-                          </div>
+                          {item.tipo && item.tipo.length > 0 && (
+                            <div className="w-full md:max-w-xs md:w-1/3 flex flex-row md:justify-center ">
+                              <p>
+                                Tipo:{" "}
+                                {item.tipo
+                                  .slice(0, 1)
+                                  .toUpperCase()
+                                  .concat(item.tipo.slice(1).toLowerCase())}
+                              </p>
+                            </div>
+                          )}
+                          {item.marca && item.marca.length > 0 && (
+                            <div className="w-full md:max-w-xs md:w-1/3 flex flex-row md:justify-center ">
+                              <p>
+                                Marca:{" "}
+                                {item.marca
+                                  .slice(0, 1)
+                                  .toUpperCase()
+                                  .concat(item.marca.slice(1))}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="collapse-content focus:h-max ">
@@ -140,66 +157,76 @@ const Products = () => {
                                 Imagenes:
                               </h2>
 
-                              {item.imagenes?.length ? (
-                                item.imagenes.map((image, index) => (
-                                  <div
-                                    key={index + "imagen"}
-                                    className="flex flex-row flex-wrap"
-                                  >
-                                    <img src={image} className="w-16 m-1" />
-                                  </div>
-                                ))
+                              {item.imagen?.length ? (
+                                <div
+                                  key={index + "imagen"}
+                                  className="flex flex-row flex-wrap"
+                                >
+                                  <img src={item.imagen} className="w-16 m-1" />
+                                </div>
                               ) : (
                                 <p>No hay una imagen agregada.</p>
                               )}
                             </div>
 
-                            <div className="w-max flex flex-col justify-start sm:items-center   md:p-2 py-2 ">
-                              <h2 className="underline font-medium">
-                                Colores:
-                              </h2>
-                              {item.colores.length > 0 ? (
-                                item.colores.map((color, index) => (
-                                  <p key={index + "color"}>
-                                    {color
-                                      .slice(0, 1)
-                                      .toUpperCase()
-                                      .concat(color.slice(1).toLowerCase())}
-                                  </p>
-                                ))
-                              ) : (
-                                <p>No se agregaron colores.</p>
-                              )}
-                            </div>
-                            <div className="w-max flex flex-col justify-start sm:items-center    md:p-2 py-2 ">
-                              <h2 className="underline font-medium">Talles:</h2>
-                              {item.talle.length > 0 ? (
-                                item.talle.map((talle, index) => (
-                                  <div
-                                    key={index + "talles"}
-                                    className="flex flex-row  justify-evenly gap-4"
-                                  >
-                                    <p>Talle: {talle.talle}</p>
-                                    <p>Cantidad: {talle.cantidad}</p>
-                                  </div>
-                                ))
-                              ) : (
-                                <p>No se agregaron talles.</p>
-                              )}
-                            </div>
+                            {item.colores && item.colores.length > 0 && (
+                              <>
+                                {" "}
+                                <div className="w-max flex flex-col justify-start sm:items-center   md:p-2 py-2 ">
+                                  <h2 className="underline font-medium">
+                                    Colores:
+                                  </h2>
+                                  {item.colores.length > 0 ? (
+                                    item.colores.map((color, index) => (
+                                      <p key={index + "color"}>
+                                        {color
+                                          .slice(0, 1)
+                                          .toUpperCase()
+                                          .concat(color.slice(1).toLowerCase())}
+                                      </p>
+                                    ))
+                                  ) : (
+                                    <p>No se agregaron colores.</p>
+                                  )}
+                                </div>
+                              </>
+                            )}
+
+                            {item.talle && item.talle.length > 0 && (
+                              <div className="w-max flex flex-col justify-start sm:items-center    md:p-2 py-2 ">
+                                <h2 className="underline font-medium">
+                                  Talles:
+                                </h2>
+                                {item.talle.length > 0 ? (
+                                  item.talle.map((talle, index) => (
+                                    <div
+                                      key={index + "talles"}
+                                      className="flex flex-row  justify-evenly gap-4"
+                                    >
+                                      <p>Talle: {talle.talle}</p>
+                                      <p>Cantidad: {talle.cantidad}</p>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <p>No se agregaron talles.</p>
+                                )}
+                              </div>
+                            )}
                             <div className="w-max flex flex-col justify-start sm:items-center    md:p-2 py-2 ">
                               <h2 className="underline font-medium">Precio:</h2>
                               <p>${item.precio}</p>
                             </div>
 
-                            <div className="w-max flex flex-col justify-start sm:items-center    md:p-2 py-2 ">
-                              <h2 className="underline font-medium">
-                                Proveedor:
-                              </h2>
-                              <p>{item.proveedor}</p>
-                            </div>
+                            {item.proveedor && item.proveedor.length > 0 && (
+                              <div className="w-max flex flex-col justify-start sm:items-center    md:p-2 py-2 ">
+                                <h2 className="underline font-medium">
+                                  Proveedor:
+                                </h2>
+                                <p>{item.proveedor}</p>
+                              </div>
+                            )}
                             <Link
-                              to={`/detail/${item._id}`}
+                              to={`/product/${item._id}`}
                               className="btn bg-opacity-75 text-white hover:bg-grey hover:text-header transition-all ease-in-out w-full md:w-auto overflow-ellipsis my-4"
                             >
                               Ir al producto
@@ -262,6 +289,16 @@ const Products = () => {
                   />
                 </div>
               </dialog>
+            </div>
+          )}
+          {productsSearch?.length > 0 && maxSlice < productsSearch?.length && (
+            <div className="w-full flex justify-center items-center p-10">
+              <button
+                className="px-6 py-2 border border-header/70 text-header/70 uppercase font-medium text-lg"
+                onClick={handleSlice}
+              >
+                Ver más productos
+              </button>
             </div>
           )}
         </div>

@@ -11,7 +11,7 @@ import CategoriesForm from "./Category/CategoriesForm";
 
 const PanelHome = () => {
   return (
-    <div className="w-full h-auto flex flex-row justify-start items-start md:justify-center md:items-center  max-h-max mt-[35%] sm:mt-[20%] md:mt-[14%] lg:mt-[8%] ">
+    <div className="w-full h-auto min-h-[450px] flex flex-row justify-start items-start md:justify-center md:items-center  max-h-max mt-[35%] sm:mt-[20%] md:mt-[14%] lg:mt-[8%] bg-grey">
       <div className=" max-w-[340px] sm:max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl w-full xl:w-4/5 h-auto flex justify-between items-start ">
         <SideBar />
         <aside className="flex w-full justify-center items-center">
