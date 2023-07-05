@@ -22,6 +22,7 @@ import {
 import SearchItems from "../../utils/SearchItems";
 
 import WishList from "../WishList/WishList";
+import { MdOutlineFavoriteBorder } from "react-icons/md";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const Header = () => {
   const { products, loading, errorSearch } = useSelector(
     (state) => state.products
   );
+  const { wishedProducts } = useSelector((state) => state.wishlist);
   const { productos } = useSelector((state) => state.cart);
   const [navbar, setNavbar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -95,11 +97,11 @@ const Header = () => {
       )}
 
       <header className="z-[999] w-full flex flex-col items-start justify-center fixed top-0 h-auto">
-        <div className="flex flex-row w-full bg-header">
+        <div className="flex flex-row w-full bg-header justify-center items-center">
           <div
             className={`${
               isSearchOpen ? "hidden" : "flex"
-            } justify-center items-start bg-header w-[20%] sm:w-[15%] h-full `}
+            } justify-center items-center bg-header w-[20%] sm:w-[15%] h-full `}
           >
             <Link to={"/"}>
               <img
@@ -117,23 +119,38 @@ const Header = () => {
               <div className="text-white text-center text-xs font-semibold uppercase hidden lg:flex w-[88%] justify-center">
                 <p>envío gratis a partir de $29.999 - 3 cuotas sin interés</p>
               </div>
-              <div className="w-auto flex justify-center">
+              <div className="w-auto flex justify-center items-center">
                 <button className="text-white hidden lg:flex justify-center items-center ">
                   <TbMapPinFilled className=" text-yellow text-xl" />
                   Sucursales
                 </button>
-                <div className="lg:hidden indicator ">
-                  {productos?.length > 0 && (
-                    <span className="indicator-item badge badge-warning -left-1">
-                      {productos?.length}
-                    </span>
-                  )}
-                  <button
-                    className=" lg:hidden flex pr-6"
-                    onClick={toggleShoppingCart}
-                  >
-                    <FiShoppingCart color="white" fontSize={26} />
-                  </button>
+                <div className="w-auto flex justify-center items-center lg:hidden pr-4 ">
+                  <div className="lg:hidden indicator ">
+                    {productos?.length > 0 && (
+                      <span className="indicator-item badge badge-warning -left-1">
+                        {productos?.length}
+                      </span>
+                    )}
+                    <button
+                      className=" lg:hidden flex pr-2"
+                      onClick={toggleShoppingCart}
+                    >
+                      <FiShoppingCart color="white" fontSize={26} />
+                    </button>
+                  </div>
+                  <Link to={"/wishlist"} className="px-3 pt-1">
+                    <div className="indicator">
+                      {wishedProducts?.length > 0 && (
+                        <span className="indicator-item badge badge-warning -left-1">
+                          {wishedProducts
+                            ?.map((item) => item?.quantity)
+                            .reduce((acc, elem) => (acc += elem))}
+                        </span>
+                      )}
+
+                      <MdOutlineFavoriteBorder color="white" fontSize={24} />
+                    </div>
+                  </Link>
                 </div>
               </div>
             </section>
@@ -178,7 +195,7 @@ const Header = () => {
                   </button>
                 </div>
 
-                <div className="flex w-[96.5%] flex-row bg-header justify-end items-center p-2">
+                <div className="flex w-full flex-row bg-header justify-end items-center py-2 px-3">
                   <div className="hidden lg:flex justify-between bg-nav w-[410px] md:w-[390px] 2xl:w-1/3 pr-2">
                     <input
                       autoComplete="off"
@@ -218,7 +235,7 @@ const Header = () => {
                       />
                     )}
                   </div>
-                  <div className=" lg:flex hidden flex-row-reverse items-center w-1/3">
+                  <div className=" lg:flex hidden flex-row-reverse items-center w-[35%] ">
                     <div className="indicator">
                       {productos.length > 0 && (
                         <span className="indicator-item badge badge-warning -left-1">
@@ -231,7 +248,18 @@ const Header = () => {
                     </div>
 
                     <UserDropdown />
-                    <WishList />
+                    <Link to={"/wishlist"} className="px-4 flex">
+                      <div className="indicator">
+                        {wishedProducts?.length > 0 && (
+                          <span className="indicator-item badge badge-warning -left-1">
+                            {wishedProducts
+                              ?.map((item) => item?.quantity)
+                              .reduce((acc, elem) => (acc += elem))}
+                          </span>
+                        )}
+                        <MdOutlineFavoriteBorder color="white" fontSize={24} />
+                      </div>
+                    </Link>
                   </div>
                 </div>
 

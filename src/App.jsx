@@ -16,6 +16,7 @@ import {
   getSubCategoriesAction,
 } from "./redux/categoriesActions";
 import ShoppingCartPage from "./components/Home/ShoppingCartPage";
+import WishList from "./components/WishList/WishList";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -38,7 +39,7 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full m-auto bg-grey">
+    <div className="flex flex-col w-full m-auto bg-white">
       <Header />
       <ScrollToTop />
       <Routes>
@@ -47,6 +48,7 @@ function App() {
         <Route path="/login" element={<UserDropdown />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/checkout" element={<ShoppingCartPage />} />
+        <Route path="/wishlist" element={<WishList />} />
         <Route element={<PrivateRoutes />}>
           <Route path="/admin/*" element={<PanelHome />} />
           <Route path="/profile" element={<Profile />} />

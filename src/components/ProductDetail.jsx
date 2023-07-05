@@ -9,8 +9,8 @@ import { clearDetail } from "../redux/productSlice";
 import { addToCartAction } from "../redux/shoppingCartActions";
 import { Link } from "react-router-dom";
 import OtrosProductosInteres from "./OtrosProductosInteres";
-import {MdOutlineFavorite} from "react-icons/md"; 
-import {addProductToWishlist} from "../redux/wishListActions";  
+import { MdOutlineFavorite } from "react-icons/md";
+import { addProductToWishlist } from "../redux/wishListActions";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -34,9 +34,6 @@ const ProductDetail = () => {
       dispatch(clearDetail());
     };
   }, [dispatch, id]);
- 
-
- 
   const [selectedImage, setSelectedImage] = useState(
     detailProduct && detailProduct?.imagenes.length
       ? detailProduct?.imagenes[0]
@@ -144,17 +141,16 @@ const ProductDetail = () => {
   const handleToggleSucursales = () => {
     setIsSucursalesOpen(!isSucursalesOpen);
   };
-const handleWishList = () => {
-  dispatch(addProductToWishlist({quantity: 1, 
-                                  id: detailProduct.id}))
-}
+  const handleWishList = () => {
+    dispatch(addProductToWishlist({ quantity: 1, id: detailProduct._id }));
+  };
   return detailProduct ? (
     <>
       <div className="w-3/4 flex flex-col bg-grey/80 mr-10  mt-[42%] sm:mt-[20.8%] md:mt-[16%] md:max-lg:mt-[15.5%] lg:mt-[12.5%] xsm:flex xsm:w-full xsm:mt-36 sm:flex-row sm:mr-20 xl:mt-[6%] lg:w-full xl:w-full">
         <dialog ref={modalRef} className="modal bg-grey/40">
-          <div className="modal-box bg-grey">
+          <div className="modal-box bg-white">
             <button
-              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-header text-xl"
               onClick={toggleModal}
             >
               ✕
@@ -296,7 +292,6 @@ const handleWishList = () => {
         </div>
         <div className="flex flex-col w-auto lg:mr-36 my-1 xsm:w-full lg:w-1/2 md:mr-10 md:mt-10 lg:mt-14 xl:mt-0">
           <aside className="flex-1 w-3/4 bg-white  py-1 px-1 my-1 mx-1 lg:p-1 lg:mt-16">
-          
             <h1 className="font-extrabold tracking-tight text-gray-900 text-2xl mt-4 xsm:mt.0 ">
               {detailProduct?.tipo} {detailProduct?.marca}{" "}
               {detailProduct?.modelo}
@@ -306,9 +301,7 @@ const handleWishList = () => {
             </div>
             <hr className="w-full border-gray-300 mt-2" />
             <div className="mt-4">
-              <p className="ml-3 text-sm text-gray-500">
-                Stock:
-              </p>
+              <p className="ml-3 text-sm text-gray-500">Stock:</p>
             </div>
             <div className="mt-4">
               <p className="ml-3 text-sm text-gray-500">
@@ -317,19 +310,18 @@ const handleWishList = () => {
             </div>
             <hr className="w-full border-gray-300 mt-2" />
             <div className="flex flex-row justify-between">
-            <button
-              className="bg-black text-white py-2 px-0 mt-8 rounded-md w-1/2 hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
-              onClick={handleAddToCart}
-            >
-              AGREGAR AL CARRITO
-            </button>
-            <button
-              className="bg-black w-auto text-white py-2 px-2 mt-8 rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
-              onClick={handleWishList}
-            >
-             
-            <MdOutlineFavorite className="text-lg"/>
-            </button>
+              <button
+                className="bg-black text-white py-2 px-0 mt-8 rounded-md w-1/2 hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
+                onClick={handleAddToCart}
+              >
+                AGREGAR AL CARRITO
+              </button>
+              <button
+                className="bg-black w-auto text-white py-2 px-2 mt-8 rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
+                onClick={handleWishList}
+              >
+                <MdOutlineFavorite className="text-lg" />
+              </button>
             </div>
             <div className="flex items-center mt-6">
               <button onClick={handleShare}>
@@ -608,7 +600,7 @@ const handleWishList = () => {
       </div>
     </>
   ) : (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen ">
       <h1 className="text-4xl font-bold animate-color-change">Cargando...</h1>
     </div>
   );

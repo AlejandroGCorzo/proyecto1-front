@@ -12,6 +12,7 @@ import {
   deleteProductAction,
 } from "../redux/productActions";
 import { removeFromCartAction } from "../redux/shoppingCartActions";
+import { removeProductFromWishlist } from "../redux/wishListActions";
 
 export const ConfirmationComponent = ({
   onDelete,
@@ -30,6 +31,17 @@ export const ConfirmationComponent = ({
       if (section === "carrito de compras") {
         await dispatch(
           removeFromCartAction({
+            id: itemToDelete.id,
+          })
+        );
+
+        toggleModal();
+      } else {
+        setConfirmed(true);
+      }
+      if (section === "lista de deseados") {
+        await dispatch(
+          removeProductFromWishlist({
             id: itemToDelete.id,
           })
         );
