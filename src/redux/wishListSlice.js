@@ -10,7 +10,21 @@ const wishlistSlice = createSlice({
   reducers: {
     addProduct: (state, action) => {
       const product = action.payload;
-      state.wishedProducts = [...state.wishedProducts, product];
+      let existingItem;
+
+      if (product.id?.length) {
+        existingItem = state.wishedProducts.find(
+          (item) => item.id === product.id
+        );
+      }
+
+      if (existingItem) {
+       
+        existingItem.quantity += product.quantity;
+      } else {
+        
+        state.wishedProducts.push(product);
+      }
     },
     removeProduct: (state, action) => {
       const productId = action.payload;
