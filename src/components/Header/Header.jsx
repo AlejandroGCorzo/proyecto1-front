@@ -21,6 +21,8 @@ import {
 } from "../../redux/productSlice";
 import SearchItems from "../../utils/SearchItems";
 
+import WishList from "../WishList/WishList";
+
 const Header = () => {
   const dispatch = useDispatch();
   const { isLoggedIn, userRole } = useSelector((state) => state.users);
@@ -176,7 +178,7 @@ const Header = () => {
                   </button>
                 </div>
 
-                <div className="flex w-[96.5%] flex-row bg-header justify-end items-center">
+                <div className="flex w-[96.5%] flex-row bg-header justify-end items-center p-2">
                   <div className="hidden lg:flex justify-between bg-nav w-[410px] md:w-[390px] 2xl:w-1/3 pr-2">
                     <input
                       autoComplete="off"
@@ -223,12 +225,13 @@ const Header = () => {
                           {productos.length}
                         </span>
                       )}
-                      <button onClick={toggleShoppingCart}>
+                      <button onClick={toggleShoppingCart} className="px-5">
                         <FiShoppingCart color="white" fontSize={22} />
                       </button>
                     </div>
 
                     <UserDropdown />
+                    <WishList />
                   </div>
                 </div>
 
