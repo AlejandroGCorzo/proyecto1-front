@@ -7,15 +7,17 @@ import { useSwipeable } from "react-swipeable";
 import ProductosDestacados from "./ProductosDestacados";
 import { clearDetail } from "../redux/productSlice";
 import { addToCartAction } from "../redux/shoppingCartActions";
-import { Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import OtrosProductosInteres from "./OtrosProductosInteres";
 import { MdOutlineFavorite } from "react-icons/md";
 import { addProductToWishlist } from "../redux/wishListActions";
 import { FaExchangeAlt } from "react-icons/fa";
+import { MdCheckCircle, MdRemoveCircle } from "react-icons/md";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const location = useLocation();
   const modalRef = useRef(null);
   const detailProduct = useSelector((state) => state.products.detail);
   const { productos } = useSelector((state) => state.cart);
@@ -31,6 +33,21 @@ const ProductDetail = () => {
   const [postalCode, setPostalCode] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  // const [breadcrumbs, setBreadcrumbs] = useState([]);
+
+  // useEffect(() => {
+  //   const segments = location.pathname
+  //     .split("/")
+  //     .filter((segment) => segment !== "");
+
+  //   const breadcrumbs = segments.map((segment, index) => {
+  //     const path = `/${segments.slice(0, index + 1).join("/")}`;
+  //     const name = segment.replace(/-/g, " ");
+
+  //     return { path, name };
+  //   });
+  //   setBreadcrumbs(breadcrumbs);
+  // }, [location.pathname]);
 
   const handleDecreaseQuantity = () => {
     if (quantity > 1) {
@@ -52,12 +69,6 @@ const ProductDetail = () => {
       dispatch(clearDetail());
     };
   }, [dispatch, id]);
-
-  const [selectedImage, setSelectedImage] = useState(
-    detailProduct && detailProduct?.imagenes.length
-      ? detailProduct?.imagenes[0]
-      : null
-  );
 
   //////////////////////////////Carrito/////////////////////////////
 
@@ -167,7 +178,21 @@ const ProductDetail = () => {
   return detailProduct ? (
     <>
       <div className="w-full flex flex-col mt-[10%]">
-        <div className="w-3/4 flex flex-col bg-grey/80 mr-10  mt-[70%] sm:mt-[20.8%] md:mt-[16%] md:max-lg:mt-[15.5%] lg:mt-[12.5%] xsm:flex xsm:w-full xsm:mt-36 sm:flex-row sm:mr-20 md:flex-row md:w-full xl:mt-[6%] lg:w-full xl:w-full">
+      <div className="text-gray-500 md:flex sm:flex-row sm:w-full sm:justify-center md:justify-start sm:mt-5 text-xl sm:px-4 sm:py-2 xsm:hidden ">
+          Página Principal &gt; {detailProduct.descripcion}
+          {/* {breadcrumbs.map((breadcrumb, index) => (
+            <Link
+              key={breadcrumb.path}
+              to={` product/${detailProduct._id}`}
+              className="text-gray-500 hover:underline px-2 mx-2"
+            >
+              {index === breadcrumbs.length - 1
+                ? ` ${breadcrumb.name}`
+                : ` ${breadcrumb.name} > `}
+            </Link>
+          ))} */}
+        </div>
+        <div className="w-full flex flex-col  bg-grey/80  mt-[4%] sm:mt-[5.8%]  md:mt-[2%] md:max-lg:mt-[1.5%] lg:mt-[1.5%] xsm:flex xsm:w-full xsm:mt-36 sm:flex-row md:flex-row md:w-full lg:w-full xl:w-full">
           <dialog ref={modalRef} className="modal bg-grey/40">
             <div className="modal-box bg-grey">
               <button
@@ -240,18 +265,20 @@ const ProductDetail = () => {
             </div>
           </dialog>
 
-          <div className="flex flex-col md:w-full lg:w-1/2 xsm:w-full bg-white items-center justify-start lg:mx-4  mt-22 mx-2 px-2 py-2 xsm:mx-0">
+          <div className="flex flex-col md:w-full lg:w-3/4 sm:mx-2 xsm:w-full bg-white items-center justify-start lg:mx-0 lg:px-2 xsm:mx-0">
             <img
               src={detailProduct?.imagen && detailProduct?.imagen}
               alt={detailProduct?.modelo}
-              className="w-full md:w-3/4  mx-2 my-2 px-2 py-2 "
+              className="w-full lg:w-3/4  mx-2 px-2 py-2 "
             />
           </div>
-          <div className="flex flex-col w-full lg:mr-36 mx-1 my-3 xsm:w-full lg:w-1/2 md:mr-10 md:mt-0 lg:mt-0 xl:mt-0">
-            <aside className="flex-1 w-full bg-white items-center justify-start  py-2 px-2   lg:p-10 lg:mt-1">
-              <h1 className="font-extrabold tracking-tight text-gray-900 text-2xl my-2 px-2 py-2  xsm:mt.0 ">
+          <div className="flex flex-col w-full sm:mx-2 xsm:w-full lg:w-1/2 md:mx-6 md:mt-0 lg:mt-0 xl:mt-0">
+            <aside className="flex-1 w-full bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
+              <div className="w-full flex flex-row justify-center items-center">
+              <h1 className="font-extrabold tracking-tight items-center justify-center text-gray-900 text-2xl  xsm:mt.0 ">
                 {detailProduct?.descripcion}
               </h1>
+              </div>
               <div className="my-3 px-2 py-2 ">
                 <p className="text-3xl text-gray-900">
                   {detailProduct?.precio.toLocaleString("es-AR", {
@@ -263,8 +290,19 @@ const ProductDetail = () => {
                 </p>
               </div>
               <hr className="w-full border-gray-300 mt-2" />
-              <div className=" my-3 px-2 py-2 ">
-                <p className="ml-3 text-sm text-gray-500">Stock:</p>
+              <div className="my-3 px-2 py-2">
+               
+                {detailProduct.stock > 0 ? (
+                  <div className="flex items-center ml-3">
+                    <MdCheckCircle className="text-green-500 mr-1" />
+                    <p className="text-sm text-green-500">HAY STOCK</p>
+                  </div>
+                ) : (
+                  <div className="flex items-center ml-3">
+                    <MdRemoveCircle className="text-red-500 mr-1" />
+                    <p className="text-sm text-red-500">NO HAY STOCK</p>
+                  </div>
+                )}
               </div>
               <div className="my-3 px-2 py-2 ">
                 <p className="ml-3 text-sm text-gray-500">
@@ -427,7 +465,7 @@ const ProductDetail = () => {
               </div>
             </aside>
           </div>
-          <div className="w-1/4 "></div>
+          
         </div>
         <div className="flex h-auto bg-white my-4 mx-1 justify-between xsm:h-auto ">
           <main className="flex-1 h-full w-full lg:w-3/4 order-2 xsm:order-1 mt-0 ml-1 mb-0 mr-0 sm:mr-0 mx-auto sm:w-3/5 justify-center md:h-1/4">

@@ -12,18 +12,14 @@ const ProductosDestacados = ({ productType }) => {
     dispatch(getProductsAction());
   }, [dispatch]);
 
-  const filteredProducts = allProducts.filter(
-    (product) => product.tipo === productType
-  );
-
-  const currentMonth = new Date().getMonth(); // Obtener el mes actual
+  console.log(allProducts)
 
   return (
     <div>
       <h2 className="text-2xl font-bold mx-4 my-4 px-2 py-2">
         Productos Relacionados
       </h2>
-      <CardsSlider data={filteredProducts} currentMonth={currentMonth} />
+      {/* <CardsSlider data={allProducts}  /> */}
     </div>
   );
 };
