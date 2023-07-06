@@ -41,13 +41,13 @@ const Footer = () => {
         </div>
         <div className=" w-full h-auto lg:h-56 lg:py-11 flex flex-col lg:flex-row justify-end lg:justify-evenly items-center bg-nav">
           <FooterOptions />
-          <a
+          {/* <a
             href="https://wa.me/5491133130958/?text=Hola, quisiera cancelar mi compra..."
             target="_blank"
             className="text-base flex items-center border-b border-b-white h-12 w-full bg-header lg:h-auto lg:bg-nav lg:w-auto lg:border py-2 px-4 lg:self-end lg:rounded lg:uppercase"
           >
             Arrepentimiento de compra
-          </a>
+          </a> */}
         </div>
         <div className=" w-full h-14 flex justify-center items-center bg-header">
           Copyright

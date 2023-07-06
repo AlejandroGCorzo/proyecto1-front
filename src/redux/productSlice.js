@@ -48,32 +48,28 @@ const productSlice = createSlice({
       }
       if (action.payload === "A-Z") {
         orderedProducts = orderedProducts.sort((a, b) =>
-          a.modelo.localeCompare(b.modelo)
+          a.descripcion.localeCompare(b.descripcion)
         );
       }
       if (action.payload === "Z-A") {
         orderedProducts = orderedProducts.sort((a, b) =>
-          b.modelo.localeCompare(a.modelo)
+          b.descripcion.localeCompare(a.descripcion)
         );
       }
       if (action.payload === "relevancia") {
         let relevantes = orderedProducts.filter(
-          (prod) =>
-            prod.destacado === true ||
-            prod.descuento > 0 ||
-            (prod.talle.length > 0 &&
+          (prod) => prod.destacado === true || prod.descuento > 0 /*||
+             (prod.talle.length > 0 &&
               prod.talle
                 .map((item) => item.cantidad)
-                .reduce((elem, acc) => (acc += elem)) === 1)
+                .reduce((elem, acc) => (acc += elem)) === 1) */
         );
         let noRelevantes = orderedProducts.filter(
-          (prod) =>
-            prod.destacado === false &&
-            prod.descuento === 0 &&
+          (prod) => prod.destacado === false && prod.descuento === 0 /* &&
             prod.talle.length > 0 &&
             prod.talle
               .map((item) => item.cantidad)
-              .reduce((elem, acc) => (acc += elem)) > 1
+              .reduce((elem, acc) => (acc += elem)) > 1 */
         );
 
         orderedProducts = [...relevantes, ...noRelevantes];
@@ -106,26 +102,26 @@ const productSlice = createSlice({
         filteredProducts = state.filters.nombre
           .map((item) =>
             filteredProducts.filter((prod) =>
-              prod.modelo.toLowerCase().includes(item.toLowerCase())
+              prod.descripcion.toLowerCase().includes(item.toLowerCase())
             )
           )
           .flat();
       }
-      if (state.filters?.category?.length) {
+      /*   if (state.filters?.category?.length) {
         //buscar por category a product filter
         filteredProducts = state.filters.category
           .map((item) => filteredProducts.filter((prod) => prod.tipo === item))
           .flat();
-      }
-      if (state.filters?.color?.length) {
+      } */
+      /* if (state.filters?.color?.length) {
         //buscar por color a product filter
         filteredProducts = filteredProducts
           .filter((prod) =>
             prod.colores.some((elem) => state.filters.color.includes(elem))
           )
           .flat();
-      }
-      if (state.filters?.marca?.length) {
+      } */
+      /*  if (state.filters?.marca?.length) {
         //buscar por marca a product filter
         filteredProducts = state.filters.marca
           .map((item) => filteredProducts.filter((prod) => prod.marca === item))
@@ -144,8 +140,8 @@ const productSlice = createSlice({
             filteredProducts.filter((prod) => prod.genero === item)
           )
           .flat();
-      }
-      if (state.filters?.disciplina?.length) {
+      } */
+      /*  if (state.filters?.disciplina?.length) {
         //buscar por disciplina a product filter
         filteredProducts = state.filters.disciplina
           .map((item) =>
@@ -154,7 +150,7 @@ const productSlice = createSlice({
             )
           )
           .flat();
-      }
+      } */
       if (state.filters?.precio?.length) {
         filteredProducts = filteredProducts.filter(
           (prod) =>
@@ -169,15 +165,10 @@ const productSlice = createSlice({
       if (action.payload?.length) {
         state.productsSearch = state.products.filter(
           (item) =>
-            item.modelo.toLowerCase().includes(action.payload.toLowerCase()) ||
-            item.marca.toLowerCase().includes(action.payload.toLowerCase()) ||
-            item.tipo.toLowerCase().includes(action.payload.toLowerCase()) ||
-            item.genero.toLowerCase().includes(action.payload.toLowerCase()) ||
-            item.codigo.toLowerCase().includes(action.payload.toLowerCase()) ||
-            item.proveedor
+            item.descripcion
               .toLowerCase()
               .includes(action.payload.toLowerCase()) ||
-            item.disciplina.toLowerCase().includes(action.payload.toLowerCase())
+            item.codigo.toLowerCase().includes(action.payload.toLowerCase())
         );
         if (!state.productsSearch.length) {
           state.productsSearch = state.products;

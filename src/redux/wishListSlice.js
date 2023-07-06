@@ -4,7 +4,7 @@ const getWishlist = JSON.parse(localStorage.getItem("wishlist"));
 
 const initialState = {
   wishedProducts:
-    getWishlist.wishedProducts && getWishlist.wishedProducts.length
+    getWishlist?.wishedProducts && getWishlist.wishedProducts.length
       ? getWishlist.wishedProducts
       : [],
   loading: false,
@@ -28,7 +28,7 @@ const wishlistSlice = createSlice({
       }
 
       if (existingItem) {
-        existingItem.quantity += product.quantity;
+        state.wishedProducts = state.wishedProducts;
       } else {
         state.wishedProducts.push(product);
       }
@@ -40,27 +40,7 @@ const wishlistSlice = createSlice({
         })
       );
     },
-    updateQuantity: (state, action) => {
-      const { itemId, quantity } = action.payload;
-      const itemToUpdate = state.wishedProducts.find(
-        (item) => item.id === itemId
-      );
-      const filteredWishlist = state.wishedProducts.filter(
-        (item) => item.id !== itemId
-      );
 
-      if (itemToUpdate) {
-        itemToUpdate.quantity = quantity;
-
-        state.wishedProducts = [...filteredWishlist, itemToUpdate];
-        localStorage.setItem(
-          "wishlist",
-          JSON.stringify({
-            wishedProducts: state.wishedProducts,
-          })
-        );
-      }
-    },
     removeProduct: (state, action) => {
       const productId = action.payload.id;
       let filteredProducts = state.wishedProducts.filter(

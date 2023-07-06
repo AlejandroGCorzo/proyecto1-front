@@ -21,6 +21,7 @@ const ProductDetail = () => {
   const modalRef = useRef(null);
   const detailProduct = useSelector((state) => state.products.detail);
   const { productos } = useSelector((state) => state.cart);
+  const { isLoggedIn } = useSelector((state) => state.users);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
@@ -78,40 +79,22 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = async () => {
-    if (selectedSize.length) {
-      let itemToAdd = productos.filter(
-        (el) => el.product === id && el.size === selectedSize
-      );
-      if (
-        itemToAdd.length &&
-        itemToAdd[0].quantity ===
-          Number(
-            detailProduct.talle.find((elem) => elem.talle === selectedSize)
-              .cantidad
-          )
-      ) {
-        setError(true);
-        toggleModal();
-      } else {
-        if (error) {
-          setError(false);
-        }
-        await dispatch(
-          addToCartAction({
-            id: id + selectedSize,
-            quantity: 1,
-            size: selectedSize,
-            precio: detailProduct.precio,
-            product: id,
-          })
-        );
-        setSuccess(true);
-        toggleModal();
-      }
-    } else {
-      setSuccess(false);
-      toggleModal();
+    let itemToAdd = productos.filter((el) => el.product === id);
+
+    if (error) {
+      setError(false);
     }
+    await dispatch(
+      addToCartAction({
+        id: id,
+        quantity: quantity,
+
+        precio: detailProduct.precio,
+        product: id,
+      })
+    );
+    setSuccess(true);
+    toggleModal();
   };
   /////////////////////////////Carrito/////////////////////////////
 
@@ -172,11 +155,13 @@ const ProductDetail = () => {
     setIsSucursalesOpen(!isSucursalesOpen);
   };
   const handleWishList = () => {
-    dispatch(addProductToWishlist({ quantity: 1, id: detailProduct._id }));
+    if (isLoggedIn) {
+      dispatch(addProductToWishlist({ id: detailProduct._id }));
+    }
   };
   return detailProduct ? (
     <>
-      <div className="w-full flex flex-col mt-[10%]">
+      <div className="w-full flex flex-col">
         <div className="text-gray-500 md:flex sm:flex-row sm:w-full sm:justify-center md:justify-start sm:mt-5 text-xl sm:px-4 sm:py-2 xsm:hidden ">
           Página Principal &gt; {detailProduct.descripcion}
           {/* {breadcrumbs.map((breadcrumb, index) => (

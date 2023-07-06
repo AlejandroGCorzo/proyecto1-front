@@ -92,9 +92,11 @@ const Sidebar = () => {
           </ul>
         </nav>
       </div>
-      <div className="hidden lg:block">
-        <nav className={`h-full bg-grey w-1/4 p-5 min-w-[150px]`}>
-          <section className=" flex flex-row items-center justify-start gap-4 py-6">
+      <div className="hidden lg:flex justify-center items-start mt-10">
+        <nav
+          className={`h-full bg-grey w-1/4  min-w-[150px] flex flex-col justify-center items-center `}
+        >
+          <section className=" flex flex-row items-center justify-start gap-4 py-2">
             <img
               src="/avatar.jpg"
               alt="user avatar"

@@ -80,7 +80,7 @@ const Categories = () => {
     setErrorSub({ subcategoria: "" });
   };
   return (
-    <div className="flex flex-col mt-6 w-full max-w-full h-full justify-center items-center p-2">
+    <div className="flex flex-col w-full max-w-full h-full justify-start items-center">
       <div className="w-full max-w-[350px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-between gap-1 mb-2">
         <Link
           to="/admin/categories/form"

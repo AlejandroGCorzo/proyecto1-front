@@ -89,6 +89,7 @@ export const filterProductsAction = () => {
 
 //accion de creacion de producto
 export const postProductAction = (values, token) => {
+  console.log("action", values);
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));
@@ -114,6 +115,7 @@ export const postProductAction = (values, token) => {
 
 //accion de creacion de producto
 export const patchProductAction = (values, token, id) => {
+  console.log("action", values, id);
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));

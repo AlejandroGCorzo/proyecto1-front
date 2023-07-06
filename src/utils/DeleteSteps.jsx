@@ -24,6 +24,7 @@ export const ConfirmationComponent = ({
   section,
 }) => {
   const dispatch = useDispatch();
+  const {isLoggedIn} = useSelector(state => state.users)
   const handleConfirm = async (e) => {
     e.preventDefault();
     const { value } = e.target;
@@ -32,7 +33,7 @@ export const ConfirmationComponent = ({
         await dispatch(
           removeFromCartAction({
             id: itemToDelete.id,
-          })
+          }, isLoggedIn)
         );
 
         toggleModal();
@@ -259,6 +260,13 @@ export const DeleteComponent = ({
           deleteImgCategoriesAction({
             id: itemToDelete.id,
             idCategory: itemToDelete.idCategory,
+          })
+        );
+      } else if (section === "inputProducto") {
+        dispatch(
+          deleteImgProductsAction({
+            id: itemToDelete.id,
+            idProduct: itemToDelete.idProduct,
           })
         );
       }

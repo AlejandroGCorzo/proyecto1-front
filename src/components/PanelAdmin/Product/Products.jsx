@@ -33,7 +33,7 @@ const Products = () => {
   const [confirmed, setConfirmed] = useState(false);
   const debouncedSearchValue = useDebounce(searchValue);
 
-  const [maxSlice, setMaxSlice] = useState(5);
+  const [maxSlice, setMaxSlice] = useState(10);
 
   useEffect(() => {
     const getCategories = () => {
@@ -63,11 +63,11 @@ const Products = () => {
   const handleSlice = (e) => {
     if (
       maxSlice === productsSearch?.length ||
-      maxSlice + 5 > productsSearch?.length
+      maxSlice + 10 > productsSearch?.length
     ) {
       setMaxSlice(productsSearch?.length);
     } else {
-      setMaxSlice(maxSlice + 5);
+      setMaxSlice(maxSlice + 10);
     }
   };
 
@@ -83,7 +83,7 @@ const Products = () => {
   return (
     <>
       <div className="flex flex-col  w-full max-w-full h-full justify-center items-center lg:p-6">
-        <div className="w-full max-w-[350px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-between gap-1 mb-2 ">
+        <div className="w-full max-w-[350px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-between gap-1 my-2 ">
           <Link
             to="/admin/products/form"
             className="btn text-white hover:bg-grey hover:text-header transition-all ease-in-out w-1/3 md:w-auto"
@@ -96,7 +96,7 @@ const Products = () => {
             error={errorSearch}
           />
         </div>
-        <div className="flex flex-nowrap w-full xl:flex-wrap max-w-[400px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto">
+        <div className="flex flex-nowrap w-full xl:flex-wrap max-w-[400px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex-col">
           {loading ? (
             <Loading />
           ) : (
@@ -105,25 +105,27 @@ const Products = () => {
                 productsSearch.slice(0, maxSlice).map((item, index) => (
                   <div
                     key={item._id}
-                    className="bg-grey flex flex-row justify-start items-start md:text-lg border w-full"
+                    className="bg-grey flex flex-row justify-center items-center md:text-lg border w-full"
                   >
                     <div className="collapse p-2 ">
                       <input type="checkbox" />
                       <div className="collapse-title font-medium  text-header p-1 pr-1 md:p-4 md:pr-4">
-                        <div className="flex flex-col sm:flex-row justify-start items-start w-3/4 sm:w-full gap-2">
+                        <div className="flex flex-row justify-start items-center w-3/4 sm:w-full gap-2">
                           <div className="text-header bg-grey w-10">
                             <p>{index + 1}</p>
                           </div>
-                          <div className="w-full md:max-w-xs md:w-1/3">
-                            <p className="overflow-ellipsis">
-                              {item.descripcion
-                                ?.slice(0, 1)
-                                .toUpperCase()
-                                .concat(item.descripcion.slice(1))}
-                            </p>
-                          </div>
-                          <div className="w-full md:max-w-xs md:w-1/3 flex flex-row md:justify-center ">
-                            <p>Código: {item.codigo}</p>
+                          <div className="w-full flex flex-col sm:flex-row justify-around items-center">
+                            <div className="w-full md:max-w-xs md:w-1/3">
+                              <p className="overflow-ellipsis">
+                                {item.descripcion
+                                  ?.slice(0, 1)
+                                  .toUpperCase()
+                                  .concat(item.descripcion.slice(1))}
+                              </p>
+                            </div>
+                            <div className="w-full md:max-w-xs md:w-1/3 flex flex-row md:justify-center ">
+                              <p>Código: {item.codigo}</p>
+                            </div>
                           </div>
                           {item.tipo && item.tipo.length > 0 && (
                             <div className="w-full md:max-w-xs md:w-1/3 flex flex-row md:justify-center ">
@@ -157,12 +159,19 @@ const Products = () => {
                                 Imagenes:
                               </h2>
 
-                              {item.imagen?.length ? (
+                              {item.imagen?.length || item.imagenes?.length ? (
                                 <div
                                   key={index + "imagen"}
                                   className="flex flex-row flex-wrap"
                                 >
-                                  <img src={item.imagen} className="w-16 m-1" />
+                                  <img
+                                    src={
+                                      item.imagen?.length
+                                        ? item.imagen
+                                        : item.imagenes
+                                    }
+                                    className="w-16 m-1"
+                                  />
                                 </div>
                               ) : (
                                 <p>No hay una imagen agregada.</p>
@@ -235,7 +244,7 @@ const Products = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-start justify-start h-full w-20 pt-2">
+                    <div className="flex items-center justify-center h-full w-20 pt-2">
                       <div>
                         {" "}
                         <Link

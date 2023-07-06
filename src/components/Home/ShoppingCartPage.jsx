@@ -17,8 +17,10 @@ const ShoppingCartPage = () => {
   const { productos, totalSinDescuento, loading } = useSelector(
     (state) => state.cart
   );
+  const { isLoggedIn } = useSelector((state) => state.users);
   const { products } = useSelector((state) => state.products);
   const [productsInCart, setProductsInCart] = useState([]);
+  const [buySteps, setBuySteps] = useState(false);
   const [error, setError] = useState(false);
   const [onDelete, setOnDelete] = useState(null);
   const [itemToDelete, setItemToDelete] = useState({ nombre: "", id: "" });
@@ -44,8 +46,8 @@ const ShoppingCartPage = () => {
   }, [productos, products]);
 
   const toggleModal = (e) => {
-    modalRef.current.classList.toggle("modal-open");
-    document.activeElement.blur();
+    modalRef?.current?.classList?.toggle("modal-open");
+    document?.activeElement?.blur();
     if (onDelete) {
       setOnDelete(false);
     } else {
@@ -81,22 +83,25 @@ const ShoppingCartPage = () => {
     const productData = productsInCart.find(
       (elem) => elem._id === itemToUpdate.product
     );
-    const productStock = productData.talle.find(
+    /*    const productStock = productData.talle.find(
       (elem) => elem.talle === itemToUpdate.size
-    ).cantidad;
+    ).cantidad; */
 
     if (value === "+") {
-      if (itemToUpdate.quantity + 1 > productStock) {
+      /*    if (itemToUpdate.quantity + 1 > productStock) {
         setError(true);
         toggleModal();
-      } else {
-        dispatch(
-          updateCartAction({
+      } else { */
+      dispatch(
+        updateCartAction(
+          {
             itemId: name,
             quantity: itemToUpdate.quantity + 1,
-          })
-        );
-      }
+          },
+          isLoggedIn
+        )
+      );
+      /* } */
     } else {
       if (itemToUpdate.quantity - 1 === 0) {
         if (error) {
@@ -110,17 +115,29 @@ const ShoppingCartPage = () => {
       }
       if (itemToUpdate.quantity > 0 && itemToUpdate.quantity - 1 !== 0) {
         dispatch(
-          updateCartAction({
-            itemId: name,
-            quantity: itemToUpdate.quantity - 1,
-          })
+          updateCartAction(
+            {
+              itemId: name,
+              quantity: itemToUpdate.quantity - 1,
+            },
+            isLoggedIn
+          )
         );
       }
     }
   };
 
+  const handleOrder = (e) => {
+    if (!isLoggedIn) {
+      setError("Inicie sesion");
+      toggleModal();
+    } else {
+      setBuySteps(true);
+    }
+  };
+
   return (
-    <div className="w-full h-auto flex flex-col justify-start items-start md:justify-center md:items-center  max-h-max mt-[30%] sm:mt-[15%] md:mt-[8%]  bg-fontGrey">
+    <div className="w-full h-auto flex flex-col justify-start items-start md:justify-center md:items-center  max-h-max bg-fontGrey">
       <dialog ref={modalRef} className="modal bg-grey/40">
         <div className="modal-box bg-white">
           <button
@@ -133,7 +150,7 @@ const ShoppingCartPage = () => {
             <div className="w-full h-28 flex justify-center items-center">
               <Loading />
             </div>
-          ) : error ? (
+          ) : error && error === "Inicie sesion" ? (
             <div className="alert alert-warning w-[97%]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -148,9 +165,7 @@ const ShoppingCartPage = () => {
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                 />
               </svg>
-              <span>
-                Ha agregado todos los productos en stock del Talle seleccionado.
-              </span>
+              <span>Debes iniciar sesión para poder finalizar la compra</span>
             </div>
           ) : (
             <ConfirmationComponent
@@ -165,27 +180,29 @@ const ShoppingCartPage = () => {
           )}
         </div>
       </dialog>
-      <div className="flex justify-start items-center px-2">
-        <h1 className="flex w-full py-6 text-center uppercase text-xl text-header font-semibold">
-          Carrito de compras
-        </h1>
-      </div>
+      {!buySteps && (
+        <div className="flex justify-start items-center px-2">
+          <h1 className="flex w-full py-6 text-center uppercase text-xl text-header font-semibold">
+            Carrito de compras
+          </h1>
+        </div>
+      )}
       <div className="flex flex-col items-center justify-center w-full bg-grey ">
         {productos?.length > 0 ? (
           <div className="w-full h-full max-w-[90%] flex flex-col lg:flex-row justify-center items-center lg:justify-around lg:items-start gap-6">
             <div className="h-auto w-full 2xl:max-w-[70%] flex flex-col justify-between gap-2 overflow-y-auto p-2 bg-grey">
-              {productsInCart?.length > 0 &&
+              {productsInCart?.length > 0 && !buySteps ? (
                 productsInCart.map((elem) => (
                   <div
                     key={elem._id + "cartPage"}
-                    className=" flex flex-row justify-between items-center w-full border py-3 px-2 sm:px-6 bg-white"
+                    className=" flex flex-row justify-between items-center w-full h-40 border py-3 px-2 sm:px-6 bg-white"
                   >
                     <Link
                       to={`/product/${elem._id}`}
-                      className="flex h-1/3 py-1 border"
+                      className="flex h-full w-36 py-1 border"
                     >
                       <img
-                        className="max-w-[100px]"
+                        className="h-full w-full object-contain aspect-auto"
                         src={elem.imagen}
                         alt={elem.descripcion}
                       />
@@ -257,7 +274,10 @@ const ShoppingCartPage = () => {
                       />
                     </button>
                   </div>
-                ))}
+                ))
+              ) : (
+                <></>
+              )}
             </div>
             <div className="flex w-full md:w-[40%] max-w-xl flex-col ">
               <div className="h-full flex flex-col w-full justify-between border-x-2 border-2">
@@ -292,10 +312,16 @@ const ShoppingCartPage = () => {
                   </button>
                 </div>
                 <div className="flex flex-col justify-start items-center  py-4 px-4 gap-6 bg-white rounded-bl-md rounded-br-md">
-                  <button className="btn bg-header hover:opacity-70 text-white w-full flex justify-center items-center text-[17px] ">
+                  <button
+                    className="btn bg-header hover:opacity-70 text-white w-full flex justify-center items-center text-[17px]"
+                    onClick={handleOrder}
+                  >
                     <RiShoppingBagFill /> Finalizar compra
                   </button>
                 </div>
+              </div>
+              <div className="w-full justify-center flex py-4 text-blue-400 text-lg font-medium">
+                <Link to={"/"}>{"< Continuar comprando"}</Link>
               </div>
             </div>
           </div>

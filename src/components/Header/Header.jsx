@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { FiShoppingCart } from "react-icons/fi";
 import { TbMapPinFilled } from "react-icons/tb";
@@ -7,12 +7,13 @@ import ShoppingCartPreview from "./ShoppingCartPreview";
 import SearchBar from "./SearchMobile";
 import Dropdown from "./Dropdown";
 import UserDropdown from "./UserDropdown";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/userSlice";
 import useDebounce from "../../hooks/useDebounce";
 import {
   filterProductsAction,
+  orderProductsAction,
   searchProductsAction,
 } from "../../redux/productActions";
 import {
@@ -20,12 +21,12 @@ import {
   setSearchProducts,
 } from "../../redux/productSlice";
 import SearchItems from "../../utils/SearchItems";
-
-import WishList from "../WishList/WishList";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
 
 const Header = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const dropdownUserRef = useRef(null);
   const { isLoggedIn, userRole } = useSelector((state) => state.users);
   const { products, loading, errorSearch } = useSelector(
     (state) => state.products
@@ -66,11 +67,26 @@ const Header = () => {
   };
 
   const toggleShoppingCart = () => {
-    setIsOpen(!isOpen);
+    if (location.pathname !== "/checkout") {
+      setIsOpen(!isOpen);
+    }
   };
 
   const toggleSearchBar = () => {
     setIsSearchOpen(!isSearchOpen);
+  };
+
+  const handleWishList = () => {
+    if (!isLoggedIn) {
+      toggleDropdownUser();
+    } else {
+      return;
+    }
+  };
+
+  const toggleDropdownUser = () => {
+    dropdownUserRef.current.classList.toggle("dropdown-open");
+    document.activeElement.blur();
   };
 
   return (
@@ -138,7 +154,10 @@ const Header = () => {
                       <FiShoppingCart color="white" fontSize={26} />
                     </button>
                   </div>
-                  <Link to={"/wishlist"} className="px-3 pt-1">
+                  <Link
+                    to={isLoggedIn ? "/wishlist" : "/login"}
+                    className="px-3 pt-1"
+                  >
                     <div className="indicator">
                       {wishedProducts?.length > 0 && (
                         <span className="indicator-item badge badge-warning -left-1">
@@ -247,8 +266,15 @@ const Header = () => {
                       </button>
                     </div>
 
-                    <UserDropdown />
-                    <Link to={"/wishlist"} className="px-4 flex">
+                    <UserDropdown
+                      toggleDropdownUser={toggleDropdownUser}
+                      dropdownUserRef={dropdownUserRef}
+                    />
+                    <Link
+                      to={isLoggedIn ? "/wishlist" : "/"}
+                      onClick={handleWishList}
+                      className="px-4 flex"
+                    >
                       <div className="indicator">
                         {wishedProducts?.length > 0 && (
                           <span className="indicator-item badge badge-warning -left-1">
@@ -277,46 +303,56 @@ const Header = () => {
           </div>
         </div>
         <div
-          className="bg-nav text-white text-center text-xs font-semibold uppercase flex-col w-full h-auto justify-center lg:justify-between items-center py-2 lg:py-3 lg:px-20 hidden lg:flex "
+          className="bg-nav text-white text-center text-xs font-semibold uppercase flex-col w-full h-10 justify-center lg:justify-between items-center py-2 lg:py-3 lg:px-20 hidden lg:flex "
           style={{ fontSize: "16px" }}
         >
-          <div className="hidden lg:flex flex-row justify-between items-center w-full">
-            <button className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center">
+          <div className="hidden lg:flex flex-row justify-center items-center w-full gap-6">
+            <Link
+              to={"/:filter"}
+              className="transition-all ease-in-out uppercase border-b border-b-transparent  hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center "
+              value={"nuevo"}
+              onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+            >
               new in
-            </button>
+            </Link>
             <button
               onClick={toggleDropdown}
-              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center lg:hidden"
             >
               tus favoritos
             </button>
             <button
               onClick={toggleDropdown}
-              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center lg:hidden"
             >
               hombre
             </button>
             <button
               onClick={toggleDropdown}
-              className="transition-all easy-in-out pb-1 uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow"
+              className="transition-all easy-in-out pb-1 uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow lg:hidden"
             >
               mujer
             </button>
             <button
               onClick={toggleDropdown}
-              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center lg:hidden"
             >
               niños
             </button>
             <button
               onClick={toggleDropdown}
-              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center lg:hidden"
             >
               marcas
             </button>
-            <button className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow ">
+            <Link
+              to={"/:filter"}
+              className="transition-all ease-in-out uppercase border-b border-b-transparent hover:border-b-yellow hover:text-yellow focus:text-yellow "
+              value={"descuento"}
+              onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+            >
               sale
-            </button>
+            </Link>
           </div>
         </div>
         <div className="lg:hidden flex bg-nav w-full justify-center items-center text-white text-xs uppercase py-2 font-medium">
@@ -332,10 +368,19 @@ const Header = () => {
         {navbar && (
           <div className=" relative top-0 right-0  h-screen w-full bg-nav bg-opacity-20 flex items-start justify-start">
             <div className="bg-header text-white max-h-[430px] w-1/2 sm:w-1/3 p-4 ease-in-out transform transition-transform duration-300 delay-150 overflow-y-scroll">
-              <div className=" text-xl font-medium flex justify-center items-center">
-                <button>NEW IN</button>
+              <div className=" text-xl font-medium flex justify-center items-center mb-2">
+                <Link
+                  to={"/:filter"}
+                  value={"nuevo"}
+                  onClick={(e) => {
+                    dispatch(orderProductsAction(e.target.value));
+                    setNavbar(false);
+                  }}
+                >
+                  NEW IN
+                </Link>
               </div>
-              <div className="collapse collapse-arrow ">
+              <div className="collapse collapse-arrow hidden">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium ">TITLE</div>
                 <div className="collapse-content">
@@ -352,7 +397,7 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="collapse collapse-arrow">
+              <div className="collapse collapse-arrow hidden">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium">TITLE</div>
                 <div className="collapse-content">
@@ -369,7 +414,7 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="collapse collapse-arrow focus:bg-yellow">
+              <div className="collapse collapse-arrow focus:bg-yellow hidden">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium ">TITLE</div>
                 <div className="collapse-content">
@@ -386,7 +431,7 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="collapse collapse-arrow">
+              <div className="collapse collapse-arrow hidden">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium ">TITLE</div>
                 <div className="collapse-content">
@@ -403,7 +448,7 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="collapse collapse-arrow focus:bg-yellow">
+              <div className="collapse collapse-arrow focus:bg-yellow hidden">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium ">TITLE</div>
                 <div className="collapse-content">
@@ -420,9 +465,17 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="text-xl font-medium flex justify-center items-center pb-4">
+              <Link
+                to={"/:filter"}
+                className="text-xl font-medium flex justify-center items-center pb-4"
+                value={"descuento"}
+                onClick={(e) => {
+                  dispatch(orderProductsAction(e.target.value));
+                  setNavbar(false);
+                }}
+              >
                 <span>SALE</span>
-              </div>
+              </Link>
 
               <div className="text-xl font-medium flex justify-center items-center ">
                 {!isLoggedIn ? (

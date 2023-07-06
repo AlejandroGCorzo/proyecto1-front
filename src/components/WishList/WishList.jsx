@@ -67,38 +67,22 @@ const WishList = () => {
     if (error) {
       setError(false);
     }
-    if (e.target.parentElement) {
-      const itemToAdd = wishedProducts.find(
-        (elem) => elem.id === e.target.parentElement.id
-      );
-      const productPrice = products?.find(
-        (elem) => elem._id === itemToAdd?.id
-      )?.precio;
-      await dispatch(
-        addToCartAction({
-          id: itemToAdd.id,
-          product: itemToAdd.id,
-          quantity: itemToAdd.quantity,
-          precio: productPrice,
-        })
-      );
-      dispatch(removeProductFromWishlist({ id: itemToAdd.id }));
-    } else {
-      const itemToAdd = wishedProducts.find((elem) => elem.id === e.target.id);
-      const productPrice = products?.find(
-        (elem) => elem._id === itemToAdd?.id
-      )?.precio;
 
-      await dispatch(
-        addToCartAction({
-          id: itemToAdd.id,
-          product: itemToAdd.id,
-          quantity: itemToAdd.quantity,
-          precio: productPrice,
-        })
-      );
-      dispatch(removeProductFromWishlist({ id: itemToAdd.id }));
-    }
+    const itemToAdd = wishedProducts.find((elem) => elem.id === e.target.id);
+
+    const productPrice = products?.find(
+      (elem) => elem._id === itemToAdd?.id
+    )?.precio;
+
+    await dispatch(
+      addToCartAction({
+        id: itemToAdd.id,
+        product: itemToAdd.id,
+        quantity: 1,
+        precio: productPrice,
+      })
+    );
+    dispatch(removeProductFromWishlist({ id: itemToAdd.id }));
   };
 
   const handleWishlistRemove = (e) => {
@@ -113,43 +97,8 @@ const WishList = () => {
     toggleModal();
   };
 
-  const handleWishedAmount = (e) => {
-    const { value, name, id } = e.target;
-    const itemToUpdate = wishedProducts.find((elem) => elem.id === name);
-
-    if (value === "+") {
-      dispatch(
-        updateWishlistAction({
-          itemId: name,
-          quantity: itemToUpdate?.quantity + 1,
-        })
-      );
-    } else if (value === "-") {
-      if (itemToUpdate?.quantity - 1 === 0) {
-        if (error) {
-          setError(false);
-        }
-        setItemToDelete({
-          nombre: "producto",
-          id: name,
-        });
-        toggleModal();
-      } else if (
-        itemToUpdate?.quantity > 0 &&
-        itemToUpdate?.quantity - 1 !== 0
-      ) {
-        dispatch(
-          updateWishlistAction({
-            itemId: name,
-            quantity: itemToUpdate?.quantity - 1,
-          })
-        );
-      }
-    }
-  };
-
   return (
-    <div className="w-full h-auto flex flex-col justify-start items-start md:justify-center md:items-center  max-h-max mt-[33%] sm:mt-[15%] md:mt-[12.5%] lg:mt-[14%] 2xl:mt-[8.5%] bg-fontGrey">
+    <div className="w-full h-auto flex flex-col justify-start items-start md:justify-center md:items-center  max-h-max bg-fontGrey mt-10 sm:mt-0">
       <dialog ref={modalWishlistRef} className="modal bg-grey/40">
         <div className="modal-box bg-white">
           <button
@@ -182,80 +131,52 @@ const WishList = () => {
           </span>
         </li>
         {productsInWishlist?.length ? (
-          <div className="w-full xl:w-[80%] flex flex-col justify-start items-center min-h-[355px] overflow-y-auto gap-2 contentScroll">
+          <div className="w-full xl:w-[80%] flex flex-col justify-start items-center min-h-[355px] overflow-y-auto  contentScroll">
             {productsInWishlist.map((elem) => (
               <li
                 key={elem._id + "wishlist"}
-                className=" flex flex-row justify-center items-center py-3 w-full border bg-white"
+                className=" flex flex-col md:flex-row justify-center xl:justify-between items-center py-3 w-full bg-white"
               >
-                <div className="w-auto h-full px-4 sm:px-6">
-                  <button
-                    value={elem._id}
-                    className="btn btn-sm btn-circle btn-ghost text-xl text-header bg-grey"
-                    onClick={handleWishlistRemove}
-                  >
-                    ✕
-                  </button>
-                </div>
-                <div className="flex h-auto justify-center items-center w-20 sm:w-28 sm:px-2">
-                  <img
-                    className="w-20 h-20 object-contain aspect-auto sm:max-w-[100px] sm:max-h-28"
-                    src={elem.imagen}
-                    alt={elem.modelo}
-                  />
-                </div>
-                <div className="w-[65%] flex flex-col sm:flex-row justify-center sm:justify-between items-center h-full gap-4 px-2">
-                  <h2 className="text-header uppercase w-full sm:w-1/3 sm:text-lg md:text-xl text-center ">
-                    {elem.descripcion}
-                  </h2>
-                  <div className="flex flex-col justify-center items-center md:flex-row sm:gap-4">
-                    <p className="text-base md:text-lg font-medium text-header/50 w-max text-center h-full">
-                      Unidad: {formatearPrecio(elem.precio)}
-                    </p>
-                    <p className="text-xl font-medium text-header w-max text-center h-full">
-                      Total:{" "}
-                      {formatearPrecio(
-                        wishedProducts?.find((item) => item.id === elem._id)
-                          ?.quantity * elem.precio
-                      )}
-                    </p>
+                <div className=" w-full flex flex-row justify-center  items-center h-full gap-4">
+                  <div className="flex  justify-center items-center w-1/3 sm:w-32 h-32 ">
+                    <img
+                      className="w-full h-full object-contain aspect-auto "
+                      src={elem.imagen}
+                      alt={elem.modelo}
+                    />
                   </div>
-                  <div className="w-auto flex justify-center items-center flex-row flex-nowrap px-2">
-                    <button
-                      className="hover:opacity-70  flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none "
-                      value={"-"}
-                      name={elem._id}
-                      onClick={handleWishedAmount}
-                    >
-                      -
-                    </button>
-                    <span className="py-1 px-2 text-header text-xl">
-                      {
-                        wishedProducts?.find((item) => item.id === elem._id)
-                          ?.quantity
-                      }
-                    </span>
-                    <button
-                      className="hover:opacity-70  flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
-                      value={"+"}
-                      name={elem._id}
-                      onClick={handleWishedAmount}
-                    >
-                      +
-                    </button>
+                  <div className="flex items-center justify-between w-[55%] sm:w-[80%] flex-col sm:flex-row">
+                    <div className="w-full flex flex-col sm:flex-row justify-center sm:justify-around items-center h-full ">
+                      <div className="flex flex-col justify-between items-center md:flex-row sm:gap-1 w-auto md:w-96">
+                        <h2 className="text-header uppercase w-max sm:text-lg text-center ">
+                          {elem.descripcion}
+                        </h2>
+                        <p className="text-base md:text-lg font-medium text-header/50 text-center h-full">
+                          {elem.codigo}
+                        </p>
+                      </div>
+                      <p className="text-xl font-medium text-header w-max text-center h-full min-w-[100px]">
+                        {formatearPrecio(elem.precio)}
+                      </p>
+                    </div>
+                    <div className="w-max h-full flex py-2 justify-between items-center flex-col-reverse gap-2">
+                      <button
+                        value={elem._id}
+                        className="  text-yellow uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-header hover:bg-header/80 border border-yellow w-full transition-all  whitespace-nowrap"
+                        onClick={handleWishlistRemove}
+                      >
+                        Eliminar
+                      </button>
+                      <button
+                        className=" text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 border border-header w-full md:w-auto transition-all  whitespace-nowrap"
+                        onClick={handleWishlistAddToCart}
+                        id={elem._id}
+                      >
+                        Comprar Ahora
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <button
-                  className="md:w-[10%] w-[15%] px-2"
-                  onClick={handleWishlistAddToCart}
-                  id={elem._id}
-                >
-                  <FaShoppingCart
-                    fontSize={20}
-                    id={elem._id}
-                    className="w-full text-header"
-                  />
-                </button>
               </li>
             ))}
           </div>

@@ -12,10 +12,7 @@ const initialState = {
     getStorage?.totalSinDescuento && getStorage?.totalSinDescuento > 0
       ? getStorage?.totalSinDescuento
       : 0, // Valor total de la compra
-  totalConDescuento:
-    getStorage?.totalConDescuento && getStorage.totalConDescuento > 0
-      ? getStorage.totalConDescuento
-      : 0,
+  totalConDescuento: 0,
   tipoDePago:
     getStorage?.tipoDePago && getStorage.tipoDePago.length
       ? getStorage.tipoDePago
@@ -25,6 +22,9 @@ const initialState = {
     getStorage?.isFacturaA && getStorage.isFacturaA > 0
       ? getStorage.isFacturaA
       : false,
+  cupon: null,
+  errorCupon: "",
+  successCupon: "",
 };
 
 const cartSlice = createSlice({
@@ -116,13 +116,30 @@ const cartSlice = createSlice({
         );
       }
     },
+    setCupon: (state, action) => {
+      state.cupon = action.payload;
+    },
+    setErrorCupon: (state, action) => {
+      state.errorCupon = action.payload;
+    },
+    setSuccessCupon: (state, action) => {
+      state.successCupon = action.payload;
+    },
     clearCart: (state, action) => {
       state = initialState;
     },
   },
 });
 
-export const { setLoading, addItem, removeItem, updateQuantity, clearCart } =
-  cartSlice.actions;
+export const {
+  setLoading,
+  setCupon,
+  setErrorCupon,
+  setSuccessCupon,
+  addItem,
+  removeItem,
+  updateQuantity,
+  clearCart,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;

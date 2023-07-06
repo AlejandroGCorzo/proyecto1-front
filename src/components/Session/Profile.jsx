@@ -7,6 +7,7 @@ import {
   updateUserAction,
   resetPasswordAction,
   resetPasswordCodeAction,
+  logOutAction,
 } from "../../redux/userActions";
 
 function Profile() {
@@ -167,6 +168,7 @@ function Profile() {
   };
 
   const handleLogout = () => {
+    dispatch(logOutAction());
     navigate("/");
   };
 

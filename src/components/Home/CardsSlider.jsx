@@ -37,8 +37,8 @@ const settings = {
   autoplaySpeed: 5000,
   infinite: true,
   speed: 500,
-  slidesToShow: 5,
-  slidesToScroll: 5,
+  slidesToShow: 4,
+  slidesToScroll: 4,
   initialSlide: 0,
   /* dots: true, */
   arrows: true,
@@ -49,8 +49,8 @@ const settings = {
     {
       breakpoint: 1280,
       settings: {
-        slidesToShow: 4,
-        slidesToScroll: 4,
+        slidesToShow: 3,
+        slidesToScroll: 3,
         /* dots: true, */
       },
     },
@@ -107,31 +107,33 @@ const CardsSlider = ({ data, mounth }) => {
                         </span>
                       )}
 
-                      {item.talle.length > 0 &&
+                      {
+                        /* item.talle.length > 0 &&
                       item.talle
                         .map((item) => item.cantidad)
                         .reduce((elem, acc) => (acc += elem)) === 1 ? (
                         <span className="text-header px-2 bg-yellow">
                           ÚLTIMA UNIDAD
                         </span>
-                      ) : (
-                        item.productoDate &&
-                        item.productoDate.split("-")[1] === mounth && (
-                          <span className="text-white bg-header p-1">
-                            NUEVO
-                          </span>
-                        )
-                      )}
+                      ) : */ item.productoDate &&
+                          item.productoDate.split("-")[1] === mounth && (
+                            <span className="text-white bg-header p-1">
+                              NUEVO
+                            </span>
+                          )
+                      }
                     </div>
 
                     <div className="flex justify-center items-center h-44 w-44 ">
-                      {item.imagen.length && (
+                      {item.imagen?.length || item.imagenes?.length ? (
                         <img
-                          src={item.imagen}
+                          src={
+                            item.imagen?.length ? item.imagen : item.imagenes
+                          }
                           alt={item.descripcion}
-                          className="h-auto max-h-44 w-auto max-w-44 aspect-auto object-contain"
+                          className="h-auto max-h-44 w-auto max-w-44 aspect-auto object-cover"
                         />
-                      )}
+                      ) : null}
                     </div>
                   </div>
                   {brandImg.length > 0 &&

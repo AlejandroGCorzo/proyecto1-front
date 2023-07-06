@@ -39,21 +39,23 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full m-auto bg-white">
+    <div className="flex flex-col w-full m-auto bg-grey">
       <Header />
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/:filter" element={<FilterProducts />} />
-        <Route path="/login" element={<UserDropdown />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/checkout" element={<ShoppingCartPage />} />
-        <Route path="/wishlist" element={<WishList />} />
-        <Route element={<PrivateRoutes />}>
-          <Route path="/admin/*" element={<PanelHome />} />
-          <Route path="/profile" element={<Profile />} />
-        </Route>
-      </Routes>
+      <div className="mt-[20%] sm:mt-[17%] md:mt-[13%] lg:mt-[14%] 2xl:mt-[8%] ">
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/:filter" element={<FilterProducts />} />
+          <Route path="/login" element={<UserDropdown />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/checkout" element={<ShoppingCartPage />} />
+          <Route path="/wishlist" element={<WishList />} />
+          <Route element={<PrivateRoutes />}>
+            <Route path="/admin/*" element={<PanelHome />} />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
+        </Routes>
+      </div>
       <Footer />
       <a href="https://wa.me/5491133130958/?text=Hola" target="_blank">
         <img
