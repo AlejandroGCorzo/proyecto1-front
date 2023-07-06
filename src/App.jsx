@@ -1,7 +1,7 @@
 import Header from "./components/Header/Header";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Home from "./components/Home/Home";
-import Footer from "./components/Footer.jsx/Footer";
+import Footer from "./components/Footer/Footer";
 import UserDropdown from "./components/Header/UserDropdown";
 import PanelHome from "./components/PanelAdmin/PanelHome";
 import PrivateRoutes from "./utils/PrivateRoutes";
