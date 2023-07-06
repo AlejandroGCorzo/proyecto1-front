@@ -15,7 +15,7 @@ const ProductosDestacados = ({ productType }) => {
   const filteredProducts = allProducts.filter(
     (product) => product.tipo === productType
   );
-console.log(filteredProducts)
+
   const currentMonth = new Date().getMonth(); // Obtener el mes actual
 
   return (
