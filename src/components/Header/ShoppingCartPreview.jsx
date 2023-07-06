@@ -199,7 +199,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                       key={elem._id + "cartPreview"}
                       className="border-b flex flex-row justify-start items-center py-5 w-full"
                     >
-                      <div className="flex h-1/3 py-1 border">
+                      <div className="flex h-1/3 border">
                         <img
                           className="max-w-[100px]"
                           src={

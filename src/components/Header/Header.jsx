@@ -161,9 +161,7 @@ const Header = () => {
                     <div className="indicator">
                       {wishedProducts?.length > 0 && (
                         <span className="indicator-item badge badge-warning -left-1">
-                          {wishedProducts
-                            ?.map((item) => item?.quantity)
-                            .reduce((acc, elem) => (acc += elem))}
+                          {wishedProducts.length}
                         </span>
                       )}
 
@@ -278,9 +276,7 @@ const Header = () => {
                       <div className="indicator">
                         {wishedProducts?.length > 0 && (
                           <span className="indicator-item badge badge-warning -left-1">
-                            {wishedProducts
-                              ?.map((item) => item?.quantity)
-                              .reduce((acc, elem) => (acc += elem))}
+                            {wishedProducts?.length}
                           </span>
                         )}
                         <MdOutlineFavoriteBorder color="white" fontSize={24} />

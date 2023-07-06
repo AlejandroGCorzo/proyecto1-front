@@ -4,6 +4,7 @@ import Slide from "./Slide";
 import CardsSlider from "./CardsSlider";
 import {
   filterProductsAction,
+  orderProductsAction,
   setFiltersAction,
 } from "../../redux/productActions";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,9 +46,14 @@ const Home = () => {
             <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col">
               <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
                 <p className="text-lg md:text-2xl py-1">LANZAMIENTOS</p>
-                <button className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out">
+                <Link
+                  to={"/:filters"}
+                  className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow 
+                bg-header hover:text-white hover:bg-yellow transition-all ease-in-out z-10"
+                  onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+                >
                   ver todo
-                </button>
+                </Link>
               </div>
               <CardsSlider data={lanzamientos} mounth={mes} />
             </div>
@@ -56,9 +62,14 @@ const Home = () => {
             <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col mb-10">
               <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
                 <p className="text-lg md:text-2xl py-1">RECOMENDADOS</p>
-                <button className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out">
+                <Link
+                  to={"/:filters"}
+                  className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow 
+                bg-header hover:text-white hover:bg-yellow transition-all ease-in-out"
+                  onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+                >
                   ver todo
-                </button>
+                </Link>
               </div>
               <CardsSlider data={recomendados} mounth={mes} />
             </div>
@@ -159,9 +170,13 @@ const Home = () => {
             <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col mb-10">
               <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between  text-nav font-semibold">
                 <p className="text-lg md:text-2xl py-1">DESTACADOS</p>
-                <button className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out">
+                <Link
+                  to={"/:filters"}
+                  className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out"
+                  onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+                >
                   ver todo
-                </button>
+                </Link>
               </div>
               <CardsSlider data={destacados} mounth={mes} />
             </div>

@@ -88,7 +88,6 @@ const ProductDetail = () => {
       addToCartAction({
         id: id,
         quantity: quantity,
-
         precio: detailProduct.precio,
         product: id,
       })
@@ -180,7 +179,7 @@ const ProductDetail = () => {
           <dialog ref={modalRef} className="modal bg-grey/40">
             <div className="modal-box bg-grey">
               <button
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-fontDark text-xl"
+                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-header text-xl"
                 onClick={toggleModal}
               >
                 ✕
