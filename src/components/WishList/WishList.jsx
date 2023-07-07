@@ -76,9 +76,8 @@ const WishList = () => {
 
     await dispatch(
       addToCartAction({
-        id: itemToAdd.id,
-        product: itemToAdd.id,
-        quantity: 1,
+        producto: itemToAdd.id,
+        cantidad: 1,
         precio: productPrice,
       })
     );

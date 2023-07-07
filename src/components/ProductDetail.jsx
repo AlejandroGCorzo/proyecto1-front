@@ -6,13 +6,18 @@ import Modal from "./Modal";
 import { useSwipeable } from "react-swipeable";
 import ProductosDestacados from "./ProductosDestacados";
 import { clearDetail } from "../redux/productSlice";
-import { addToCartAction } from "../redux/shoppingCartActions";
+import {
+  addToCartAction,
+  updateCartAction,
+} from "../redux/shoppingCartActions";
 import { useLocation, Link } from "react-router-dom";
 import OtrosProductosInteres from "./OtrosProductosInteres";
 import { MdOutlineFavorite } from "react-icons/md";
 import { addProductToWishlist } from "../redux/wishListActions";
 import { FaExchangeAlt } from "react-icons/fa";
 import { MdCheckCircle, MdRemoveCircle } from "react-icons/md";
+import { ConfirmationComponent } from "../utils/DeleteSteps";
+import Loading from "../utils/Loading";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -20,7 +25,7 @@ const ProductDetail = () => {
   const location = useLocation();
   const modalRef = useRef(null);
   const detailProduct = useSelector((state) => state.products.detail);
-  const { productos } = useSelector((state) => state.cart);
+  const { productos, loading } = useSelector((state) => state.cart);
   const { isLoggedIn } = useSelector((state) => state.users);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -34,6 +39,10 @@ const ProductDetail = () => {
   const [postalCode, setPostalCode] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [onDelete, setOnDelete] = useState(null);
+  const [itemToDelete, setItemToDelete] = useState({ nombre: "", id: "" });
+  const [section, setSection] = useState("carrito de compras");
+  const [confirmed, setConfirmed] = useState(false);
   // const [breadcrumbs, setBreadcrumbs] = useState([]);
 
   // useEffect(() => {
@@ -49,15 +58,93 @@ const ProductDetail = () => {
   //   });
   //   setBreadcrumbs(breadcrumbs);
   // }, [location.pathname]);
-
+  /* const handleAmount = (e) => {
+    const { value, name, id } = e.target;
+    const itemToUpdate = productos.find((elem) => elem.producto === name);
+    const productData = productsInCart.find(
+      (elem) => elem._id === itemToUpdate.producto
+      );
+      
+      
+      if (value === "+") {
+        
+        dispatch(
+          updateCartAction({
+            itemId: name,
+            cantidad: itemToUpdate.cantidad + 1,
+          })
+          );
+          
+        } else {
+          if (itemToUpdate.cantidad - 1 === 0) {
+            if (error) {
+              setError(false);
+            }
+            setItemToDelete({
+              nombre: "producto",
+              id: name,
+        });
+        toggleModal();
+      }
+      if (itemToUpdate.cantidad > 0 && itemToUpdate.cantidad - 1 !== 0) {
+        dispatch(
+          updateCartAction({
+            itemId: name,
+            cantidad: itemToUpdate.cantidad - 1,
+          })
+          );
+        }
+      }
+    }; */
+  const toggleModal = () => {
+    modalRef?.current?.classList?.toggle("modal-open");
+    document.activeElement.blur();
+    if (onDelete) {
+      setOnDelete(false);
+    } else {
+      setOnDelete(true);
+    }
+    if (confirmed) {
+      setConfirmed(false);
+    }
+  };
   const handleDecreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
+    const itemToUpdate = productos.find((elem) => elem.producto === id);
+    if (itemToUpdate && itemToUpdate.cantidad - 1 > 0) {
+      dispatch(
+        updateCartAction({
+          itemId: id,
+          cantidad: itemToUpdate.cantidad - 1,
+        })
+      );
+    } else if (itemToUpdate && itemToUpdate.cantidad - 1 === 0) {
+      if (error) {
+        setError(false);
+      }
+      setItemToDelete({
+        nombre: "producto",
+        id: id,
+      });
+      toggleModal();
+    } else {
+      if (quantity > 1) {
+        setQuantity(quantity - 1);
+      }
     }
   };
 
   const handleIncreaseQuantity = () => {
-    setQuantity(quantity + 1);
+    const itemToUpdate = productos.find((elem) => elem.producto === id);
+    if (itemToUpdate) {
+      dispatch(
+        updateCartAction({
+          itemId: id,
+          cantidad: itemToUpdate.cantidad + 1,
+        })
+      );
+    } else {
+      setQuantity(quantity + 1);
+    }
   };
 
   const handleCalculateShipping = () => {};
@@ -73,28 +160,33 @@ const ProductDetail = () => {
 
   //////////////////////////////Carrito/////////////////////////////
 
-  const toggleModal = () => {
-    modalRef.current.classList.toggle("modal-open");
-    document.activeElement.blur();
-  };
-
   const handleAddToCart = async () => {
     let itemToAdd = productos.filter((el) => el.product === id);
-
+    setItemToDelete({ nombre: "", id: "" });
     if (error) {
       setError(false);
     }
+
+    let precioFinal = detailProduct.precio;
+
+    if (detailProduct.descuento > 0) {
+      // Aplicar el descuento al precio total
+      const descuento = detailProduct.precio * (detailProduct.descuento / 100);
+      precioFinal = detailProduct.precio - descuento;
+    }
+
     await dispatch(
       addToCartAction({
-        id: id,
-        quantity: quantity,
-        precio: detailProduct.precio,
-        product: id,
+        cantidad: quantity,
+        precio: precioFinal,
+        producto: id,
       })
     );
+
     setSuccess(true);
     toggleModal();
   };
+
   /////////////////////////////Carrito/////////////////////////////
 
   const handleToggleTooltip = () => {
@@ -154,9 +246,7 @@ const ProductDetail = () => {
     setIsSucursalesOpen(!isSucursalesOpen);
   };
   const handleWishList = () => {
-    if (isLoggedIn) {
-      dispatch(addProductToWishlist({ id: detailProduct._id }));
-    }
+    dispatch(addProductToWishlist({ id: detailProduct._id }));
   };
   return detailProduct ? (
     <>
@@ -185,7 +275,7 @@ const ProductDetail = () => {
                 ✕
               </button>
 
-              {error && (
+              {/*  {error && (
                 <div className="alert alert-warning w-[97%]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -223,34 +313,53 @@ const ProductDetail = () => {
                   </svg>
                   <span>Debe seleccionar un Talle.</span>
                 </div>
-              )}
+              )} */}
               {productos.length &&
-                !error &&
-                productos.filter((el) => el.product === id).length && (
-                  <div className="flex flex-col w-[97%] justify-between items-center p-6 gap-8">
-                    <h2 className="uppercase text-lg w-full text-header text-center font-medium">
-                      El producto fue agregado al carrito
-                    </h2>
-                    <Link
-                      to={"/checkout"}
-                      className="btn underline text-white bg-yellow hover:bg-yellow/80 border-none focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
-                    >
-                      ir al carrito
-                    </Link>
-                    <button
-                      onClick={toggleModal}
-                      className="btn hover:opacity-80 text-white focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
-                    >
-                      seguir comprando
-                    </button>
-                  </div>
-                )}
+              !error &&
+              !itemToDelete.nombre &&
+              productos.filter((el) => el.producto === id).length ? (
+                <div className="flex flex-col w-[97%] justify-between items-center p-6 gap-8">
+                  <h2 className="uppercase text-lg w-full text-header text-center font-medium">
+                    El producto fue agregado al carrito
+                  </h2>
+                  <Link
+                    to={"/checkout"}
+                    className="btn underline text-white bg-yellow hover:bg-yellow/80 border-none focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
+                  >
+                    ir al carrito
+                  </Link>
+                  <button
+                    onClick={toggleModal}
+                    className="btn hover:opacity-80 text-white focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
+                  >
+                    seguir comprando
+                  </button>
+                </div>
+              ) : loading ? (
+                <div className="w-full h-28 flex justify-center items-center">
+                  <Loading />
+                </div>
+              ) : (
+                <ConfirmationComponent
+                  onDelete={onDelete}
+                  toggleModal={toggleModal}
+                  confirmed={confirmed}
+                  setConfirmed={setConfirmed}
+                  itemToDelete={itemToDelete}
+                  setItemToDelete={setItemToDelete}
+                  section={section}
+                />
+              )}
             </div>
           </dialog>
 
           <div className="flex flex-col md:w-full lg:w-3/4 sm:mx-2 xsm:w-full bg-white items-center justify-start lg:mx-0 lg:px-2 xsm:mx-0">
             <img
-              src={detailProduct?.imagen && detailProduct?.imagen}
+              src={
+                detailProduct?.imagen?.length
+                  ? detailProduct?.imagen
+                  : detailProduct?.imagenes
+              }
               alt={detailProduct?.modelo}
               className="w-full lg:w-3/4  mx-2 px-2 py-2 "
             />
@@ -377,7 +486,10 @@ const ProductDetail = () => {
                   <input
                     type="number"
                     id="cantidad"
-                    value={quantity}
+                    value={
+                      productos.find((item) => item.producto === id)
+                        ?.cantidad || quantity
+                    }
                     onChange={(e) => setQuantity(e.target.value)}
                     className="w-16 px-2 py-1 text-center outline-none"
                   />

@@ -154,10 +154,7 @@ const Header = () => {
                       <FiShoppingCart color="white" fontSize={26} />
                     </button>
                   </div>
-                  <Link
-                    to={isLoggedIn ? "/wishlist" : "/login"}
-                    className="px-3 pt-1"
-                  >
+                  <Link to={"/wishlist"} className="px-3 pt-1">
                     <div className="indicator">
                       {wishedProducts?.length > 0 && (
                         <span className="indicator-item badge badge-warning -left-1">
@@ -252,7 +249,7 @@ const Header = () => {
                       />
                     )}
                   </div>
-                  <div className=" lg:flex hidden flex-row-reverse items-center w-[35%] ">
+                  <div className=" lg:flex hidden flex-row-reverse items-center w-[35%] pr-8 ">
                     <div className="indicator">
                       {productos.length > 0 && (
                         <span className="indicator-item badge badge-warning -left-1">
@@ -264,15 +261,11 @@ const Header = () => {
                       </button>
                     </div>
 
-                    <UserDropdown
+                    {/*  <UserDropdown
                       toggleDropdownUser={toggleDropdownUser}
                       dropdownUserRef={dropdownUserRef}
-                    />
-                    <Link
-                      to={isLoggedIn ? "/wishlist" : "/"}
-                      onClick={handleWishList}
-                      className="px-4 flex"
-                    >
+                    /> */}
+                    <Link to={"/wishlist"} className="px-4 flex">
                       <div className="indicator">
                         {wishedProducts?.length > 0 && (
                           <span className="indicator-item badge badge-warning -left-1">
@@ -302,7 +295,7 @@ const Header = () => {
           className="bg-nav text-white text-center text-xs font-semibold uppercase flex-col w-full h-10 justify-center lg:justify-between items-center py-2 lg:py-3 lg:px-20 hidden lg:flex "
           style={{ fontSize: "16px" }}
         >
-          <div className="hidden lg:flex flex-row justify-center items-center w-full gap-6">
+          <div className="hidden lg:flex flex-row justify-end items-center w-72 gap-6">
             <Link
               to={"/:filter"}
               className="transition-all ease-in-out uppercase border-b border-b-transparent  hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center "
@@ -463,7 +456,7 @@ const Header = () => {
               </div>
               <Link
                 to={"/:filter"}
-                className="text-xl font-medium flex justify-center items-center pb-4"
+                className="text-xl font-medium flex justify-center items-center pb-4 "
                 value={"descuento"}
                 onClick={(e) => {
                   dispatch(orderProductsAction(e.target.value));
@@ -472,7 +465,7 @@ const Header = () => {
               >
                 <span>SALE</span>
               </Link>
-
+              {/* 
               <div className="text-xl font-medium flex justify-center items-center ">
                 {!isLoggedIn ? (
                   <Link
@@ -486,7 +479,7 @@ const Header = () => {
                 ) : (
                   <div className="flex flex-col justify-center items-center">
                     <Link
-                      to={isLoggedIn ? "/" : "/login"}
+                      to={isLoggedIn ? "/profile" : "/login"}
                       onClick={() => setNavbar(false)}
                     >
                       <div className="flex flex-row pb-2">
@@ -517,7 +510,7 @@ const Header = () => {
                     </button>
                   </div>
                 )}
-              </div>
+              </div> */}
             </div>
           </div>
         )}
