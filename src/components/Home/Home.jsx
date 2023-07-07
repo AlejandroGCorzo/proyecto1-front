@@ -50,7 +50,8 @@ const Home = () => {
                   to={"/:filters"}
                   className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow 
                 bg-header hover:text-white hover:bg-yellow transition-all ease-in-out z-10"
-                  onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+                  id={"nuevo"}
+                  onClick={(e) => dispatch(orderProductsAction(e.target.id))}
                 >
                   ver todo
                 </Link>
@@ -66,7 +67,8 @@ const Home = () => {
                   to={"/:filters"}
                   className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow 
                 bg-header hover:text-white hover:bg-yellow transition-all ease-in-out"
-                  onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+                  id={"descuento"}
+                  onClick={(e) => dispatch(orderProductsAction(e.target.id))}
                 >
                   ver todo
                 </Link>
@@ -173,7 +175,8 @@ const Home = () => {
                 <Link
                   to={"/:filters"}
                   className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out"
-                  onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+                  id={"relevancia"}
+                  onClick={(e) => dispatch(orderProductsAction(e.target.id))}
                 >
                   ver todo
                 </Link>
