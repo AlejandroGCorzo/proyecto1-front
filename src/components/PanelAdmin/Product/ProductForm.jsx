@@ -84,6 +84,9 @@ function validateProduct(input, products) {
     errorsProduct.modelo = "El campo Modelo no puede estar vacío."; */
     errorsProduct.precio = "El campo Precio no puede estar vacío.";
     errorsProduct.codigo = "El campo Código no puede estar vacío.";
+    errorsProduct.descripcion = "El campo Código no puede estar vacío.";
+    errorsProduct.qxbulto = "El campo Código no puede estar vacío.";
+    errorsProduct.stock = "El campo Código no puede estar vacío.";
     /*     errorsProduct.genero = "El campo Género no puede estar vacío.";
     errorsProduct.proveedor = "El campo Proveedor no puede estar vacío.";
     errorsProduct.disciplina = "El campo Disciplina no puede estar vacío."; */
@@ -91,11 +94,7 @@ function validateProduct(input, products) {
 
   /*   if (!input.tipo || input.tipo === "Elige un tipo de producto") {
     errorsProduct.tipo = "Seleccione un tipo de producto.";
-  }
-  if (products.map((item) => item.descripcion).includes(input.descripcion)) {
-    errorsProduct.descripcion =
-      "La Descripción ya existe, ingrese un valor diferente.";
-  } */
+  }*/
   /*   if (!input.modelo) {
     errorsProduct.modelo = "El campo Modelo no puede estar vacío.";
   }*/
@@ -103,6 +102,14 @@ function validateProduct(input, products) {
   if (!input.marca.length || input.marca === "Elige una marca") {
     errorsProduct.marca = "Seleccione una marca.";
   } */
+  if (
+    products
+      .map((item) => item.descripcion.toUpperCase())
+      .includes(input.descripcion.toUpperCase())
+  ) {
+    errorsProduct.descripcion =
+      "La Descripción ya existe, ingrese un valor diferente.";
+  }
   if (!input.descripcion) {
     errorsProduct.descripcion = "El campo Descripción no puede estar vacío.";
   }
@@ -126,6 +133,15 @@ function validateProduct(input, products) {
   if (!input.qxbulto) {
     errorsProduct.qxbulto = "El campo Cantidad por bulto no puede estar vacío.";
   }
+
+  if (
+    products
+      .map((item) => item.codigo.toUpperCase())
+      .includes(input.codigo.toUpperCase())
+  ) {
+    errorsProduct.codigo = "El Código ya existe, ingrese un valor diferente.";
+  }
+
   if (!input.codigo) {
     errorsProduct.codigo = "El campo Código no puede estar vacío.";
   }
@@ -210,7 +226,7 @@ const ProductForm = () => {
         }))
       : [],
     colores: productToUpdate?.colores?.length ? productToUpdate.colores : [], */
-    descuento: productToUpdate?.descuento > 0 ? productToUpdate.descuento : "",
+
     isActive: true,
     destacado: false,
   });
@@ -308,7 +324,7 @@ const ProductForm = () => {
       descuento: "",
     });
     if (params?.id?.length) {
-      setFormUpdate({ descuento: "", isActive: true, destacado: false });
+      setFormUpdate({ isActive: true, destacado: false });
     }
     /*  setErrorColor({});
     setErrorSize({}); */
@@ -589,12 +605,10 @@ const ProductForm = () => {
 
     if (productToUpdate?._id?.length) {
       if (formUpdate?.precio?.length) {
-        console.log("entre precio");
         formToSubmit = {
           ...formUpdate,
           precio: Number(formUpdate.precio),
         };
-        console.log(formToSubmit);
       } else {
         formToSubmit = formUpdate;
       }
@@ -653,7 +667,6 @@ const ProductForm = () => {
       ? true
       : false;
 
-  console.log(productToUpdate, formUpdate);
   return (
     <>
       {loading ? (
@@ -662,8 +675,6 @@ const ProductForm = () => {
         </div>
       ) : (
         <div className="flex flex-col w-full justify-start items-center ">
-          {error && <ServerError error={error} />}
-          {success && <ServerSuccess success={success} />}
           <>
             <div
               className="w-full py-2 px-8 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between
@@ -683,6 +694,8 @@ const ProductForm = () => {
                 Limpiar formulario
               </button>
             </div>
+            {error && <ServerError error={error} />}
+            {success && <ServerSuccess success={success} />}
             <h2 className="pt-2 h-10 font-semibold text-header underline text-2xl flex self-center sm:w-2/3">
               {productToUpdate?._id?.length
                 ? "Editar producto:"
@@ -909,7 +922,7 @@ const ProductForm = () => {
                     <img
                       src={image}
                       alt={`preview `}
-                      className="w-full h-full object-contain rounded-md  "
+                      className="w-full h-52 object-contain rounded-md  "
                     />
                     <button
                       className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-header text-xl relative flex px-2 transition-all"
@@ -925,7 +938,7 @@ const ProductForm = () => {
                     <img
                       src={productToUpdate.imagenes}
                       alt={`edit `}
-                      className="w-full h-64 object-contain rounded-md  "
+                      className="w-full h-52 object-contain rounded-md  "
                     />
                     <button
                       className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-header text-xl relative flex px-2 transition-all"
@@ -1145,7 +1158,7 @@ const ProductForm = () => {
                   </small>
                 )}
               </div>
-              <div className="flex flex-col md:flex-row items-center justify-between">
+              <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between">
                 <div className="flex flex-row items-center gap-2 pt-4 px-2">
                   <input
                     className="checkbox checkbox-warning checkbox-sm rounded"

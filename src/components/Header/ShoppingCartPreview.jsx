@@ -42,7 +42,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
   }, [productos, products]);
 
   const toggleModal = (e) => {
-    modalRef.current.classList.toggle("modal-open");
+    modalRef?.current?.classList?.toggle("modal-open");
     document.activeElement.blur();
     if (onDelete) {
       setOnDelete(false);
@@ -222,31 +222,22 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                           <button
                             className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
                             value={"-"}
-                            name={
-                              productos.find(
-                                (item) => item.product === elem._id
-                              ).id
-                            }
+                            name={elem._id}
                             onClick={handleAmount}
                           >
                             -
                           </button>
                           <span className="py-1 px-2 text-header text-xl">
                             {
-                              productos.find(
-                                (item) => item.product === elem._id
-                              ).quantity
+                              productos?.find((item) => item.id === elem._id)
+                                ?.quantity
                             }
                           </span>
 
                           <button
                             className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
                             value={"+"}
-                            name={
-                              productos.find(
-                                (item) => item.product === elem._id
-                              ).id
-                            }
+                            name={elem._id}
                             onClick={handleAmount}
                           >
                             +
@@ -256,17 +247,12 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                       <button
                         className="w-[10%] pt-2"
                         onClick={handleRemove}
-                        id={
-                          productos.find((item) => item.product === elem._id).id
-                        }
+                        id={elem._id}
                         name={elem.descripcion}
                       >
                         <MdDeleteOutline
                           fontSize={20}
-                          id={
-                            productos.find((item) => item.product === elem._id)
-                              .id
-                          }
+                          id={elem._id}
                           name={elem.descripcion}
                           className="w-full text-header"
                         />

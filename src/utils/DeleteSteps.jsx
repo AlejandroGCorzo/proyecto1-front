@@ -24,16 +24,19 @@ export const ConfirmationComponent = ({
   section,
 }) => {
   const dispatch = useDispatch();
-  const {isLoggedIn} = useSelector(state => state.users)
+  const { isLoggedIn } = useSelector((state) => state.users);
   const handleConfirm = async (e) => {
     e.preventDefault();
     const { value } = e.target;
     if (value === "true") {
       if (section === "carrito de compras") {
         await dispatch(
-          removeFromCartAction({
-            id: itemToDelete.id,
-          }, isLoggedIn)
+          removeFromCartAction(
+            {
+              id: itemToDelete.id,
+            },
+            isLoggedIn
+          )
         );
 
         toggleModal();
@@ -228,19 +231,15 @@ export const DeleteComponent = ({
           )
         );
       } else if (section === "Productos") {
-        let productToDelete = products.find(
-          (item) => item._id === itemToDelete.id
-        );
-        for (let i = 0; i < productToDelete.imagenes.length; i++) {
+        if (itemToDelete.id.length) {
           await dispatch(
             deleteImgProductsAction(
-              { id: productToDelete.imagenes[i], idProduct: itemToDelete.id },
+              { id: itemToDelete.id, idProduct: itemToDelete.idProduct },
               false
             )
           );
         }
-
-        dispatch(deleteProductAction(itemToDelete.id, token));
+        dispatch(deleteProductAction(itemToDelete.idProduct, token));
       } else if (section === "formProductos") {
         dispatch(
           deleteImgProductsAction({

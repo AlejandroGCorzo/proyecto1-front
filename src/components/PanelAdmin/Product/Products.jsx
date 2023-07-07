@@ -19,6 +19,7 @@ import {
   setErrorSearchProduct,
   setSearchProducts,
 } from "../../../redux/productSlice";
+import { formatearPrecio } from "../../../utils/formatPrice";
 const Products = () => {
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
@@ -170,7 +171,7 @@ const Products = () => {
                                         ? item.imagen
                                         : item.imagenes
                                     }
-                                    className="w-16 m-1"
+                                    className="w-16 max-h-20 m-1 object-contain"
                                   />
                                 </div>
                               ) : (
@@ -223,7 +224,27 @@ const Products = () => {
                             )}
                             <div className="w-max flex flex-col justify-start sm:items-center    md:p-2 py-2 ">
                               <h2 className="underline font-medium">Precio:</h2>
-                              <p>${item.precio}</p>
+                              <p>{formatearPrecio(item.precio)}</p>
+                            </div>
+                            <div className="w-max flex flex-col justify-start sm:items-center    md:p-2 py-2 ">
+                              <h2 className="underline font-medium">
+                                Descuento:
+                              </h2>
+                              <p>{item.descuento}%</p>
+                            </div>
+                            <div className="w-max flex flex-col justify-start sm:items-center    md:p-2 py-2 ">
+                              <h2 className="underline font-medium">Stock:</h2>
+                              <p>{item.stock}</p>
+                            </div>
+                            <div className="w-max flex flex-col justify-start sm:items-center    md:p-2 py-2 ">
+                              <h2 className="underline font-medium">Activo:</h2>
+                              <p>{item.isActive ? "Si" : "No"}</p>
+                            </div>
+                            <div className="w-max flex flex-col justify-start sm:items-center    md:p-2 py-2 ">
+                              <h2 className="underline font-medium">
+                                Destacado:
+                              </h2>
+                              <p>{item.destacado ? "Si" : "No"}</p>
                             </div>
 
                             {item.proveedor && item.proveedor.length > 0 && (
@@ -269,7 +290,8 @@ const Products = () => {
                           onClick={() => {
                             setItemToDelete({
                               nombre: item.codigo,
-                              id: item._id,
+                              id: item.imagenes?.length ? item.imagenes : "",
+                              idProduct: item._id,
                             });
                             setSection("Productos");
                           }}
