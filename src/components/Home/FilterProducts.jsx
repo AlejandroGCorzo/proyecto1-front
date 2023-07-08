@@ -282,7 +282,7 @@ const FilterProducts = () => {
           {productsFilter?.length > 0 && maxSlice < productsFilter?.length && (
             <div className="w-full flex justify-center items-center p-10">
               <button
-                className="px-6 py-2 border border-header/70 text-header/70 uppercase font-medium text-lg"
+                className="px-6 py-2 border border-yellow bg-header hover:bg-header/70 text-yellow uppercase font-medium text-lg"
                 onClick={handleSlice}
               >
                 Ver más productos

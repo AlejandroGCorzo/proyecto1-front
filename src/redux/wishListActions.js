@@ -1,8 +1,8 @@
 import {
   addProduct,
+  clearWishlist,
   removeProduct,
   setLoading,
-  updateQuantity,
 } from "./wishListSlice";
 
 export const addProductToWishlist = (product) => {
@@ -10,11 +10,7 @@ export const addProductToWishlist = (product) => {
     dispatch(addProduct(product));
   };
 };
-export const updateWishlistAction = (values) => {
-  return function (dispatch) {
-    dispatch(updateQuantity(values));
-  };
-};
+
 export const removeProductFromWishlist = (values) => {
   return function (dispatch) {
     dispatch(setLoading(true));
@@ -22,7 +18,7 @@ export const removeProductFromWishlist = (values) => {
     setTimeout(() => dispatch(setLoading(false)), 500);
   };
 };
-export const clearWishlist = () => {
+export const clearWishlistAction = () => {
   return function (dispatch) {
     dispatch(clearWishlist());
   };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById, getProductsAction } from "../redux/productActions";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Modal from "./Modal";
 import { useSwipeable } from "react-swipeable";
 import ProductosDestacados from "./ProductosDestacados";
@@ -22,6 +22,7 @@ import Loading from "../utils/Loading";
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const modalRef = useRef(null);
   const detailProduct = useSelector((state) => state.products.detail);
@@ -160,7 +161,8 @@ const ProductDetail = () => {
 
   //////////////////////////////Carrito/////////////////////////////
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (e) => {
+    const { value } = e.target;
     let itemToAdd = productos.filter((el) => el.product === id);
     setItemToDelete({ nombre: "", id: "" });
     if (error) {
@@ -183,8 +185,12 @@ const ProductDetail = () => {
       })
     );
 
-    setSuccess(true);
-    toggleModal();
+    if (value === "comprar") {
+      navigate("/checkout/form");
+    } else {
+      setSuccess(true);
+      toggleModal();
+    }
   };
 
   /////////////////////////////Carrito/////////////////////////////
@@ -218,7 +224,7 @@ const ProductDetail = () => {
   const handleImageClick = (imageName) => {
     setSelectedImage(imageName);
   };
-
+  console.log(detailProduct);
   const handleSwipe = (direction) => {
     if (direction === "LEFT") {
       const currentIndex = detailProduct?.imagenes.indexOf(selectedImage);
@@ -510,6 +516,7 @@ const ProductDetail = () => {
                   AGREGAR AL CARRITO
                 </button>
                 <button
+                  value={"comprar"}
                   className="bg-blue-500 text-white py-2 px-2 mt-8 mx-2 rounded-md w-1/2 hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
                   onClick={handleAddToCart}
                 >

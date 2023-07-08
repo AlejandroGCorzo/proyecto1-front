@@ -13,6 +13,7 @@ import { TbShoppingCartDiscount } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import Discount from "../../utils/Discount";
 import { formatearPrecio } from "../../utils/formatPrice";
+import CheckoutForm from "../Checkout/CheckoutForm";
 
 const ShoppingCartPage = () => {
   const dispatch = useDispatch();
@@ -84,7 +85,7 @@ const ShoppingCartPage = () => {
     const { value, name, id } = e.target;
     console.log(name);
     const itemToUpdate = productos.find((elem) => elem.producto === name);
-    console.log(itemToUpdate);
+
     const productData = productsInCart.find(
       (elem) => elem._id === itemToUpdate.producto
     );
@@ -165,7 +166,7 @@ const ShoppingCartPage = () => {
         </div>
       )}
       <div className="flex flex-col items-center justify-center w-full bg-grey ">
-        {productos?.length > 0 ? (
+        {productos?.length > 0 && !buySteps ? (
           <>
             <div className="w-full h-full max-w-[90%] flex flex-col lg:flex-row justify-center items-center lg:justify-around lg:items-start gap-6">
               <div className="h-auto w-full 2xl:max-w-[70%] flex flex-col justify-between gap-2 overflow-y-auto p-2 bg-grey">
@@ -177,7 +178,7 @@ const ShoppingCartPage = () => {
                     Vaciar carrito
                   </button>
                 </div>
-                {productsInCart?.length > 0 && !buySteps ? (
+                {productsInCart?.length > 0 &&
                   productsInCart?.map((elem) => (
                     <div
                       key={elem._id + "cartPage"}
@@ -283,10 +284,7 @@ const ShoppingCartPage = () => {
                         />
                       </button>
                     </div>
-                  ))
-                ) : (
-                  <></>
-                )}
+                  ))}
               </div>
               <div className="flex w-full md:w-[40%] max-w-xl flex-col ">
                 <div className="h-full flex flex-col w-full justify-between border-x-2 border-2">
@@ -335,7 +333,7 @@ const ShoppingCartPage = () => {
               </div>
             </div>
           </>
-        ) : (
+        ) : !buySteps ? (
           <div className=" flex flex-grow items-center justify-center flex-col ">
             <div className=" flex flex-col justify-center items-center text-gray-500 h-[440px] sm:h-[520px] lg:h-[330px]">
               <FaShoppingCart fontSize={80} />
@@ -345,6 +343,8 @@ const ShoppingCartPage = () => {
               <Link to={"/"}>{"< Continuar comprando"}</Link>
             </div>
           </div>
+        ) : (
+          <CheckoutForm products={productsInCart} />
         )}
       </div>
     </div>

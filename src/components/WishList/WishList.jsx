@@ -7,13 +7,13 @@ import {
 } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  clearWishlistAction,
   removeProductFromWishlist,
-  updateWishlistAction,
 } from "../../redux/wishListActions";
 import { ConfirmationComponent } from "../../utils/DeleteSteps";
 import Loading from "../../utils/Loading";
 import { addToCartAction } from "../../redux/shoppingCartActions";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { formatearPrecio } from "../../utils/formatPrice";
 
 const WishList = () => {
@@ -27,9 +27,10 @@ const WishList = () => {
   const [section, setSection] = useState("lista de deseados");
   const [confirmed, setConfirmed] = useState(false);
   const [productsInWishlist, setProductsInWishlist] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (wishedProducts.length && products?.length) {
+    if (wishedProducts?.length && products?.length) {
       let foundProduct = [];
       for (let i = 0; i < wishedProducts.length; i++) {
         let productToShow = products?.find(
@@ -44,6 +45,7 @@ const WishList = () => {
       foundProduct = foundProduct.sort((a, b) =>
         a.descripcion.localeCompare(b.descripcion)
       );
+
       setProductsInWishlist(foundProduct);
     } else if (!wishedProducts?.length) {
       setProductsInWishlist([]);
@@ -70,9 +72,15 @@ const WishList = () => {
 
     const itemToAdd = wishedProducts.find((elem) => elem.id === e.target.id);
 
-    const productPrice = products?.find(
-      (elem) => elem._id === itemToAdd?.id
-    )?.precio;
+    let productPrice = products?.find((elem) => elem._id === itemToAdd?.id);
+
+    if (productPrice.descuento > 0) {
+      // Aplicar el descuento al precio total
+      const descuento = detailProduct.precio * (detailProduct.descuento / 100);
+      productPrice = detailProduct.precio - descuento;
+    } else {
+      productPrice = productPrice.precio;
+    }
 
     await dispatch(
       addToCartAction({
@@ -82,6 +90,7 @@ const WishList = () => {
       })
     );
     dispatch(removeProductFromWishlist({ id: itemToAdd.id }));
+    navigate("/checkout/form");
   };
 
   const handleWishlistRemove = (e) => {
@@ -131,6 +140,14 @@ const WishList = () => {
         </li>
         {productsInWishlist?.length ? (
           <div className="w-full xl:w-[80%] flex flex-col justify-start items-center min-h-[355px] overflow-y-auto  contentScroll">
+            <div className="w-full justify-end items-center flex pb-4">
+              <button
+                className=" text-yellow  py-1  px-4 font-medium rounded bg-header hover:bg-yellow/80 hover:text-header border border-header w-full md:w-auto transition-all  whitespace-nowrap"
+                onClick={() => dispatch(clearWishlistAction())}
+              >
+                Vaciar lista de deseados
+              </button>
+            </div>
             {productsInWishlist.map((elem) => (
               <li
                 key={elem._id + "wishlist"}
@@ -150,13 +167,26 @@ const WishList = () => {
                         <h2 className="text-header uppercase w-max sm:text-lg text-center ">
                           {elem.descripcion}
                         </h2>
-                        <p className="text-base md:text-lg font-medium text-header/50 text-center h-full">
+                        <p className="text-base md:text-lg font-medium text-header/50 text-center h-full min-w-[80px]">
                           {elem.codigo}
                         </p>
                       </div>
-                      <p className="text-xl font-medium text-header w-max text-center h-full min-w-[100px]">
-                        {formatearPrecio(elem.precio)}
-                      </p>
+                      {elem.descuento > 0 ? (
+                        <div className="flex flex-row w-auto gap-2">
+                          <p className="text-lg pb-1 font-medium text-header/60 w-full text-center line-through">
+                            {formatearPrecio(elem.precio)}
+                          </p>
+                          <p className="text-lg pb-1 font-medium text-header w-full text-center">
+                            {formatearPrecio(
+                              elem.precio * (elem.descuento / 100)
+                            )}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-lg pb-1 font-medium text-header w-full text-center">
+                          {formatearPrecio(elem.precio)}
+                        </p>
+                      )}
                     </div>
                     <div className="w-max h-full flex py-2 justify-between items-center flex-col-reverse gap-2">
                       <button

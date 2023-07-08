@@ -198,7 +198,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                 </button>
               </div>
               <div className="w-full h-full flex flex-col justify-start items-center bg-white">
-                <div className="max-h-[50%] xl:max-h-[65%] xl:h-[65%] w-full px-2 self-start overflow-y-auto">
+                <div className="max-h-[50%] xl:max-h-[55%] xl:h-[60%] w-full px-2 self-start overflow-y-auto">
                   {productsInCart?.length > 0 &&
                     productsInCart.map((elem) => (
                       <div
@@ -303,7 +303,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                       compra.
                     </p>{" "}
                     <Link
-                      to={"/checkout"}
+                      to={"/checkout/form"}
                       className="btn bg-header hover:opacity-70 text-white w-full flex justify-center items-center text-[17px] "
                       onClick={() => toggleShoppingCart()}
                     >
