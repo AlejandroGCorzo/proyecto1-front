@@ -14,6 +14,7 @@ import { addProductToWishlist } from "../redux/wishListActions";
 import { FaExchangeAlt } from "react-icons/fa";
 import { MdCheckCircle, MdRemoveCircle } from "react-icons/md";
 
+
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -29,9 +30,10 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [isSucursalesOpen, setIsSucursalesOpen] = useState(false);
   const [isEnvioOpen, setIsEnvioOpen] = useState(false);
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState("Argentina");
   const [province, setProvince] = useState("");
   const [postalCode, setPostalCode] = useState("");
+  const [shippingCost, setShippingCost] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [quantity, setQuantity] = useState(1);
   
@@ -462,6 +464,14 @@ const ProductDetail = () => {
             <div className="flex flex-col w-full items-center py-3 bg-white sm:items-start">
               <h3 className="text-lg3 mx-3 font-bold">DESCRIPCION</h3>
               <p className="text-gray-500 mx-3 list-disc">{detailProduct?.descripcion}</p>
+            </div>
+          </main>
+        </div>
+        <div className="flex flex-row w-full h-auto  my-4 mx-1 justify-between ">
+          <main className="flex-1 h-full w-full  mx-auto justify-center ">
+            <div className="flex flex-col w-full items-center py-3 bg-white sm:items-start">
+              <h3 className="text-lg3 mx-3 font-bold">Tambien te puede interesar</h3>
+              <p className="text-gray-500 mx-3 list-disc"><OtrosProductosInteres /></p>
             </div>
           </main>
         </div>
