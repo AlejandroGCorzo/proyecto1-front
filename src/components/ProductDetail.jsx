@@ -361,11 +361,7 @@ const ProductDetail = () => {
 
           <div className=" w-full md:w-1/2 flex  h-[550px] sm:h-[750px] lg:h-[680px] bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
             <img
-              src={
-                detailProduct?.imagen?.length
-                  ? detailProduct?.imagen
-                  : detailProduct?.imagenes
-              }
+              src={detailProduct?.imagen && detailProduct?.imagen}
               alt={detailProduct?.modelo}
               className="w-full h-[80%] object-contain px-4  "
             />
@@ -484,9 +480,9 @@ const ProductDetail = () => {
                 <label htmlFor="cantidad" className="mr-2 text-black font-bold">
                   CANTIDAD
                 </label>
-                <div className="flex items-center border border-gray-400 rounded">
+                <div className="flex items-center rounded">
                   <button
-                    className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
+                    className="hover:opacity-70 min-h-6 h-9 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
                     onClick={() => handleDecreaseQuantity()}
                   >
                     -
@@ -499,10 +495,10 @@ const ProductDetail = () => {
                         ?.cantidad || quantity
                     }
                     onChange={(e) => setQuantity(e.target.value)}
-                    className="w-16 px-2 py-1 text-xl text-header text-center outline-none"
+                    className="w-16 px-2 py-1 text-xl text-header text-center outline-none bg-grey flex justify-center items-center"
                   />
                   <button
-                    className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
+                    className="hover:opacity-70 min-h-6 h-9 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
                     onClick={() => handleIncreaseQuantity()}
                   >
                     +
@@ -519,8 +515,7 @@ const ProductDetail = () => {
                   Agregar al Carrito
                 </button>
                 <button
-                  value={"comprar"}
-                  className="bg-blue-500 text-white py-2 px-2 mt-8 mx-2 rounded-md w-1/2 hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
+                  className=" text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 md:w-2/4 w-full border  border-header transition-all   whitespace-nowrap"
                   onClick={handleAddToCart}
                   id={detailProduct._id}
                 >
@@ -579,6 +574,18 @@ const ProductDetail = () => {
               <h3 className="text-lg3 mx-3 font-bold">DESCRIPCION</h3>
               <p className="text-gray-500 mx-3 list-disc">
                 {detailProduct?.descripcion}
+              </p>
+            </div>
+          </main>
+        </div>
+        <div className="flex flex-row w-full h-auto  my-4 mx-1 justify-between ">
+          <main className="flex-1 h-full w-full  mx-auto justify-center ">
+            <div className="flex flex-col w-full items-center py-3 bg-white sm:items-start">
+              <h3 className="text-lg3 mx-3 font-bold">
+                Tambien te puede interesar
+              </h3>
+              <p className="text-gray-500 mx-3 list-disc">
+                <OtrosProductosInteres />
               </p>
             </div>
           </main>
