@@ -207,7 +207,7 @@ const FilterProducts = () => {
                               item.imagen?.length ? item.imagen : item.imagenes
                             }
                             alt={item.descripcion}
-                            className="h-auto max-h-44 w-auto max-w-44 aspect-auto object-contain"
+                            className="h-44 w-auto max-w-44 aspect-auto object-contain"
                           />
                         ) : null}
                       </div>
