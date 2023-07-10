@@ -387,8 +387,7 @@ function CheckoutForm({ productsData = [] }) {
   };
 
   const handleBack = () => {
-    /*  localStorage.removeItem("alreadyRedirected");
-    dispatch(clearOrder()); */
+    dispatch(clearOrder());
   };
 
   let disabled =
@@ -736,14 +735,14 @@ function CheckoutForm({ productsData = [] }) {
             <h2 className="w-full text-center uppercase text-xl text-header font-semibold py-2 bg-grey rounded-tl-md rounded-tr-md">
               Resumen de cuenta
             </h2>
-            <div className="h-full min-h-[200px] bg-white p-2 gap-2">
+            <div className="h-full min-h-[200px] max-h-96 overflow-y-auto bg-white p-2 gap-2">
               {productsInCart &&
                 productsInCart?.length > 0 &&
                 productsInCart?.map((elem) => (
                   <div
                     key={elem._id + "cartPage"}
                     className=" flex flex-row  justify-center items-center
-                      w-auto h-28 border-y  bg-white"
+                      w-auto h-32 border-y  bg-white"
                   >
                     <div className="flex h-20 w-20 py-1 border">
                       <img
@@ -754,7 +753,7 @@ function CheckoutForm({ productsData = [] }) {
                     </div>
                     <div className="w-2/3  flex flex-col sm:flex-row justify-center items-center px-2">
                       <Link to={`/product/${elem._id}`}>
-                        <h2 className="text-header uppercase text-center w-40 lg:w-44  hover:text-blue-400">
+                        <h2 className="text-header uppercase text-center w-32 lg:w-44 h-full hover:text-blue-400">
                           {elem.descripcion}
                         </h2>
                       </Link>

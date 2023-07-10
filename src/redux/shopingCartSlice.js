@@ -164,7 +164,7 @@ const cartSlice = createSlice({
       state.successCupon = "";
     },
     clearOrder: (state, action) => {
-      state.order = {};
+      state.order = initialState.order;
     },
   },
 });
