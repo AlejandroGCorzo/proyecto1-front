@@ -517,6 +517,7 @@ const ProductDetail = () => {
                 <button
                   className=" text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 md:w-2/4 w-full border  border-header transition-all   whitespace-nowrap"
                   onClick={handleAddToCart}
+                  value={"comprar"}
                   id={detailProduct._id}
                 >
                   Comprar Ahora
