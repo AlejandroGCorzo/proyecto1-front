@@ -26,7 +26,7 @@ const SearchItems = ({
   return (
     <div className="w-[95%] md:w-2/3 lg:w-[350px] 2xl:w-[500px] h-auto contentScroll max-h-[80%] sm:max-h-[70%] xl:max-h-[600px] bg-white absolute top-[120px] xl:left-[500px] 2xl:left-[790px] z-[9999] overflow-y-auto font-medium">
       <Link
-        to={`/${debouncedSearchValue}`}
+        to={`/products/${debouncedSearchValue}`}
         className="flex flex-row gap-2 px-2 py-4 hover:bg-grey"
         onClick={() => {
           dispatch(searchProductsAction(debouncedSearchValue));
@@ -47,7 +47,7 @@ const SearchItems = ({
         categories.map((item) => (
           <Link
             key={item}
-            to={`/${item}`}
+            to={`/products/${item}`}
             className="flex flex-row gap-2 px-2 py-4 hover:bg-grey"
             onClick={() => {
               dispatch(setFiltersAction({ category: [item] }));
@@ -70,7 +70,7 @@ const SearchItems = ({
         productsSearch.map((item) => (
           <Link
             key={item._id}
-            to={`/detail/${item._id}`}
+            to={`/product/${item._id}`}
             className="flex flex-row gap-2  px-2 py-6 hover:bg-grey items-center justify-center w-full"
             onClick={() => {
               setShowItems(false);

@@ -191,7 +191,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
             <>
               <div className="w-full flex justify-end items-center p-2">
                 <button
-                  className=" text-yellow  py-1  px-4 font-medium rounded bg-header hover:bg-yellow/80 hover:text-header border border-header w-full md:w-auto transition-all  whitespace-nowrap"
+                  className=" text-yellow  py-1  px-4 font-medium rounded bg-header hover:bg-yellow/80 hover:text-header border border-header w-auto transition-all  whitespace-nowrap"
                   onClick={() => dispatch(clearCartAction())}
                 >
                   Vaciar carrito
@@ -220,20 +220,22 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                           </h2>
                           {productos?.find((item) => item.producto === elem._id)
                             ?.precio < elem.precio ? (
-                            <div className="flex flex-row w-auto gap-2">
-                              <p className="text-lg pb-1 font-medium text-header/60 w-full text-center line-through">
+                            <div className="flex flex-col w-auto gap-1 justify-center items-center py-2 ">
+                              <p className="text-lg font-medium text-header/60 w-max text-center line-through">
                                 {formatearPrecio(elem.precio)}
                               </p>
-                              <p className="text-lg pb-1 font-medium text-header w-full text-center">
+                              <p className="text-xl font-medium text-header w-max text-center flex flex-row items-center">
+                                <span className="text-green-400 text-xs pr-2 font-normal">
+                                  {elem.descuento + "% OFF"}
+                                </span>
                                 {formatearPrecio(
-                                  productos?.find(
-                                    (item) => item.producto === elem._id
-                                  ).precio
+                                  elem.precio -
+                                    elem.precio * (elem.descuento / 100)
                                 )}
                               </p>
                             </div>
                           ) : (
-                            <p className="text-lg pb-1 font-medium text-header w-full text-center">
+                            <p className="text-xl py-2 font-medium text-header  text-center w-full">
                               {formatearPrecio(elem.precio)}
                             </p>
                           )}

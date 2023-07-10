@@ -8,6 +8,7 @@ import {
   orderProductsAction,
 } from "../../redux/productActions";
 import Loading from "../../utils/Loading";
+import { formatearPrecio } from "../../utils/formatPrice";
 
 const FilterProducts = () => {
   const distpatch = useDispatch();
@@ -20,7 +21,7 @@ const FilterProducts = () => {
   let fechaActual = new Date();
   let mounth = String(fechaActual.getMonth() + 1).padStart(2, "0");
 
-  const [maxSlice, setMaxSlice] = useState(5);
+  const [maxSlice, setMaxSlice] = useState(8);
 
   const handleOrder = (e) => {
     e.preventDefault();
@@ -34,11 +35,11 @@ const FilterProducts = () => {
   const handleSlice = (e) => {
     if (
       maxSlice === productsFilter?.length ||
-      maxSlice + 5 > productsFilter?.length
+      maxSlice + 8 > productsFilter?.length
     ) {
       setMaxSlice(productsFilter?.length);
     } else {
-      setMaxSlice(maxSlice + 5);
+      setMaxSlice(maxSlice + 8);
     }
   };
 
@@ -47,7 +48,7 @@ const FilterProducts = () => {
     distpatch(clearFiltersAction());
   };
   return (
-    <section className="w-full h-auto flex flex-col justify-center items-center max-h-max bg-grey mt-12 sm:mt-0 ">
+    <section className="w-full h-auto min-h-[450px] sm:min-h-[650px] md:min-h-[450px] flex flex-col justify-center items-center max-h-max bg-grey mt-12 sm:mt-0 ">
       <div
         className={`flex flex-row justify-center  gap-2 w-full ${
           productsFilter?.length === 0
@@ -228,11 +229,26 @@ const FilterProducts = () => {
                     <p className="text-gray-400 py-4 uppercase font-medium h-20 w-full max-w-52 text-center">
                       {item.descripcion}
                     </p>
-                    <div className="h-auto flex flex-col justify-start items-start">
-                      <p className="text-lg">
-                        <strong className="text-xl">${item.precio},00</strong>
-                      </p>
-
+                    <div className="h-auto flex flex-col justify-start items-end">
+                      {item.descuento > 0 ? (
+                        <div className="flex flex-col w-full gap-1 justify-center items-end">
+                          <p className="text-lg font-medium text-header/60 w-max text-center line-through">
+                            {formatearPrecio(item.precio)}
+                          </p>
+                          <p className="text-xl font-medium text-header w-max text-center flex flex-row items-center">
+                            <span className="text-green-400 text-xs pr-2 font-normal">
+                              {item.descuento + "% OFF"}
+                            </span>
+                            {formatearPrecio(
+                              item.precio - item.precio * (item.descuento / 100)
+                            )}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-xl pb-1 font-medium text-header  text-end w-full">
+                          {formatearPrecio(item.precio)}
+                        </p>
+                      )}
                       <p className="font-medium text-yellow text-sm flex justify-start items-end">
                         ENVÍO GRATIS
                       </p>
@@ -267,7 +283,7 @@ const FilterProducts = () => {
                         <li>
                           <button
                             onClick={clearErrorFilters}
-                            className="btn text-yellow bg-grey border-yellow px-6 hover:bg-yellow hover:text-white transition-all hover:border-yellow"
+                            className="btn text-header bg-yellow border-header px-6 hover:bg-yellow hover:text-white transition-all hover:border-yellow text-base"
                           >
                             Limpiar filtros
                           </button>

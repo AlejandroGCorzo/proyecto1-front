@@ -24,7 +24,6 @@ const ShoppingCartPage = () => {
   const { isLoggedIn } = useSelector((state) => state.users);
   const { products } = useSelector((state) => state.products);
   const [productsInCart, setProductsInCart] = useState([]);
-  const [buySteps, setBuySteps] = useState(false);
   const [error, setError] = useState(false);
   const [onDelete, setOnDelete] = useState(null);
   const [itemToDelete, setItemToDelete] = useState({ nombre: "", id: "" });
@@ -128,7 +127,7 @@ const ShoppingCartPage = () => {
   };
 
   return (
-    <div className="w-full h-auto flex flex-col justify-start items-start md:justify-center md:items-center  max-h-max bg-fontGrey">
+    <div className="w-full h-auto flex flex-col justify-start items-start md:justify-center md:items-center  max-h-max  min-h-[450px] sm:min-h-[650px] md:min-h-[450px] bg-fontGrey">
       <dialog ref={modalRef} className="modal bg-grey/40">
         <div className="modal-box bg-white">
           <button
@@ -155,8 +154,8 @@ const ShoppingCartPage = () => {
         </div>
       </dialog>
 
-      <div className="flex justify-start items-center px-2 ">
-        <h1 className="flex w-full py-6 text-center uppercase text-xl text-header font-semibold">
+      <div className=" flex justify-start items-center px-4 mt-10 sm:mt-2 lg:mt-0">
+        <h1 className="flex py-4 w-full text-center uppercase text-xl text-header font-semibold">
           Carrito de compras
         </h1>
       </div>
@@ -168,7 +167,7 @@ const ShoppingCartPage = () => {
               <div className="h-auto w-full 2xl:max-w-[70%] flex flex-col justify-between gap-2 overflow-y-auto p-2 bg-grey">
                 <div className="w-full flex justify-end items-center p-2">
                   <button
-                    className=" text-yellow  py-1  px-4 font-medium rounded bg-header hover:bg-yellow/80 hover:text-header border border-header w-full md:w-auto transition-all  whitespace-nowrap"
+                    className=" text-yellow  py-1  px-4 font-medium rounded bg-header hover:bg-yellow/80 hover:text-header border border-header w-auto transition-all  whitespace-nowrap"
                     onClick={() => dispatch(clearCartAction())}
                   >
                     Vaciar carrito
@@ -178,11 +177,11 @@ const ShoppingCartPage = () => {
                   productsInCart?.map((elem) => (
                     <div
                       key={elem._id + "cartPage"}
-                      className=" flex flex-row justify-between items-center w-full h-40 border py-3 px-2 sm:px-6 bg-white"
+                      className=" flex flex-row justify-center sm:justify-between items-center w-full sm:h-40 border py-3 px-2 sm:px-6 bg-white"
                     >
                       <Link
                         to={`/product/${elem._id}`}
-                        className="flex h-full w-36 py-1 border"
+                        className="flex h-36 w-36 py-1 border"
                       >
                         <img
                           className="h-full w-full object-contain aspect-auto"
@@ -207,24 +206,25 @@ const ShoppingCartPage = () => {
                       </p> */}
                         {productos?.find((item) => item.producto === elem._id)
                           ?.precio < elem.precio ? (
-                          <div className="flex flex-col w-auto gap-2">
-                            <p className="text-lg pb-1 font-medium text-header/60 w-full text-center line-through">
+                          <div className="flex flex-col w-max gap-1 justify-center items-end pr-10">
+                            <p className="text-lg font-medium text-header/60 w-max text-center line-through">
                               {formatearPrecio(elem.precio)}
                             </p>
-                            <p className="text-lg pb-1 font-medium text-header w-full text-center">
+                            <p className="text-xl font-medium text-header w-max text-center flex flex-row items-center">
+                              <span className="text-green-400 text-xs pr-2 font-normal">
+                                {elem.descuento + "% OFF"}
+                              </span>
                               {formatearPrecio(
-                                productos?.find(
-                                  (item) => item.producto === elem._id
-                                ).precio
+                                elem.precio -
+                                  elem.precio * (elem.descuento / 100)
                               )}
                             </p>
                           </div>
                         ) : (
-                          <p className="text-lg pb-1 font-medium text-header w-full text-center">
+                          <p className="text-xl pb-1 font-medium text-header  text-end auto">
                             {formatearPrecio(elem.precio)}
                           </p>
                         )}
-
                         <div className="w-auto flex justify-center items-center flex-row flex-nowrap pr-2">
                           <button
                             className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
@@ -232,7 +232,7 @@ const ShoppingCartPage = () => {
                             name={
                               productos.find(
                                 (item) => item.producto === elem._id
-                              ).producto
+                              )?.producto
                             }
                             onClick={handleAmount}
                           >
@@ -242,7 +242,7 @@ const ShoppingCartPage = () => {
                             {
                               productos.find(
                                 (item) => item.producto === elem._id
-                              ).cantidad
+                              )?.cantidad
                             }
                           </span>
 
@@ -252,7 +252,7 @@ const ShoppingCartPage = () => {
                             name={
                               productos.find(
                                 (item) => item.producto === elem._id
-                              ).producto
+                              )?.producto
                             }
                             onClick={handleAmount}
                           >
@@ -265,7 +265,7 @@ const ShoppingCartPage = () => {
                         onClick={handleRemove}
                         id={
                           productos.find((item) => item.producto === elem._id)
-                            .producto
+                            ?.producto
                         }
                         name={elem.descripcion}
                       >
@@ -273,7 +273,7 @@ const ShoppingCartPage = () => {
                           fontSize={20}
                           id={
                             productos.find((item) => item.producto === elem._id)
-                              .producto
+                              ?.producto
                           }
                           name={elem.descripcion}
                           className="w-full text-header"
@@ -300,8 +300,8 @@ const ShoppingCartPage = () => {
                       <Discount />
                     )}
                   </div> */}
-                  <div className="h-auto lg:h-80 w-full flex flex-col justify-start items-start px-6 py-4  bg-white">
-                    <div className="flex w-full flex-row justify-between text-header text-lg">
+                  <div className="h-auto lg:h-60 w-full flex flex-col justify-start items-center px-6 py-4  bg-white">
+                    <div className="flex w-full flex-row justify-between text-header text-lg ">
                       <span>Subtotal</span>{" "}
                       <span>{formatearPrecio(totalSinDescuento)}</span>
                     </div>
@@ -330,7 +330,7 @@ const ShoppingCartPage = () => {
               </div>
             </div>
           </>
-        ) : !buySteps ? (
+        ) : (
           <div className=" flex flex-grow items-center justify-center flex-col ">
             <div className=" flex flex-col justify-center items-center text-gray-500 h-[440px] sm:h-[520px] lg:h-[330px]">
               <FaShoppingCart fontSize={80} />
@@ -340,8 +340,6 @@ const ShoppingCartPage = () => {
               <Link to={"/"}>{"< Continuar comprando"}</Link>
             </div>
           </div>
-        ) : (
-          <CheckoutForm products={productsInCart} />
         )}
       </div>
     </div>
