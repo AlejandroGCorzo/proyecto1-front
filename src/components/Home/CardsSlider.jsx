@@ -173,7 +173,7 @@ const CardsSlider = ({ data, mounth }) => {
                         </p>
                       </div>
                     ) : (
-                      <p className="text-xl pb-1 font-medium text-header  text-end w-full">
+                      <p className="text-xl pb-1 font-medium text-header  text-end w-full mt-7">
                         {formatearPrecio(item.precio)}
                       </p>
                     )}

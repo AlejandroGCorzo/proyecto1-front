@@ -21,7 +21,7 @@ const FilterProducts = () => {
   let fechaActual = new Date();
   let mounth = String(fechaActual.getMonth() + 1).padStart(2, "0");
 
-  const [maxSlice, setMaxSlice] = useState(8);
+  const [maxSlice, setMaxSlice] = useState(6);
 
   const handleOrder = (e) => {
     e.preventDefault();
@@ -35,11 +35,11 @@ const FilterProducts = () => {
   const handleSlice = (e) => {
     if (
       maxSlice === productsFilter?.length ||
-      maxSlice + 8 > productsFilter?.length
+      maxSlice + 6 > productsFilter?.length
     ) {
       setMaxSlice(productsFilter?.length);
     } else {
-      setMaxSlice(maxSlice + 8);
+      setMaxSlice(maxSlice + 6);
     }
   };
 
@@ -172,9 +172,9 @@ const FilterProducts = () => {
                 <Link
                   to={`/product/${item._id}`}
                   key={item._id}
-                  className="mb-1 flex flex-col justify-between items-center"
+                  className=" flex flex-col justify-between items-center"
                 >
-                  <div className="h-auto sm:max-w-[280px] w-72 border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
+                  <div className="h-full sm:max-w-[280px] w-72 border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
                     <div className=" flex flex-col justify-start items-center ">
                       <div className="absolute w-64 sm:w-48 md:w-60 xl:w-48 2xl:w-56 flex items-center justify-between">
                         {item.descuento > 0 && (
@@ -245,7 +245,7 @@ const FilterProducts = () => {
                           </p>
                         </div>
                       ) : (
-                        <p className="text-xl pb-1 font-medium text-header  text-end w-full">
+                        <p className="text-xl pb-1 font-medium text-header  text-end w-full mt-7">
                           {formatearPrecio(item.precio)}
                         </p>
                       )}

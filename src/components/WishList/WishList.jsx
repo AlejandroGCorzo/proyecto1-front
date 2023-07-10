@@ -76,8 +76,8 @@ const WishList = () => {
 
     if (productPrice.descuento > 0) {
       // Aplicar el descuento al precio total
-      const descuento = detailProduct.precio * (detailProduct.descuento / 100);
-      productPrice = detailProduct.precio - descuento;
+      const descuento = productPrice.precio * (productPrice.descuento / 100);
+      productPrice = productPrice.precio - descuento;
     } else {
       productPrice = productPrice.precio;
     }
