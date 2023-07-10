@@ -256,8 +256,8 @@ const ProductDetail = () => {
   };
   return detailProduct ? (
     <>
-      <div className="w-full flex flex-col">
-        <div className="text-gray-500 md:flex sm:flex-row sm:w-full sm:justify-center md:justify-start sm:mt-5 text-xl sm:px-4 sm:py-2 xsm:hidden ">
+      <div className="w-full h-auto flex flex-col md:justify-center sm:items-center mt-[20%] sm:mt-[5%] md:mt-[4%] lg:mt-[15%] xl:mt-[0%] 2xl:mt-10 justify-start items-start  ">
+        <div className="text-gray-500 flex sm:flex-row sm:w-full sm:justify-center md:justify-start xsm: text-xl px-4 sm:py-2  ">
           Página Principal &gt; {detailProduct.descripcion}
           {/* {breadcrumbs.map((breadcrumb, index) => (
             <Link
@@ -271,7 +271,7 @@ const ProductDetail = () => {
             </Link>
           ))} */}
         </div>
-        <div className="w-full flex flex-col  bg-grey/80  mt-[4%] sm:mt-[5.8%]  md:mt-[2%] md:max-lg:mt-[1.5%] lg:mt-[1.5%] xsm:flex xsm:w-full xsm:mt-36 sm:flex-row md:flex-row md:w-full lg:w-full xl:w-full">
+        <div className="w-full flex flex-col h-auto justify-center items-center px-4 gap-4 bg-grey/80  mt-[4%] sm:mt-[5.8%]  md:mt-[2%] md:max-lg:mt-[1.5%] lg:mt-[1.5%]  xsm:mt-[5%]  md:flex-row ">
           <dialog ref={modalRef} className="modal bg-grey/40">
             <div className="modal-box bg-grey">
               <button
@@ -359,7 +359,7 @@ const ProductDetail = () => {
             </div>
           </dialog>
 
-          <div className="flex flex-col md:w-full lg:w-3/4 sm:mx-2 xsm:w-full bg-white items-center justify-start lg:mx-0 lg:px-2 xsm:mx-0">
+          <div className=" w-full md:w-1/2 flex  h-[550px] sm:h-[750px] lg:h-[680px] bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
             <img
               src={
                 detailProduct?.imagen?.length
@@ -367,17 +367,18 @@ const ProductDetail = () => {
                   : detailProduct?.imagenes
               }
               alt={detailProduct?.modelo}
-              className="w-full lg:w-3/4  mx-2 px-2 py-2 "
+              className="w-full h-[80%] object-contain px-4  "
             />
           </div>
-          <div className="flex flex-col w-full sm:mx-2 xsm:w-full lg:w-1/2 md:mx-6 md:mt-0 lg:mt-0 xl:mt-0">
-            <aside className="flex-1 w-full bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
+          <div className="flex flex-col w-full h-[750px] lg:h-[680px] p-2 bg-white  md:w-1/2 md:mt-0 lg:mt-0 xl:mt-0">
+            <aside className="flex-1 w-full  bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
               <div className="w-full flex flex-row justify-center items-center">
                 <h1 className="font-extrabold tracking-tight items-center justify-center text-gray-900 text-2xl  xsm:mt.0 ">
                   {detailProduct?.descripcion}
                 </h1>
               </div>
-              <div className="my-3 px-2 py-2 ">
+
+              <div className="my-5 px-2 py-2 ">
                 <p className="text-3xl text-gray-900">
                   {detailProduct?.precio.toLocaleString("es-AR", {
                     style: "currency",
@@ -387,8 +388,13 @@ const ProductDetail = () => {
                   })}
                 </p>
               </div>
-              <hr className="w-full border-gray-300 mt-2" />
-              <div className="my-3 px-2 py-2">
+              <hr className="w-full border-gray-300 my-2" />
+              <div className="my-3 px-2 py-2 ">
+                <p className="ml-3 text-sm text-gray-500">
+                  CODIGO: {detailProduct?.codigo}
+                </p>
+              </div>
+              <div className="my-5  py-2">
                 {detailProduct.stock > 0 ? (
                   <div className="flex items-center ml-3">
                     <MdCheckCircle className="text-green-500 mr-1" />
@@ -401,13 +407,9 @@ const ProductDetail = () => {
                   </div>
                 )}
               </div>
-              <div className="my-3 px-2 py-2 ">
-                <p className="ml-3 text-sm text-gray-500">
-                  CODIGO: {detailProduct?.codigo}
-                </p>
-              </div>
-              <hr className="w-full border-gray-300 mt-2" />
-              <div className="flex items-center justify-between my-3  px-1 py-1 border border-gray-300">
+
+              <hr className="w-full border-gray-300 my-2" />
+              <div className="flex items-center justify-between my-5  px-1 py-1 border border-gray-300">
                 <div className="flex items-center">
                   <img
                     src="https://www.suono.com.ar/media/codazon/themelayout/images/truck-icon.png"
@@ -478,13 +480,13 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              <div className="flex flex-col items-start my-3">
+              <div className="flex flex-col items-start my-5">
                 <label htmlFor="cantidad" className="mr-2 text-black font-bold">
                   CANTIDAD
                 </label>
                 <div className="flex items-center border border-gray-400 rounded">
                   <button
-                    className="px-2 py-1 text-xl font-bold text-blue-500 hover:text-blue-600"
+                    className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
                     onClick={() => handleDecreaseQuantity()}
                   >
                     -
@@ -497,10 +499,10 @@ const ProductDetail = () => {
                         ?.cantidad || quantity
                     }
                     onChange={(e) => setQuantity(e.target.value)}
-                    className="w-16 px-2 py-1 text-center outline-none"
+                    className="w-16 px-2 py-1 text-xl text-header text-center outline-none"
                   />
                   <button
-                    className="px-2 py-1 text-xl font-bold text-blue-500 hover:text-blue-600"
+                    className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
                     onClick={() => handleIncreaseQuantity()}
                   >
                     +
@@ -508,34 +510,38 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              <div className="flex flex-row justify-between">
+              <div className="w-full lg:w-full  h-auto flex xsm:flex-col py-2 my-5 justify-center lg:justify-between items-center lg:flex-row gap-2">
                 <button
-                  className="bg-black text-white py-2 px-2 mt-8 mx-2 rounded-md w-1/2 hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
+                  value={detailProduct._id}
+                  className="  text-yellow uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-header hover:bg-header/80 border border-yellow md:w-2/4 w-full transition-all  whitespace-nowrap"
                   onClick={handleAddToCart}
                 >
-                  AGREGAR AL CARRITO
+                  Agregar al Carrito
                 </button>
                 <button
                   value={"comprar"}
                   className="bg-blue-500 text-white py-2 px-2 mt-8 mx-2 rounded-md w-1/2 hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
                   onClick={handleAddToCart}
+                  id={detailProduct._id}
                 >
-                  COMPRAR AHORA
+                  Comprar Ahora
                 </button>
-                <button
-                  className="bg-black w-auto text-white py-2 px-2 mt-8 mx-2 rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
-                  onClick={handleWishList}
-                >
-                  <MdOutlineFavorite className="text-lg" />
-                </button>
-                <button
-                  className="bg-black w-auto text-white py-2 px-2 mt-8 mx-2 rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
-                  onClick={handleWishList}
-                >
-                  <FaExchangeAlt className="text-lg" />
-                </button>
+                <div className="flex flex-row justify-between items-center gap-2 w-auto">
+                  <button
+                    className="bg-black w-auto text-white py-2 px-2   rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
+                    onClick={handleWishList}
+                  >
+                    <MdOutlineFavorite className="text-lg" />
+                  </button>
+                  <button
+                    className="bg-black w-auto text-white py-2 px-2  rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
+                    onClick={handleWishList}
+                  >
+                    <FaExchangeAlt className="text-lg" />
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center justify-between my-10">
+              <div className="flex items-center my-3 justify-between xsm:py-2 sm:py-6">
                 <div className="flex flex-col">
                   <p className="mr-3 font-bold">INFORMACIÓN GENERAL</p>
                   <p>{detailProduct.descripcion}</p>
@@ -567,21 +573,15 @@ const ProductDetail = () => {
             </aside>
           </div>
         </div>
-        <div className="flex h-auto bg-white my-4 mx-1 justify-between xsm:h-auto ">
-          <main className="flex-1 h-full w-full lg:w-3/4 order-2 xsm:order-1 mt-0 ml-1 mb-0 mr-0 sm:mr-0 mx-auto sm:w-3/5 justify-center md:h-1/4">
-            <div className="flex flex-col items-center sm:items-start mx-6">
-              <h3 className="text-lg3 mt-3 font-bold">DESCRIPCION</h3>
-              <p className="text-gray-500 mt-3">{detailProduct?.descripcion}</p>
+        <div className="flex flex-row w-full h-auto  my-4 mx-1 justify-between ">
+          <main className="flex-1 h-full w-full  mx-auto justify-center ">
+            <div className="flex flex-col w-full items-center py-3 bg-white sm:items-start">
+              <h3 className="text-lg3 mx-3 font-bold">DESCRIPCION</h3>
+              <p className="text-gray-500 mx-3 list-disc">
+                {detailProduct?.descripcion}
+              </p>
             </div>
           </main>
-        </div>
-        <div className="flex justify-center items-center w-full h-auto bg-white flex-col">
-          <div className="w-full 2xl:w-3/4">
-            <ProductosDestacados />
-          </div>
-          {/* <div className="w-full 2xl:w-3/4">
-            <OtrosProductosInteres currentProductType={detailProduct?.tipo} />
-          </div> */}
         </div>
       </div>
     </>
