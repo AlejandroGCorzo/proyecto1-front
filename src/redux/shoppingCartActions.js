@@ -38,8 +38,6 @@ export const validateCart = (id) => {
   };
 };
 export const postCartAction = (values) => {
-  console.log(url + "/orden");
-  console.log(values);
   return async function (dispatch) {
     try {
       dispatch(setLoading(true));

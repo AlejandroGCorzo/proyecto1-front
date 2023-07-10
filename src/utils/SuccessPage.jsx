@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import { BsFillCartCheckFill } from "react-icons/bs";
-import { clearOrder } from "../redux/shopingCartSlice";
+import { useDispatch } from "react-redux";
+import { clearCartAction } from "../redux/shoppingCartActions";
 const SuccessComponent = () => {
+  const dispatch = useDispatch();
+  const handleClearCart = () => {
+    dispatch(clearCartAction());
+  };
   return (
     <div className="flex flex-col items-center justify-center h-[650px] lg:h-[450px]">
       <h1 className="mb-6 text-3xl font-bold  text-header flex justify-center items-center ">
@@ -16,6 +21,7 @@ const SuccessComponent = () => {
       <Link
         to="/"
         className="border hover:border-header bg-yellow/70 border-transparent text-header font-semibold py-1 px-4 rounded text-lg hover:text-header transition-all"
+        onClick={handleClearCart}
       >
         Volver al Inicio
       </Link>

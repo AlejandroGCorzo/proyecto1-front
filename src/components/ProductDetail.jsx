@@ -359,11 +359,11 @@ const ProductDetail = () => {
             </div>
           </dialog>
 
-          <div className=" w-full md:w-1/2 flex  h-[550px] sm:h-[750px] lg:h-[680px] bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
+          <div className=" w-full md:w-1/2 flex  h-auto p-2 md:h-[750px] lg:h-[680px] bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
             <img
               src={detailProduct?.imagen && detailProduct?.imagen}
               alt={detailProduct?.modelo}
-              className="w-full h-[80%] object-contain px-4  "
+              className="w-full h-[80%] object-contain px-4 max-w-sm md:max-w-xl "
             />
           </div>
           <div className="flex flex-col w-full h-[750px] lg:h-[680px] p-2 bg-white  md:w-1/2 md:mt-0 lg:mt-0 xl:mt-0">
@@ -569,7 +569,7 @@ const ProductDetail = () => {
             </aside>
           </div>
         </div>
-        <div className="flex flex-row w-full h-auto  my-4 mx-1 justify-between ">
+        <div className="flex flex-row w-full h-auto  my-4  justify-between px-4">
           <main className="flex-1 h-full w-full  mx-auto justify-center ">
             <div className="flex flex-col w-full items-center py-3 bg-white sm:items-start">
               <h3 className="text-lg3 mx-3 font-bold">DESCRIPCION</h3>
@@ -579,15 +579,10 @@ const ProductDetail = () => {
             </div>
           </main>
         </div>
-        <div className="flex flex-row w-full h-auto  my-4 mx-1 justify-between ">
+        <div className="flex flex-row w-full h-auto my-4  justify-between px-4">
           <main className="flex-1 h-full w-full  mx-auto justify-center ">
             <div className="flex flex-col w-full items-center py-3 bg-white sm:items-start">
-              <h3 className="text-lg3 mx-3 font-bold">
-                Tambien te puede interesar
-              </h3>
-              <p className="text-gray-500 mx-3 list-disc">
-                <OtrosProductosInteres />
-              </p>
+              <OtrosProductosInteres />
             </div>
           </main>
         </div>

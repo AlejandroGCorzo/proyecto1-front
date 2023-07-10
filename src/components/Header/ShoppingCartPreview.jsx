@@ -167,7 +167,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
             )}
           </div>
         </dialog>
-        <div className="flex flex-col w-3/4 sm:w-1/2 lg:w-[40%] xl:w-[35%] 2xl:w-[20%] bg-white transform transition-transform duration-300 ease-in-out h-auto ">
+        <div className="flex flex-col w-3/4 sm:w-1/2 lg:w-[40%] xl:w-[35%] 2xl:w-[20%] bg-white transform transition-transform duration-300 ease-in-out h-full ">
           <div className="flex justify-between items-center px-4 py-3 bg-gray-200">
             <h1 className="text-xl text-header font-semibold">Carrito</h1>
 
@@ -197,8 +197,8 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                   Vaciar carrito
                 </button>
               </div>
-              <div className="w-full h-full flex flex-col justify-start items-center bg-white">
-                <div className="max-h-[50%] xl:max-h-[55%] xl:h-[60%] w-full px-2 self-start overflow-y-auto">
+              <div className="w-full h-auto flex flex-col justify-start items-center bg-white">
+                <div className="max-h-[60%] h-full md:h-[30%] xl:h-[50%] w-full px-2 self-start overflow-y-auto">
                   {productsInCart?.length > 0 &&
                     productsInCart.map((elem) => (
                       <div
@@ -281,7 +281,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                       </div>
                     ))}
                 </div>
-                <div className="h-auto max-h-[30%] flex flex-col w-full justify-center items-center">
+                <div className="h-full max-h-[30%] flex flex-col w-full justify-start items-center">
                   <div className="h-32 2xl:h-72 w-full flex flex-col justify-center items-center px-6 py-4 border-t bg-white z-10">
                     <div className="flex w-full flex-row justify-between text-header text-lg">
                       <span>Subtotal</span>{" "}
