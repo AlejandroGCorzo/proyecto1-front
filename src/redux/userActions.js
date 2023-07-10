@@ -1,5 +1,6 @@
 import axios from "axios";
 import { logout, setUser, setUserError, setUserLoading } from "./userSlice";
+import { clearCartAction } from "./shoppingCartActions";
 const url = import.meta.env.VITE_REACT_APP_API;
 
 //acciones de creacion de usuario
@@ -127,12 +128,11 @@ export const updateUserAction = (userId, updatedUser) => {
   };
 };
 
-
-
 //accion de cerrar sesion
 export const logOutAction = () => {
   return async function (dispatch) {
     try {
+      dispatch(clearCartAction());
       dispatch(logout());
     } catch (error) {
       if (error.response) {

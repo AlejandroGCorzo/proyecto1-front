@@ -13,6 +13,12 @@ body,
   background-color: white;
 }
 
+.slick-slide > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .container {
   display: flex;
   flex-wrap: wrap;
@@ -49,14 +55,14 @@ body,
   background: #555;
 }
 
-.contentScroll {
+/* .contentScroll {
   padding: 1px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   background-color: white;
   text-overflow: ellipsis;
-}
+} */
 
 @media (min-width: 640px) {
   .contentScroll {

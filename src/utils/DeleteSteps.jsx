@@ -12,6 +12,7 @@ import {
   deleteProductAction,
 } from "../redux/productActions";
 import { removeFromCartAction } from "../redux/shoppingCartActions";
+import { removeProductFromWishlist } from "../redux/wishListActions";
 
 export const ConfirmationComponent = ({
   onDelete,
@@ -23,6 +24,7 @@ export const ConfirmationComponent = ({
   section,
 }) => {
   const dispatch = useDispatch();
+  const { isLoggedIn } = useSelector((state) => state.users);
   const handleConfirm = async (e) => {
     e.preventDefault();
     const { value } = e.target;
@@ -30,6 +32,17 @@ export const ConfirmationComponent = ({
       if (section === "carrito de compras") {
         await dispatch(
           removeFromCartAction({
+            id: itemToDelete.id,
+          })
+        );
+
+        toggleModal();
+      } else {
+        setConfirmed(true);
+      }
+      if (section === "lista de deseados") {
+        await dispatch(
+          removeProductFromWishlist({
             id: itemToDelete.id,
           })
         );
@@ -215,19 +228,15 @@ export const DeleteComponent = ({
           )
         );
       } else if (section === "Productos") {
-        let productToDelete = products.find(
-          (item) => item._id === itemToDelete.id
-        );
-        for (let i = 0; i < productToDelete.imagenes.length; i++) {
+        if (itemToDelete.id.length) {
           await dispatch(
             deleteImgProductsAction(
-              { id: productToDelete.imagenes[i], idProduct: itemToDelete.id },
+              { id: itemToDelete.id, idProduct: itemToDelete.idProduct },
               false
             )
           );
         }
-
-        dispatch(deleteProductAction(itemToDelete.id, token));
+        dispatch(deleteProductAction(itemToDelete.idProduct, token));
       } else if (section === "formProductos") {
         dispatch(
           deleteImgProductsAction({
@@ -247,6 +256,13 @@ export const DeleteComponent = ({
           deleteImgCategoriesAction({
             id: itemToDelete.id,
             idCategory: itemToDelete.idCategory,
+          })
+        );
+      } else if (section === "inputProducto") {
+        dispatch(
+          deleteImgProductsAction({
+            id: itemToDelete.id,
+            idProduct: itemToDelete.idProduct,
           })
         );
       }

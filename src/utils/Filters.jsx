@@ -16,7 +16,7 @@ const Filters = () => {
     (state) => state.products
   );
 
-  let productBrands = [...new Set(products?.map((item) => item.marca))];
+  /* let productBrands = [...new Set(products?.map((item) => item.marca))];
   let productColors = [
     ...new Set(
       products?.map((item) => item.colores.map((color) => color)).flat(Infinity)
@@ -48,18 +48,18 @@ const Filters = () => {
     ...new Set(products?.map((item) => item.disciplina.toUpperCase())),
   ];
   let productGenders = [...new Set(products?.map((item) => item.genero))];
-  let productCategory = [...new Set(products?.map((item) => item.tipo))];
+  let productCategory = [...new Set(products?.map((item) => item.tipo))]; */
   let maxPrice = Math.max(...products.map((item) => item.precio));
   let minPrice = Math.min(...products.map((item) => item.precio));
   const [price, setPrice] = useState(maxPrice);
   const [filtersState, setFiltersState] = useState({
     nombre: [],
-    category: productCategory?.includes(params.filter) ? params.filter : "",
+    /*   category: productCategory?.includes(params.filter) ? params.filter : "",
     color: [],
     marca: [],
     genero: [],
     disciplina: [],
-    talle: [],
+    talle: [], */
     precio: [],
   });
 
@@ -145,17 +145,17 @@ const Filters = () => {
       dispatch(filterProductsAction());
     }
   };
-
+  console.log(filters, filtersState);
   const clearFilters = (e) => {
     e.preventDefault();
     setFiltersState({
       nombre: [],
-      category: [],
+      /*  category: [],
       color: [],
       marca: [],
       genero: [],
       disciplina: [],
-      talle: [],
+      talle: [], */
       precio: [],
     });
     dispatch(clearFiltersAction());
@@ -168,7 +168,7 @@ const Filters = () => {
 
   return (
     <div
-      className={`lg:block flex flex-col w-full h-full justify-between transition-all ${
+      className={`lg:block flex flex-col w-full h-full justify-between  ${
         filters?.nombre?.length > 0 && viewportSize.width > 1024
           ? "mt-0"
           : "lg:mt-12"
@@ -181,7 +181,7 @@ const Filters = () => {
         {filters?.nombre?.length > 0 && viewportSize.width > 1024 && (
           <div className="flex flex-row justify-between items-center pb-6 px-6 gap-4">
             <p className="font-medium text-header ">
-              {params.filter.toUpperCase()}
+              {filtersState.nombre[0].toUpperCase()}
             </p>
             <button
               name="removeNombre"
@@ -202,7 +202,7 @@ const Filters = () => {
                 viewportSize.width <= 1024 && (
                   <div className="flex flex-row justify-between items-center py-2 px-2 w-full">
                     <p className="font-medium text-header ">
-                      {params.filter.toUpperCase()}
+                      {filtersState.nombre[0].toUpperCase()}
                     </p>
                     <button
                       name="removeNombre"
@@ -213,7 +213,7 @@ const Filters = () => {
                     </button>
                   </div>
                 )}
-              {filters?.category?.length > 0 &&
+              {/*  {filters?.category?.length > 0 &&
                 filters?.category?.map((item) => (
                   <label
                     key={item + "current"}
@@ -318,11 +318,11 @@ const Filters = () => {
                       {tall.slice(0, 1).toUpperCase() + tall.slice(1)}
                     </span>
                   </label>
-                ))}
+                ))} */}
             </div>
           </div>
         )}
-        <div className="collapse collapse-arrow rounded-none bg-white border-b border-x">
+        {/* <div className="collapse collapse-arrow rounded-none bg-white border-b border-x">
           <input type="checkbox" />
           <div className="collapse-title text-sm font-medium uppercase text-nav  rounded">
             Categoría
@@ -493,13 +493,24 @@ const Filters = () => {
                 </div>
               ))}
           </div>
-        </div>
-        <div className="collapse collapse-arrow rounded-none bg-white border-b border-x">
-          <input type="checkbox" />
-          <div className="collapse-title text-sm font-medium uppercase text-nav  rounded">
+        </div> */}
+        <div
+          className={`rounded-none bg-white border-b border-x ${
+            viewportSize.width > 1024 ? "collapse collapse-arrow" : ""
+          }`}
+        >
+          <input
+            type="checkbox"
+            className={`${viewportSize.width > 1024 ? "" : "hidden"}`}
+          />
+          <div className="collapse-title text-sm font-medium uppercase text-nav rounded">
             Gama de precios
           </div>
-          <div className="collapse-content border-t text-header max-h-80 px-2">
+          <div
+            className={` border-t text-header max-h-80 px-2 ${
+              viewportSize.width > 1024 ? "collapse-content" : ""
+            }`}
+          >
             <div className="text-header flex flex-col items-center justify-center p-6 lg:w-full lg:px-0 lg:pt-6 lg:pb-2">
               <input
                 type="range"

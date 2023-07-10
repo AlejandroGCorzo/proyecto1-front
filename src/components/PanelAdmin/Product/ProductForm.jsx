@@ -22,7 +22,7 @@ function validateImage(input) {
   let errorsImage = {};
 
   if (!input) {
-    errorsImage.image = "Cargar mínimo una imagen al campo Imagen.";
+    errorsImage.image = "Debe ingresar una imagen al campo Imagen.";
   }
 
   return errorsImage;
@@ -62,43 +62,53 @@ function validateSize(input, form = null) {
 function validateProduct(input, products) {
   let errorsProduct = {};
   if (
-    input.tipo === "Elige una categoría" &&
-    !input.marca &&
-    !input.descripcion &&
-    !input.colores &&
+    /*  input.tipo === "Elige una categoría" &&
+    !input.marca && */
+    /* !input.colores &&
     !input.talle &&
-    !input.modelo &&
+    !input.modelo && */
+    !input.descripcion &&
     !input.precio &&
-    !input.codigo &&
-    !input.genero &&
+    !input.stock &&
+    !input.qxbulto &&
+    !input.codigo /*  &&
+   !input.genero &&
     !input.proveedor &&
-    !input.disciplina
+    !input.disciplina */
   ) {
-    errorsProduct.tipo = "Seleccione una categoría.";
-    errorsProduct.marca = "Seleccione una subcategoría.";
-    errorsProduct.descripcion = "El campo Descripción no puede estar vacío.";
+    /*    errorsProduct.tipo = "Seleccione una categoría.";
+    errorsProduct.marca = "Seleccione una subcategoría."; */
+    /*     errorsProduct.descripcion = "El campo Descripción no puede estar vacío.";
     errorsProduct.colores = "Añadir al menos un color.";
     errorsProduct.talle = "Añadir al menos un Talle y una Cantidad.";
-    errorsProduct.modelo = "El campo Modelo no puede estar vacío.";
+    errorsProduct.modelo = "El campo Modelo no puede estar vacío."; */
     errorsProduct.precio = "El campo Precio no puede estar vacío.";
     errorsProduct.codigo = "El campo Código no puede estar vacío.";
-    errorsProduct.genero = "El campo Género no puede estar vacío.";
+    errorsProduct.descripcion = "El campo Código no puede estar vacío.";
+    errorsProduct.qxbulto = "El campo Código no puede estar vacío.";
+    errorsProduct.stock = "El campo Código no puede estar vacío.";
+    /*     errorsProduct.genero = "El campo Género no puede estar vacío.";
     errorsProduct.proveedor = "El campo Proveedor no puede estar vacío.";
-    errorsProduct.disciplina = "El campo Disciplina no puede estar vacío.";
+    errorsProduct.disciplina = "El campo Disciplina no puede estar vacío."; */
   }
 
-  if (!input.tipo || input.tipo === "Elige un tipo de producto") {
+  /*   if (!input.tipo || input.tipo === "Elige un tipo de producto") {
     errorsProduct.tipo = "Seleccione un tipo de producto.";
-  }
-  if (products.map((item) => item.modelo).includes(input.modelo)) {
-    errorsProduct.modelo = "El Modelo ya existe, ingrese un valor diferente.";
-  }
-  if (!input.modelo) {
+  }*/
+  /*   if (!input.modelo) {
     errorsProduct.modelo = "El campo Modelo no puede estar vacío.";
-  }
-
+  }*/
+  /* 
   if (!input.marca.length || input.marca === "Elige una marca") {
     errorsProduct.marca = "Seleccione una marca.";
+  } */
+  if (
+    products
+      .map((item) => item.descripcion.toUpperCase())
+      .includes(input.descripcion.toUpperCase())
+  ) {
+    errorsProduct.descripcion =
+      "La Descripción ya existe, ingrese un valor diferente.";
   }
   if (!input.descripcion) {
     errorsProduct.descripcion = "El campo Descripción no puede estar vacío.";
@@ -110,10 +120,32 @@ function validateProduct(input, products) {
   if (!input.precio) {
     errorsProduct.precio = "El campo Precio no puede estar vacío.";
   }
+  if (input.stock && !Number(input.stock)) {
+    errorsProduct.stock = "El campo Stock solo debe contener numeros.";
+  }
+  if (!input.stock) {
+    errorsProduct.stock = "El campo Stock no puede estar vacío.";
+  }
+  if (input.qxbulto && !Number(input.qxbulto)) {
+    errorsProduct.qxbulto =
+      "El campo Cantidad por bulto solo debe contener numeros.";
+  }
+  if (!input.qxbulto) {
+    errorsProduct.qxbulto = "El campo Cantidad por bulto no puede estar vacío.";
+  }
+
+  if (
+    products
+      .map((item) => item.codigo.toUpperCase())
+      .includes(input.codigo.toUpperCase())
+  ) {
+    errorsProduct.codigo = "El Código ya existe, ingrese un valor diferente.";
+  }
+
   if (!input.codigo) {
     errorsProduct.codigo = "El campo Código no puede estar vacío.";
   }
-  if (!input.genero) {
+  /*   if (!input.genero) {
     errorsProduct.genero = "El campo Género no puede estar vacío.";
   }
   if (input.proveedor !== input.codigo) {
@@ -124,7 +156,7 @@ function validateProduct(input, products) {
   }
   if (!input.disciplina) {
     errorsProduct.disciplina = "El campo Disciplina no puede estar vacío.";
-  }
+  } */
 
   return errorsProduct;
 }
@@ -162,37 +194,39 @@ const ProductForm = () => {
   const [currentSubcategories, setCurrentSubcategories] = useState([]);
   const [image, setImage] = useState([]);
   const [errorImage, setErrorImage] = useState({});
-  const [color, setColor] = useState("");
+  /*   const [color, setColor] = useState("");
   const [errorColor, setErrorColor] = useState({});
   const [size, setSize] = useState({ talle: "Único", cantidad: "" });
-  const [errorSize, setErrorSize] = useState({ talle: "", cantidad: "" });
+  const [errorSize, setErrorSize] = useState({ talle: "", cantidad: "" }); */
   const [form, setForm] = useState({
     imagenes: [],
-    tipo: "",
-    modelo: "",
-    marca: "",
+    /*  modelo: "",*/
+    /*  colores: [],
+    talle: [], */
+    /*    genero: "",
+    proveedor: "",
+    disciplina: "", */
+    /*  tipo: "",
+    marca: "", */
     descripcion: "",
-    colores: [],
-    talle: [],
     precio: "",
     codigo: "",
-    genero: "",
-    proveedor: "",
-    disciplina: "",
+    stock: "",
+    qxbulto: "",
     isActive: true,
     destacado: false,
     descuento: "",
   });
 
   const [formUpdate, setFormUpdate] = useState({
-    talle: productToUpdate?.talle?.length
+    /*  talle: productToUpdate?.talle?.length
       ? productToUpdate.talle.map((item) => ({
           talle: item.talle,
           cantidad: Number(item.cantidad),
         }))
       : [],
-    colores: productToUpdate?.colores?.length ? productToUpdate.colores : [],
-    descuento: productToUpdate?.descuento > 0 ? productToUpdate.descuento : "",
+    colores: productToUpdate?.colores?.length ? productToUpdate.colores : [], */
+
     isActive: true,
     destacado: false,
   });
@@ -210,13 +244,13 @@ const ProductForm = () => {
   const validateOnBlur = (e) => {
     const { value, name, files } = e.target;
     if (!params?.id?.length) {
-      if (name === "color") {
+      /*  if (name === "color") {
         let errorColorValidation = validateColor(value, form);
         setErrorColor(errorColorValidation);
       } else if (name === "talle" || name === "cantidad") {
         let errorSizeValidation = validateSize({ ...size, [name]: value });
         setErrorSize(errorSizeValidation);
-      } else if (name === "image") {
+      } else */ if (name === "image") {
         let validatedImage = validateImage(files[0]);
         setErrorImage(validatedImage);
       } else {
@@ -227,14 +261,29 @@ const ProductForm = () => {
         setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
       }
     }
-    if (name === "talle" || name === "cantidad") {
+    /*  if (name === "talle" || name === "cantidad") {
       let errorSizeValidation = validateSize({ ...size, [name]: value });
       setErrorSize(errorSizeValidation);
     }
     if (name === "color") {
       let errorColorValidation = validateColor(value, formUpdate);
       setErrorColor(errorColorValidation);
+    } */
+    if (name === "image") {
+      if (productToUpdate?.imagenes?.length) {
+        setItemToDelete({
+          nombre: "imagen",
+          idProduct: productToUpdate._id,
+          id: productToUpdate.imagenes,
+        });
+        setSection("inputProducto");
+        toggleModal();
+      } else {
+        let errorFormValidation = validateImage(files[0]);
+        setErrorImage(errorFormValidation);
+      }
     }
+
     return;
   };
 
@@ -252,38 +301,40 @@ const ProductForm = () => {
     if (selectInputRefTipo.current) {
       selectInputRefTipo.current.value = "Elige un tipo de producto"; // Limpiar el valor del input
     }
-    setColor("");
-    setImage([]);
-    setSize({ talle: "Único", cantidad: "" });
+    /*  setColor(""); */
+    setImage("");
+    /*  setSize({ talle: "Único", cantidad: "" }); */
     setForm({
       imagenes: [],
-      tipo: "",
-      modelo: "",
-      marca: "",
+      /*marca: "", */
+      /*   tipo: "",
+      modelo: "", */
       descripcion: "",
-      colores: [],
-      talle: [],
+      /*  colores: [],
+      talle: [], */
       precio: "",
       codigo: "",
-      genero: "",
+      stock: "",
+      qxbulto: "",
+      /*    genero: "",
       proveedor: "",
-      disciplina: "",
+      disciplina: "", */
       isActive: true,
       destacado: false,
       descuento: "",
     });
     if (params?.id?.length) {
-      setFormUpdate({ descuento: "", isActive: true, destacado: false });
+      setFormUpdate({ isActive: true, destacado: false });
     }
-    setErrorColor({});
-    setErrorSize({});
+    /*  setErrorColor({});
+    setErrorSize({}); */
     setErrorImage({});
     setErrorsForm({});
     dispatch(setErrorProduct(""));
     dispatch(setSuccessProduct(""));
   };
-
-  const handleImageChange = async (e) => {
+  ///si imagenes es un array
+  /*   const handleImageChange = async (e) => {
     const { files, name } = e.target;
 
     let eventualState = [];
@@ -330,13 +381,54 @@ const ProductForm = () => {
       }
     }
   };
-
   const handleImageRemove = (index) => {
     setImage((prevImages) => prevImages.filter((img, i) => i !== index));
     return;
+  }; 
+  */
+
+  ////si imagenes no es un array
+  const handleImageChange = async (e) => {
+    const { files, name } = e.target;
+
+    let eventualState = "";
+    let previewFiles = "";
+
+    if (!files.length) return;
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          previewFiles = reader.result;
+
+          setImage(reader.result);
+        }
+      };
+      try {
+        const res = await toBase64(files[i]);
+        eventualState = res;
+      } catch (e) {
+        console.log(e);
+      }
+      reader.readAsDataURL(files[i]);
+    }
+    if (!params?.id?.length) {
+      let validatedImage = validateImage(files);
+      setErrorImage(validatedImage);
+
+      setForm((prev) => ({ ...prev, imagenes: eventualState }));
+    } else {
+      setFormUpdate((prev) => ({ ...prev, imagenes: eventualState }));
+    }
   };
 
-  const handleColorChange = (e) => {
+  const handleImageRemove = (index) => {
+    setImage("");
+    return;
+  };
+
+  /*   const handleColorChange = (e) => {
     e.preventDefault();
     const { value, name } = e.target;
     setColor(value);
@@ -372,8 +464,8 @@ const ProductForm = () => {
       }
     }
     setColor("");
-  };
-
+  }; */
+  /* 
   const handleSizeChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -433,7 +525,7 @@ const ProductForm = () => {
       }
     }
     setSize({ talle: "", cantidad: "" });
-  };
+  }; */
   const handleChangeForm = (e) => {
     const { name, value } = e.target;
     if (name === "tipo") {
@@ -468,6 +560,10 @@ const ProductForm = () => {
         } else {
           setErrorsForm((prev) => ({ ...prev, descuento: "" }));
         }
+      } else if (name === "stock" && value) {
+        setFormUpdate((prev) => ({ ...prev, [name]: Number(value) }));
+      } else if (name === "qxbulto" && value) {
+        setFormUpdate((prev) => ({ ...prev, [name]: Number(value) }));
       } else {
         setFormUpdate((prev) => ({ ...prev, [name]: value }));
       }
@@ -484,6 +580,10 @@ const ProductForm = () => {
         } else {
           setErrorsForm((prev) => ({ ...prev, descuento: "" }));
         }
+      } else if (name === "stock" && value) {
+        setForm((prev) => ({ ...prev, [name]: Number(value) }));
+      } else if (name === "qxbulto" && value) {
+        setForm((prev) => ({ ...prev, [name]: Number(value) }));
       } else {
         setForm((prev) => ({
           ...prev,
@@ -501,19 +601,27 @@ const ProductForm = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    let formToSubmit = productToUpdate?._id?.length
-      ? formUpdate?.precio?.length
-        ? {
-            ...formUpdate,
-            precio: Number(formUpdate.precio),
-            descuento: Number(formUpdate.descuento),
-          }
-        : { ...formUpdate, descuento: Number(formUpdate.descuento) }
-      : {
-          ...form,
-          precio: Number(form.precio),
-          descuento: Number(form.descuento),
+    let formToSubmit = {};
+
+    if (productToUpdate?._id?.length) {
+      if (formUpdate?.precio?.length) {
+        formToSubmit = {
+          ...formUpdate,
+          precio: Number(formUpdate.precio),
         };
+      } else {
+        formToSubmit = formUpdate;
+      }
+    } else {
+      formToSubmit = {
+        ...form,
+        precio: Number(form.precio),
+        descuento: Number(form.descuento),
+        stock: Number(form.stock),
+        qxbulto: Number(form.qxbulto),
+      };
+    }
+
     async function post() {
       await dispatch(postProductAction(formToSubmit, token));
     }
@@ -531,7 +639,7 @@ const ProductForm = () => {
     clearForm();
   };
 
-  let isColorDisabled =
+  /*  let isColorDisabled =
     !color.length || Object.values(errorColor).join("").length ? true : false;
   let isImageDisabled =
     !image.length || Object.values(errorImage).join("").length ? true : false;
@@ -541,18 +649,20 @@ const ProductForm = () => {
     Object.values(errorSize).join("").length
       ? true
       : false;
-
+ */
   let isFormDisabled =
     !Object.values(form).join("").length ||
-    Object.values(errorColor).join("").length ||
-    Object.values(errorSize).join("").length ||
+    !image?.length ||
+    /*  Object.values(errorColor).join("").length ||
+    Object.values(errorSize).join("").length || */
     Object.values(errorsForm).join("").length
       ? true
       : false;
   let isFormUpdateDisabled =
     !Object.values(formUpdate).join("").length ||
-    Object.values(errorColor).join("").length ||
-    Object.values(errorSize).join("").length ||
+    (!image?.length && !productToUpdate?.imagenes?.length) ||
+    /*     Object.values(errorColor).join("").length ||
+    Object.values(errorSize).join("").length || */
     Object.values(errorsForm).join("").length
       ? true
       : false;
@@ -565,12 +675,10 @@ const ProductForm = () => {
         </div>
       ) : (
         <div className="flex flex-col w-full justify-start items-center ">
-          {error && <ServerError error={error} />}
-          {success && <ServerSuccess success={success} />}
           <>
             <div
-              className="w-full py-2 px-8 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between sm:mt-0
-        text-xl text-blue-400 ml-4 mt-4"
+              className="w-full py-2 px-8 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between
+        text-xl text-blue-400 ml-4 my-4"
             >
               <Link
                 to="/admin/products"
@@ -586,12 +694,14 @@ const ProductForm = () => {
                 Limpiar formulario
               </button>
             </div>
+            {error && <ServerError error={error} />}
+            {success && <ServerSuccess success={success} />}
             <h2 className="pt-2 h-10 font-semibold text-header underline text-2xl flex self-center sm:w-2/3">
               {productToUpdate?._id?.length
                 ? "Editar producto:"
                 : "Crear producto:"}
             </h2>
-
+            {/* 
             <form
               className="form-control w-2/3 gap-4 p-4 text-header text-lg flex flex-col lg:flex-row justify-around items-start lg:items-end"
               onSubmit={handleColorSubmit}
@@ -624,8 +734,8 @@ const ProductForm = () => {
                 Añadir
               </button>
             </form>
-
-            <div className="flex flex-col w-1/3 justify-center items-center">
+ */}
+            {/*  <div className="flex flex-col w-1/3 justify-center items-center">
               {form?.colores?.length > 0 &&
                 form.colores.map((item, index) => (
                   <div
@@ -677,8 +787,8 @@ const ProductForm = () => {
                   </div>
                 ))}
             </div>
-
-            <form
+ */}
+            {/*  <form
               className="form-control w-2/3 gap-4 p-4 text-header text-lg flex flex-col justify-between items-start 2xl:flex-row 2xl:items-end"
               onSubmit={handleSizeSubmit}
             >
@@ -738,8 +848,8 @@ const ProductForm = () => {
               >
                 Añadir
               </button>
-            </form>
-            <div className="flex flex-col w-2/3 justify-center items-center">
+            </form> */}
+            {/*   <div className="flex flex-col w-2/3 justify-center items-center">
               {form?.talle?.length > 0 &&
                 form.talle.map((item, index) => (
                   <div
@@ -782,7 +892,7 @@ const ProductForm = () => {
                     </button>
                   </div>
                 ))}
-            </div>
+            </div> */}
             <form
               className="form-control w-2/3 gap-4 p-4 text-header text-lg"
               onSubmit={handleFormSubmit}
@@ -806,62 +916,54 @@ const ProductForm = () => {
                   </small>
                 )}
               </div>
-              <div className="flex flex-wrap justify-center items-start mt-4 gap-2">
-                {image?.length > 0 &&
-                  image.map((img, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col-reverse w-1/4 h-72 border rounded justify-end items-end p-2 bg-white"
+              <div className="flex flex-wrap justify-center items-start gap-2">
+                {image?.length > 0 && (
+                  <div className="flex flex-col-reverse w-1/4 h-64 border rounded justify-end items-end p-2 bg-white">
+                    <img
+                      src={image}
+                      alt={`preview `}
+                      className="w-full h-52 object-contain rounded-md  "
+                    />
+                    <button
+                      className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-header text-xl relative flex px-2 transition-all"
+                      type="button"
+                      onClick={() => handleImageRemove()}
                     >
-                      <img
-                        src={img}
-                        alt={`preview ${index}`}
-                        className="w-full h-full object-contain rounded-md  "
-                      />
-                      <button
-                        className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-header text-xl relative flex px-2 transition-all"
-                        type="button"
-                        onClick={() => handleImageRemove(index)}
-                      >
-                        X
-                      </button>
-                    </div>
-                  ))}
-                {productToUpdate?.imagenes?.length > 0 &&
-                  productToUpdate.imagenes.map((img, index) => (
-                    <div
-                      key={img}
-                      className="flex flex-col-reverse w-1/4 h-72 border rounded justify-end items-end p-2 bg-white"
+                      X
+                    </button>
+                  </div>
+                )}
+                {productToUpdate?.imagenes?.length > 0 && (
+                  <div className="flex flex-col-reverse w-1/4 h-64 border rounded justify-end items-end p-2 bg-white">
+                    <img
+                      src={productToUpdate.imagenes}
+                      alt={`edit `}
+                      className="w-full h-52 object-contain rounded-md  "
+                    />
+                    <button
+                      className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-header text-xl relative flex px-2 transition-all"
+                      type="button"
+                      onClick={() => {
+                        setItemToDelete({
+                          nombre: "imagen",
+                          idProduct: productToUpdate._id,
+                          id: productToUpdate.imagenes,
+                        });
+                        setSection("formProductos");
+                        toggleModal();
+                      }}
                     >
-                      <img
-                        src={img}
-                        alt={`edit ${index}`}
-                        className="w-full h-64 object-contain rounded-md  "
-                      />
-                      <button
-                        className="border rounded-full hover:bg-nav hover:text-grey bg-grey text-header text-xl relative flex px-2 transition-all"
-                        type="button"
-                        onClick={() => {
-                          setItemToDelete({
-                            nombre: "imagen",
-                            idProduct: productToUpdate._id,
-                            id: img,
-                          });
-                          setSection("formProductos");
-                          toggleModal();
-                        }}
-                      >
-                        X
-                      </button>
-                    </div>
-                  ))}
+                      X
+                    </button>
+                  </div>
+                )}
               </div>
-              <label className="label pt-2 pb-0">
+              {/* <label className="label pt-2 pb-0">
                 <span>Tipo de producto</span>
               </label>
               <select
                 ref={selectInputRefTipo}
-                className="input bg-white"
+                className="input bg-white text-lg"
                 placeholder="Tipo de producto"
                 name="tipo"
                 onChange={handleChangeForm}
@@ -882,8 +984,8 @@ const ProductForm = () => {
                 <small className="h-6 text-red-600 w-full flex self-start mb-1">
                   {errorsForm.tipo}
                 </small>
-              )}
-              <label className="label pt-2 pb-0">
+              )} */}
+              {/*  <label className="label pt-2 pb-0">
                 <span>Modelo</span>
               </label>
               <input
@@ -902,13 +1004,13 @@ const ProductForm = () => {
                 <small className="h-6 text-red-600 w-full flex self-start mb-1">
                   {errorsForm.modelo}
                 </small>
-              )}
-              <label className="label pt-2 pb-0">
+              )} */}
+              {/*   <label className="label pt-2 pb-0">
                 <span>Marca</span>
               </label>
               <select
                 ref={selectInputRefMarca}
-                className="input bg-white"
+                className="input bg-white text-lg"
                 placeholder="Marca"
                 name="marca"
                 onChange={handleChangeForm}
@@ -941,14 +1043,14 @@ const ProductForm = () => {
                 <small className="h-6 text-red-600 w-full flex self-start mb-1">
                   {errorsForm.marca}
                 </small>
-              )}
+              )} */}
               <label className="label pt-2 pb-0">
                 <span>Descripción</span>
               </label>
               <input
                 type="text"
                 autoComplete="off"
-                className="textarea h-20 bg-grey"
+                className="textarea h-auto min-h-16 bg-white text-lg "
                 name="descripcion"
                 value={
                   productToUpdate?._id?.length
@@ -970,7 +1072,7 @@ const ProductForm = () => {
               <input
                 type="text"
                 autoComplete="off"
-                className="input bg-white"
+                className="input bg-white text-lg"
                 name="precio"
                 value={
                   productToUpdate?._id?.length ? formUpdate.precio : form.precio
@@ -986,13 +1088,61 @@ const ProductForm = () => {
               )}
               <div className={`flex flex-col w-full `}>
                 <label className="label pt-2 pb-0">
+                  <span>Stock total</span>
+                </label>
+                <input
+                  autoComplete="off"
+                  type="number"
+                  min={0}
+                  className="input bg-white text-lg"
+                  name="stock"
+                  value={
+                    productToUpdate?._id?.length
+                      ? formUpdate?.stock
+                      : form.stock
+                  }
+                  onChange={handleChangeForm}
+                  placeholder="Ingresar stock"
+                />
+                {errorsForm?.stock?.length > 0 && (
+                  <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                    {errorsForm.stock}
+                  </small>
+                )}
+              </div>
+              <div className={`flex flex-col w-full `}>
+                <label className="label pt-2 pb-0">
+                  <span>Cantidad por bulto</span>
+                </label>
+                <input
+                  autoComplete="off"
+                  type="number"
+                  min={0}
+                  className="input bg-white text-lg"
+                  name="qxbulto"
+                  value={
+                    productToUpdate?._id?.length
+                      ? formUpdate.qxbulto
+                      : form.qxbulto
+                  }
+                  onChange={handleChangeForm}
+                  placeholder="Ingresar cantidad por bulto"
+                />
+                {errorsForm?.qxbulto?.length > 0 && (
+                  <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                    {errorsForm.qxbulto}
+                  </small>
+                )}
+              </div>
+              <div className={`flex flex-col w-full `}>
+                <label className="label pt-2 pb-0">
                   <span>Aplicar descuento</span>
                 </label>
                 <input
                   autoComplete="off"
                   type="number"
                   min={0}
-                  className="input bg-white"
+                  className="input bg-white text-lg"
                   name="descuento"
                   value={
                     productToUpdate?._id?.length
@@ -1008,7 +1158,7 @@ const ProductForm = () => {
                   </small>
                 )}
               </div>
-              <div className="flex flex-col md:flex-row items-center justify-between">
+              <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between">
                 <div className="flex flex-row items-center gap-2 pt-4 px-2">
                   <input
                     className="checkbox checkbox-warning checkbox-sm rounded"
@@ -1044,7 +1194,7 @@ const ProductForm = () => {
               <input
                 autoComplete="off"
                 type="text"
-                className="input bg-white"
+                className="input bg-white text-lg"
                 name="codigo"
                 value={
                   productToUpdate?._id?.length ? formUpdate.codigo : form.codigo
@@ -1058,7 +1208,7 @@ const ProductForm = () => {
                   {errorsForm.codigo}
                 </small>
               )}
-              <label className="label pt-2 pb-0">
+              {/*  <label className="label pt-2 pb-0">
                 <span>Género</span>
               </label>
               <input
@@ -1077,7 +1227,7 @@ const ProductForm = () => {
                 <small className="h-6 text-red-600 w-full flex self-start mb-1">
                   {errorsForm.genero}
                 </small>
-              )}
+              )} 
               <label className="label pt-2 pb-0">
                 <span>Proveedor</span>
               </label>
@@ -1121,10 +1271,10 @@ const ProductForm = () => {
                 <small className="h-6 text-red-600 w-full flex self-start mb-1">
                   {errorsForm.disciplina}
                 </small>
-              )}
+              )}*/}
               <button
                 type="submit"
-                className="btn text-white hover:bg-grey hover:text-header transition-all ease-in-out disabled:bg-header/80 disabled:text-fontGrey"
+                className="btn text-white hover:bg-grey hover:text-header transition-all ease-in-out disabled:bg-header/80 disabled:text-fontGrey mt-4"
                 disabled={
                   productToUpdate?._id?.length
                     ? isFormUpdateDisabled

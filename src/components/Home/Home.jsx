@@ -4,6 +4,7 @@ import Slide from "./Slide";
 import CardsSlider from "./CardsSlider";
 import {
   filterProductsAction,
+  orderProductsAction,
   setFiltersAction,
 } from "../../redux/productActions";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,12 +20,11 @@ const Home = () => {
     (prod) => prod.productoDate.split("-")[1] === mes
   );
   let recomendados = products?.filter(
-    (prod) =>
-      prod.descuento > 0 ||
+    (prod) => prod.descuento > 0 /* ||
       (prod.talle.length > 0 &&
         prod.talle
           .map((item) => item.cantidad)
-          .reduce((elem, acc) => (acc += elem)) === 1)
+          .reduce((elem, acc) => (acc += elem)) === 1) */
   );
 
   const handleClickBrands = (e) => {
@@ -34,33 +34,49 @@ const Home = () => {
   };
 
   return (
-    <div className=" w-full flex flex-col justify-center items-center gap-6 ">
-      <div className="w-full max-h-max mt-[15%] md:mt-[12%] lg:mt-[10%] xl:mt-[8%]">
+    <div className=" w-full flex flex-col justify-center items-center gap-6 bg-grey">
+      <div className="w-full max-h-max">
         <Slide />
       </div>
       {loading ? (
         <Loading />
       ) : (
         <>
-          <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col">
-            <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
-              <p className="text-lg md:text-2xl py-1">LANZAMIENTOS</p>
-              <button className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out">
-                ver todo
-              </button>
+          {lanzamientos?.length > 0 && (
+            <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col">
+              <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
+                <p className="text-lg md:text-2xl py-1">LANZAMIENTOS</p>
+                <Link
+                  to={"/:filters"}
+                  className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow 
+                bg-header hover:text-white hover:bg-yellow transition-all ease-in-out z-10"
+                  id={"nuevo"}
+                  onClick={(e) => dispatch(orderProductsAction(e.target.id))}
+                >
+                  ver todo
+                </Link>
+              </div>
+              <CardsSlider data={lanzamientos} mounth={mes} />
             </div>
-            <CardsSlider data={lanzamientos} mounth={mes} />
-          </div>
-          <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col">
-            <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
-              <p className="text-lg md:text-2xl py-1">RECOMENDADOS</p>
-              <button className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out">
-                ver todo
-              </button>
+          )}
+          {recomendados?.length > 0 && (
+            <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col mb-10">
+              <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
+                <p className="text-lg md:text-2xl py-1">RECOMENDADOS</p>
+                <Link
+                  to={"/:filters"}
+                  className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow 
+                bg-header hover:text-white hover:bg-yellow transition-all ease-in-out"
+                  id={"descuento"}
+                  onClick={(e) => dispatch(orderProductsAction(e.target.id))}
+                >
+                  ver todo
+                </Link>
+              </div>
+              <CardsSlider data={recomendados} mounth={mes} />
             </div>
-            <CardsSlider data={recomendados} mounth={mes} />
-          </div>
-          <div className="w-full 2xl:w-[75%] flex flex-row justify-center items-center p-5 md:px-16  md:py-10 2xl:pr-12 mt-5 md:mt-10 gap-3">
+          )}
+          {/*  <div className="w-full 2xl:w-[75%] flex flex-row justify-center items-center p-5 md:px-16  md:py-10 2xl:pr-12 mt-5 md:mt-10 gap-3">
             <div className="border rounded-md shadow p-2 h-[70px] w-full bg-white flex justify-center items-center">
               <Link
                 onClick={handleClickBrands}
@@ -151,16 +167,23 @@ const Home = () => {
                 />
               </Link>
             </div>
-          </div>
-          <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col">
-            <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between  text-nav font-semibold">
-              <p className="text-lg md:text-2xl py-1">DESTACADOS</p>
-              <button className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out">
-                ver todo
-              </button>
+          </div> */}
+          {destacados?.length > 0 && (
+            <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col mb-10">
+              <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between  text-nav font-semibold">
+                <p className="text-lg md:text-2xl py-1">DESTACADOS</p>
+                <Link
+                  to={"/:filters"}
+                  className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out"
+                  id={"relevancia"}
+                  onClick={(e) => dispatch(orderProductsAction(e.target.id))}
+                >
+                  ver todo
+                </Link>
+              </div>
+              <CardsSlider data={destacados} mounth={mes} />
             </div>
-            <CardsSlider data={destacados} mounth={mes} />
-          </div>
+          )}
         </>
       )}
     </div>

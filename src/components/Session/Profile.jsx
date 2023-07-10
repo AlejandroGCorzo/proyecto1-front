@@ -1,20 +1,26 @@
-import React, { useState } from "react";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import React, { useEffect, useState } from "react";
+import {
+  AiFillEye,
+  AiFillEyeInvisible,
+  AiOutlineMenuUnfold,
+} from "react-icons/ai";
 import { encode } from "js-base64";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   updateUserAction,
   resetPasswordAction,
   resetPasswordCodeAction,
+  logOutAction,
 } from "../../redux/userActions";
+import { MdOutlineClose } from "react-icons/md";
 
 function Profile() {
   const navigate = useNavigate();
   const usuario = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState("perfil");
   const [showFullContent, setShowFullContent] = useState(false);
   const [nombre, setNombre] = useState(usuario.name || "");
   const [apellido, setApellido] = useState(usuario.lastName || "");
@@ -46,6 +52,25 @@ function Profile() {
     number: "",
     passwordLength: "",
   });
+
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
+  const [navbar, setNavbar] = useState(false);
+
+  useEffect(() => {
+    function handleResize() {
+      setViewportSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   console.log(usuario);
   const handleSaveChanges = () => {
     const { userId, userRole, token, isLoggedIn, ...rest } = usuario;
@@ -167,6 +192,7 @@ function Profile() {
   };
 
   const handleLogout = () => {
+    dispatch(logOutAction());
     navigate("/");
   };
 
@@ -216,87 +242,164 @@ function Profile() {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row sm:mr-20 w-full mt-14 lg:w-full xl:w-full xl:mt-5">
+    <div className="flex flex-col sm:flex-row w-full justify-center items-start md:justify-around  mt-12">
       {/* Sidebar */}
-      <aside className="w-full h-auto ml-5 mr-1 md:w-1/4 lg:w-1/5 xl:w-1/5">
-        <div className="mt-32 mx-10 xl:mt-5">
-          <div className="h-auto w-1/4 flex items-center mt-10">
+      <div className="md:hidden w-max ">
+        <button onClick={() => setNavbar(!navbar)} className="p-4 text-header">
+          <AiOutlineMenuUnfold fontSize={36} />
+        </button>
+        <nav
+          className={`fixed flex flex-col top-32 left-0 h-full bg-white p-2 transition-transform duration-200 ease-in-out transform w-60  min-w-[150px] z-10 ${
+            navbar ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <button
+            onClick={() => setNavbar(!navbar)}
+            className="p-4 text-header flex self-end justify-end"
+          >
+            {navbar && <MdOutlineClose fontSize={36} />}
+          </button>
+          <div className="h-auto w-full  justify-center flex items-center gap-4">
             <img
               src="https://cdn-icons-png.flaticon.com/128/149/149071.png"
               alt="Imagen Usuario"
+              width={70}
             />
-            <p className="ml-2 font-bold text-lg">
-              Hola {usuario.name || usuario.email}!
+            <p className="font-bold text-lg w-auto max-w-[200px] ">
+              Hola {usuario.name}!
             </p>
           </div>
-          <ul className="mt-12">
+          <ul className="lg:hidden gap-4 flex flex-col justify-center items-start text-lg p-6">
             <li
-              className={`flex w-full justify-between ${
-                selectedOption === "perfil" ? "text-black" : "text-gray-600"
-              } hover:text-gray-500 cursor-pointer items-center mb-6`}
+              className={`flex w-auto justify-between ${
+                selectedOption === "perfil"
+                  ? "text-header border-l-yellow border-l-2"
+                  : "text-gray-600"
+              } font-medium focus:border-l-4 focus:border-l-yellow text-lg px-2`}
               onClick={() => handleOptionClick("perfil")}
             >
-              <div className="flex items-center">
-                <span className="text-sm ml-2">Perfil</span>
-              </div>
+              <span className="text-sm ">Perfil</span>
             </li>
             <li
-              className={`flex w-full justify-between ${
+              className={`flex w-auto justify-between ${
                 selectedOption === "direcciones"
-                  ? "text-black"
+                  ? "text-header border-l-yellow border-l-2"
                   : "text-gray-600"
-              } hover:text-gray-500 cursor-pointer items-center mb-6`}
+              } font-medium focus:border-l-4 focus:border-l-yellow text-lg px-2`}
               onClick={() => handleOptionClick("direcciones")}
             >
-              <div className="flex items-center">
-                <span className="text-sm ml-2">Direcciones</span>
-              </div>
+              <span className="text-sm ">Direcciones</span>
             </li>
             <li
-              className={`flex w-full justify-between ${
-                selectedOption === "pedidos" ? "text-black" : "text-gray-600"
-              } hover:text-gray-500 cursor-pointer items-center mb-6`}
+              className={`flex w-auto justify-between ${
+                selectedOption === "pedidos"
+                  ? "text-header border-l-yellow border-l-2"
+                  : "text-gray-600"
+              } font-medium focus:border-l-4 focus:border-l-yellow text-lg px-2`}
               onClick={() => handleOptionClick("pedidos")}
             >
-              <div className="flex items-center">
-                <span className="text-sm ml-2">Pedidos</span>
-              </div>
+              <span className="text-sm ">Pedidos</span>
             </li>
             <li
-              className={`flex w-full justify-between ${
+              className={`flex w-auto justify-between ${
                 selectedOption === "autenticacion"
-                  ? "text-black"
+                  ? "text-header border-l-yellow border-l-2"
                   : "text-gray-600"
-              } hover:text-gray-500 cursor-pointer items-center mb-6`}
+              } font-medium focus:border-l-4 focus:border-l-yellow text-lg px-2`}
               onClick={() => handleOptionClick("autenticacion")}
             >
-              <div className="flex items-center">
-                <span className="text-sm  ml-2">Autenticacion</span>
-              </div>
+              <span className="text-sm  ">Autenticacion</span>
             </li>
             <li
-              className={`flex w-full justify-between ${
-                selectedOption === "salir" ? "text-black" : "text-gray-600"
-              } hover:text-gray-500 cursor-pointer items-center mb-6`}
+              className={`flex w-auto justify-between ${
+                selectedOption === "salir"
+                  ? "text-header border-l-yellow border-l-2"
+                  : "text-gray-600"
+              } font-medium focus:border-l-4 focus:border-l-yellow text-lg px-2`}
               onClick={() => {
                 handleOptionClick("salir");
                 handleLogout();
               }}
             >
-              <div className="flex items-center">
-                <span className="text-sm  ml-2">Salir</span>
-              </div>
+              <span className="text-sm ">Salir</span>
             </li>
           </ul>
+        </nav>
+      </div>
+      <aside className="w-auto h-auto max-w-full px-2 flex flex-col justify-start items-start">
+        <div className="h-auto w-auto justify-center hidden md:flex items-center gap-4">
+          <img
+            src="https://cdn-icons-png.flaticon.com/128/149/149071.png"
+            alt="Imagen Usuario"
+            width={70}
+          />
+          <p className="font-bold text-lg w-auto">
+            Hola {usuario.name || usuario.email}!
+          </p>
         </div>
+        <ul className="hidden md:flex flex-col gap-2 px-2 py-4">
+          <li
+            className={`flex w-auto justify-between ${
+              selectedOption === "perfil"
+                ? "text-header border-l-yellow border-l-2"
+                : "text-gray-600"
+            } font-medium focus:border-l-4 focus:border-l-yellow text-lg px-2`}
+            onClick={() => handleOptionClick("perfil")}
+          >
+            <span className="text-sm ">Perfil</span>
+          </li>
+          <li
+            className={`flex w-auto justify-between ${
+              selectedOption === "direcciones"
+                ? "text-header border-l-yellow border-l-2"
+                : "text-gray-600"
+            } font-medium focus:border-l-4 focus:border-l-yellow text-lg px-2`}
+            onClick={() => handleOptionClick("direcciones")}
+          >
+            <span className="text-sm ">Direcciones</span>
+          </li>
+          <li
+            className={`flex w-auto justify-between ${
+              selectedOption === "pedidos"
+                ? "text-header border-l-yellow border-l-2"
+                : "text-gray-600"
+            } font-medium focus:border-l-4 focus:border-l-yellow text-lg px-2`}
+            onClick={() => handleOptionClick("pedidos")}
+          >
+            <span className="text-sm ">Pedidos</span>
+          </li>
+          <li
+            className={`flex w-auto justify-between ${
+              selectedOption === "autenticacion"
+                ? "text-header border-l-yellow border-l-2"
+                : "text-gray-600"
+            } font-medium focus:border-l-4 focus:border-l-yellow text-lg px-2`}
+            onClick={() => handleOptionClick("autenticacion")}
+          >
+            <span className="text-sm  ">Autenticacion</span>
+          </li>
+          <li
+            className={`flex w-auto justify-between ${
+              selectedOption === "salir"
+                ? "text-header border-l-yellow border-l-2"
+                : "text-gray-600"
+            } font-medium focus:border-l-4 focus:border-l-yellow text-lg px-2`}
+            onClick={() => {
+              handleOptionClick("salir");
+              handleLogout();
+            }}
+          >
+            <span className="text-sm ">Salir</span>
+          </li>
+        </ul>
       </aside>
 
       {/* Main Content */}
-      <main className="w-full h-auto mx-1 py-5 px-1 md:w-1/2 md:mt-10 lg:w-1/2 sm:mt-10 lg:mt-10 xl:w-1/2 xl:mt-10">
+      <main className="w-full h-auto py-2 px-1 md:w-1/2 lg:w-1/2  xl:w-1/2 ">
         {/* Display content based on selectedOption */}
         {selectedOption === "perfil" && (
-          <section className="w-full">
-            <h1 className="flex justify-center px-5 py-5 md:justify-start lg:justify-start xl:justify-start text-sm font-bold font-sans">
+          <section className="w-full flex justify-center items-center flex-col">
+            <h1 className="flex justify-center px-5  md:justify-start lg:justify-start xl:justify-start text-sm font-bold font-sans">
               PERFIL
             </h1>
 
@@ -344,7 +447,7 @@ function Profile() {
                   />
                 </label>
                 <button
-                  className="bg-black w-full hover:bg-white hover:text-black  text-white font-bold py-2 px-4 rounded"
+                  className="bg-black w-full hover:bg-white hover:text-header  text-white font-bold py-2 px-4 rounded"
                   onClick={handleSaveChanges}
                 >
                   GUARDAR CAMBIOS
@@ -511,7 +614,7 @@ function Profile() {
 
                 <div className="flex justify-center">
                   <button
-                    className="bg-black w-full hover:bg-white hover:text-black text-white font-bold py-2 px-4 rounded"
+                    className="bg-black w-full hover:bg-white hover:text-header text-white font-bold py-2 px-4 rounded"
                     onClick={handleSaveChangesDireccion}
                   >
                     Guardar dirección

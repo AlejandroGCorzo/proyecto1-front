@@ -42,7 +42,7 @@ const SearchItems = ({
       >
         <p>Buscar por "{debouncedSearchValue}"</p>
       </Link>
-      {categories.length > 0 &&
+      {/* {categories.length > 0 &&
         debouncedSearchValue.length > 0 &&
         categories.map((item) => (
           <Link
@@ -63,14 +63,15 @@ const SearchItems = ({
             <p>{debouncedSearchValue}</p>
             <p>{item}</p>
           </Link>
-        ))}
+        ))} */}
+
       {productsSearch.length > 0 &&
         !error.length &&
         productsSearch.map((item) => (
           <Link
             key={item._id}
             to={`/detail/${item._id}`}
-            className="flex flex-row gap-2 my-2 px-2 py-6 hover:bg-grey "
+            className="flex flex-row gap-2  px-2 py-6 hover:bg-grey items-center justify-center w-full"
             onClick={() => {
               setShowItems(false);
               setNavbar(false);
@@ -81,13 +82,14 @@ const SearchItems = ({
             }}
           >
             <img
-              src={item.imagenes[0]}
-              alt={item.modelo + "search"}
-              className="w-10 "
+              src={item.imagen}
+              alt={item.descripcion + "search"}
+              className="w-12 max-h-12 overflow-hidden"
             />
-            <p>{item.tipo}</p>
-            <p>{item.marca}</p>
-            <p className="overflow-hidden whitespace-nowrap">{item.modelo}</p>
+
+            <p className="overflow-hidden whitespace-nowrap w-full">
+              {item.descripcion}
+            </p>
           </Link>
         ))}
       {error?.length > 0 && <ServerError error={error} />}

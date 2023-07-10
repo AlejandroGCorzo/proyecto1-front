@@ -219,8 +219,8 @@ const CategoriesForm = () => {
       ) : (
         <div className="flex flex-col w-full justify-start items-center">
           <div
-            className="w-full py-2 px-8 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between sm:mt-0
-        text-xl text-blue-400 ml-4 mt-4"
+            className="w-full py-2 px-8 flex flex-col sm:flex-row sm:self-start justify-center items-center sm:justify-between 
+        text-xl text-blue-400 ml-4 my-4"
           >
             <Link
               to="/admin/categories"

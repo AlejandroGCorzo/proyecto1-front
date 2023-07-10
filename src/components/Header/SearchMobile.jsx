@@ -23,7 +23,7 @@ const SearchBar = ({
       <div className="absolute inset-0 bg-gray-900 opacity-50"></div>
       <div className="flex flex-col justify-start items-center transform transition-transform duration-300 ease-in-out w-full">
         <button
-          className="text-white focus:outline-none pt-8 pr-8 flex self-end"
+          className="text-white focus:outline-none pt-4 pr-8 flex self-end"
           onClick={toggleSearchBar}
         >
           <svg

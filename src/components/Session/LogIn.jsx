@@ -14,7 +14,7 @@ function validateEmail(input) {
   return errors;
 }
 
-const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
+const LogIn = ({ logIn, setLogIn, handleComponents }) => {
   const dispatch = useDispatch();
   let [inputLogIn, setInputLogIn] = useState({
     email: "",
@@ -42,17 +42,8 @@ const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
     const { name, value } = e.target;
     if (name === "email") {
       setInputLogIn((prev) => ({ ...prev, [name]: value }));
-      let errorObjEmail = validateEmail({
-        [name]: value,
-      });
-      setErrorEmail(errorObjEmail);
     }
     setInputLogIn((prev) => ({ ...prev, [name]: value }));
-    let errorObj = validatePassword({
-      ...inputLogIn,
-      [name]: value,
-    });
-    setErrorLogIn((prev) => ({ ...prev, ...errorObj }));
   };
   const handleSubmitLogIn = (e) => {
     e.preventDefault();
@@ -65,15 +56,7 @@ const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
   };
 
   let isDisabled =
-    !inputLogIn.email.length ||
-    !inputLogIn.password.length ||
-    errorLogIn.lowerCase?.length ||
-    errorLogIn.upperCase?.length ||
-    errorLogIn.number?.length ||
-    errorLogIn.passwordLength?.length ||
-    errorEmail?.email?.length
-      ? true
-      : false;
+    !inputLogIn.email.length || !inputLogIn.password.length ? true : false;
 
   return (
     <div className="flex flex-col justify-center items-center w-full px-8">
@@ -88,13 +71,8 @@ const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
           focus:outline-none
           appearance-none py-2 px-5 text-start flex justify-start items-start mb-2"
           onChange={handleInputChangeLogIn}
-          onBlur={validateOnBlur}
         />
-        {errorEmail?.email?.length ? (
-          <small className="h-auto text-red-600 w-full flex self-start mb-2">
-            {errorEmail.email}
-          </small>
-        ) : null}
+
         <input
           type="password"
           name="password"
@@ -105,26 +83,7 @@ const LogIn = ({ logIn, setLogIn, handleComponents, validatePassword }) => {
           appearance-none py-2 px-5 text-start flex justify-start items-start"
           onChange={handleInputChangeLogIn}
         />
-        {errorLogIn.upperCase?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorLogIn.upperCase}
-          </small>
-        ) : null}
-        {errorLogIn.lowerCase?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorLogIn.lowerCase}
-          </small>
-        ) : null}
-        {errorLogIn.number?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorLogIn.number}
-          </small>
-        ) : null}
-        {errorLogIn.passwordLength?.length ? (
-          <small className="h-6 text-red-600 w-full flex self-start mb-1">
-            {errorLogIn.passwordLength}
-          </small>
-        ) : null}
+
         <div
           className="w-full py-2 flex flex-row self-end justify-end 
           text-sm text-blue-400  mb-4"

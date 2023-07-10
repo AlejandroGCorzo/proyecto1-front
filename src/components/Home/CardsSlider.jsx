@@ -37,10 +37,10 @@ const settings = {
   autoplaySpeed: 5000,
   infinite: true,
   speed: 500,
-  slidesToShow: 5,
-  slidesToScroll: 5,
+  slidesToShow: 4,
+  slidesToScroll: 4,
   initialSlide: 0,
-  dots: true,
+  /* dots: true, */
   arrows: true,
   pauseOnHover: true,
   prevArrow: <CustomPrevArrow />,
@@ -49,9 +49,9 @@ const settings = {
     {
       breakpoint: 1280,
       settings: {
-        slidesToShow: 4,
-        slidesToScroll: 4,
-        dots: true,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        /* dots: true, */
       },
     },
     {
@@ -61,7 +61,7 @@ const settings = {
         slidesToScroll: 3,
         initialSlide: 3,
         infinite: true,
-        dots: true,
+        /*    dots: true, */
       },
     },
     {
@@ -93,43 +93,50 @@ const CardsSlider = ({ data, mounth }) => {
             data.map((item, index) => (
               <div
                 key={item._id}
-                className="h-96 sm:max-w-[280px border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white"
+                className="h-auto max-w-[270px] border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white flex self-center"
               >
-                <Link to={`/product/${item._id}`}>
-                  <div className="mb-1 flex flex-col justify-start items-center">
-                    <div className="absolute w-64 sm:w-48 md:w-60 xl:w-48 2xl:w-56 flex items-center justify-between">
+                <Link
+                  to={`/product/${item._id}`}
+                  className="mb-1 flex flex-col justify-between items-center"
+                >
+                  <div className=" flex flex-col justify-start items-center ">
+                    <div className="absolute w-48 md:w-60 xl:w-48 2xl:w-56 flex items-center justify-between">
                       {item.descuento > 0 && (
                         <span className="text-white bg-header py-1 px-2">
                           - {item.descuento}%
                         </span>
                       )}
 
-                      {item.talle.length > 0 &&
+                      {
+                        /* item.talle.length > 0 &&
                       item.talle
                         .map((item) => item.cantidad)
                         .reduce((elem, acc) => (acc += elem)) === 1 ? (
                         <span className="text-header px-2 bg-yellow">
                           ÚLTIMA UNIDAD
                         </span>
-                      ) : (
-                        item.productoDate &&
-                        item.productoDate.split("-")[1] === mounth && (
-                          <span className="text-white bg-header p-1">
-                            NUEVO
-                          </span>
-                        )
-                      )}
+                      ) : */ item.productoDate &&
+                          item.productoDate.split("-")[1] === mounth && (
+                            <span className="text-white bg-header p-1">
+                              NUEVO
+                            </span>
+                          )
+                      }
                     </div>
 
-                    {item.imagenes.length && (
-                      <img
-                        src={item.imagenes[0]}
-                        alt={item.modelo}
-                        className="h-auto max-h-52 w-52 aspect-auto object-contain"
-                      />
-                    )}
+                    <div className="flex justify-center items-center h-44 w-44 ">
+                      {item.imagen?.length || item.imagenes?.length ? (
+                        <img
+                          src={
+                            item.imagen?.length ? item.imagen : item.imagenes
+                          }
+                          alt={item.descripcion}
+                          className="h-auto max-h-44 w-auto max-w-44 aspect-auto object-cover"
+                        />
+                      ) : null}
+                    </div>
                   </div>
-                  {brandImg.length &&
+                  {brandImg.length > 0 &&
                     brandImg.map(
                       (brand) =>
                         brand.nombre === item.marca && (
@@ -143,19 +150,18 @@ const CardsSlider = ({ data, mounth }) => {
                           </div>
                         )
                     )}
-                  <p className="text-gray-400 py-2 uppercase font-medium h-20 w-full ">
-                    {item.modelo}
+                  <p className="text-gray-400 py-4 uppercase font-medium h-20 w-full max-w-52 text-center">
+                    {item.descripcion}
                   </p>
-                  <p className="text-xl">
-                    <strong>${item.precio}</strong>
-                  </p>
-                  <p className="py-2">
-                    <strong>3</strong> cuotas de{" "}
-                    <strong>${(item.precio / 3).toFixed(2)}</strong>
-                  </p>
-                  <p className="font-medium text-yellow text-sm">
-                    ENVÍO GRATIS
-                  </p>
+                  <div className="h-auto flex flex-col justify-start items-start w-full">
+                    <p className="text-lg">
+                      <strong className="text-xl">${item.precio},00</strong>
+                    </p>
+
+                    <p className="font-medium text-yellow text-sm flex justify-start items-end">
+                      ENVÍO GRATIS
+                    </p>
+                  </div>
                 </Link>
               </div>
             ))}

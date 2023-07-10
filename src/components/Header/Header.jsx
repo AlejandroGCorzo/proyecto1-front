@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { FiShoppingCart } from "react-icons/fi";
 import { TbMapPinFilled } from "react-icons/tb";
@@ -7,12 +7,13 @@ import ShoppingCartPreview from "./ShoppingCartPreview";
 import SearchBar from "./SearchMobile";
 import Dropdown from "./Dropdown";
 import UserDropdown from "./UserDropdown";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/userSlice";
 import useDebounce from "../../hooks/useDebounce";
 import {
   filterProductsAction,
+  orderProductsAction,
   searchProductsAction,
 } from "../../redux/productActions";
 import {
@@ -20,13 +21,17 @@ import {
   setSearchProducts,
 } from "../../redux/productSlice";
 import SearchItems from "../../utils/SearchItems";
+import { MdOutlineFavoriteBorder } from "react-icons/md";
 
 const Header = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const dropdownUserRef = useRef(null);
   const { isLoggedIn, userRole } = useSelector((state) => state.users);
   const { products, loading, errorSearch } = useSelector(
     (state) => state.products
   );
+  const { wishedProducts } = useSelector((state) => state.wishlist);
   const { productos } = useSelector((state) => state.cart);
   const [navbar, setNavbar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -62,11 +67,26 @@ const Header = () => {
   };
 
   const toggleShoppingCart = () => {
-    setIsOpen(!isOpen);
+    if (location.pathname !== "/checkout") {
+      setIsOpen(!isOpen);
+    }
   };
 
   const toggleSearchBar = () => {
     setIsSearchOpen(!isSearchOpen);
+  };
+
+  const handleWishList = () => {
+    if (!isLoggedIn) {
+      toggleDropdownUser();
+    } else {
+      return;
+    }
+  };
+
+  const toggleDropdownUser = () => {
+    dropdownUserRef.current.classList.toggle("dropdown-open");
+    document.activeElement.blur();
   };
 
   return (
@@ -93,11 +113,11 @@ const Header = () => {
       )}
 
       <header className="z-[999] w-full flex flex-col items-start justify-center fixed top-0 h-auto">
-        <div className="flex flex-row w-full bg-header">
+        <div className="flex flex-row w-full bg-header justify-center items-center">
           <div
             className={`${
               isSearchOpen ? "hidden" : "flex"
-            } justify-center items-start bg-header w-[20%] sm:w-[15%] h-full `}
+            } justify-center items-center bg-header w-[20%] sm:w-[15%] h-full `}
           >
             <Link to={"/"}>
               <img
@@ -115,23 +135,36 @@ const Header = () => {
               <div className="text-white text-center text-xs font-semibold uppercase hidden lg:flex w-[88%] justify-center">
                 <p>envío gratis a partir de $29.999 - 3 cuotas sin interés</p>
               </div>
-              <div className="w-auto flex justify-center">
+              <div className="w-auto flex justify-center items-center">
                 <button className="text-white hidden lg:flex justify-center items-center ">
                   <TbMapPinFilled className=" text-yellow text-xl" />
                   Sucursales
                 </button>
-                <div className="lg:hidden indicator ">
-                  {productos?.length > 0 && (
-                    <span className="indicator-item badge badge-warning -left-1">
-                      {productos?.length}
-                    </span>
-                  )}
-                  <button
-                    className=" lg:hidden flex pr-6"
-                    onClick={toggleShoppingCart}
-                  >
-                    <FiShoppingCart color="white" fontSize={26} />
-                  </button>
+                <div className="w-auto flex justify-center items-center lg:hidden pr-4 ">
+                  <div className="lg:hidden indicator ">
+                    {productos?.length > 0 && (
+                      <span className="indicator-item badge badge-warning -left-1">
+                        {productos?.length}
+                      </span>
+                    )}
+                    <button
+                      className=" lg:hidden flex pr-2"
+                      onClick={toggleShoppingCart}
+                    >
+                      <FiShoppingCart color="white" fontSize={26} />
+                    </button>
+                  </div>
+                  <Link to={"/wishlist"} className="px-3 pt-1">
+                    <div className="indicator">
+                      {wishedProducts?.length > 0 && (
+                        <span className="indicator-item badge badge-warning -left-1">
+                          {wishedProducts.length}
+                        </span>
+                      )}
+
+                      <MdOutlineFavoriteBorder color="white" fontSize={24} />
+                    </div>
+                  </Link>
                 </div>
               </div>
             </section>
@@ -176,7 +209,7 @@ const Header = () => {
                   </button>
                 </div>
 
-                <div className="flex w-[96.5%] flex-row bg-header justify-end items-center">
+                <div className="flex w-full flex-row bg-header justify-end items-center py-2 px-3">
                   <div className="hidden lg:flex justify-between bg-nav w-[410px] md:w-[390px] 2xl:w-1/3 pr-2">
                     <input
                       autoComplete="off"
@@ -216,19 +249,32 @@ const Header = () => {
                       />
                     )}
                   </div>
-                  <div className=" lg:flex hidden flex-row-reverse items-center w-1/3">
+                  <div className=" lg:flex hidden flex-row-reverse items-center w-[35%] pr-8 ">
                     <div className="indicator">
                       {productos.length > 0 && (
                         <span className="indicator-item badge badge-warning -left-1">
                           {productos.length}
                         </span>
                       )}
-                      <button onClick={toggleShoppingCart}>
+                      <button onClick={toggleShoppingCart} className="px-5">
                         <FiShoppingCart color="white" fontSize={22} />
                       </button>
                     </div>
 
-                    <UserDropdown />
+                    {/*  <UserDropdown
+                      toggleDropdownUser={toggleDropdownUser}
+                      dropdownUserRef={dropdownUserRef}
+                    /> */}
+                    <Link to={"/wishlist"} className="px-4 flex">
+                      <div className="indicator">
+                        {wishedProducts?.length > 0 && (
+                          <span className="indicator-item badge badge-warning -left-1">
+                            {wishedProducts?.length}
+                          </span>
+                        )}
+                        <MdOutlineFavoriteBorder color="white" fontSize={24} />
+                      </div>
+                    </Link>
                   </div>
                 </div>
 
@@ -246,46 +292,56 @@ const Header = () => {
           </div>
         </div>
         <div
-          className="bg-nav text-white text-center text-xs font-semibold uppercase flex-col w-full h-auto justify-center lg:justify-between items-center py-2 lg:py-3 lg:px-20 hidden lg:flex "
+          className="bg-nav text-white text-center text-xs font-semibold uppercase flex-col w-full h-10 justify-center lg:justify-between items-center py-2 lg:py-3 lg:px-20 hidden lg:flex "
           style={{ fontSize: "16px" }}
         >
-          <div className="hidden lg:flex flex-row justify-between items-center w-full">
-            <button className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center">
+          <div className="hidden lg:flex flex-row justify-end items-center w-72 gap-6">
+            <Link
+              to={"/:filter"}
+              className="transition-all ease-in-out uppercase border-b border-b-transparent  hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center "
+              value={"nuevo"}
+              onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+            >
               new in
-            </button>
+            </Link>
             <button
               onClick={toggleDropdown}
-              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center lg:hidden"
             >
               tus favoritos
             </button>
             <button
               onClick={toggleDropdown}
-              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center lg:hidden"
             >
               hombre
             </button>
             <button
               onClick={toggleDropdown}
-              className="transition-all easy-in-out pb-1 uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow"
+              className="transition-all easy-in-out pb-1 uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow lg:hidden"
             >
               mujer
             </button>
             <button
               onClick={toggleDropdown}
-              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center lg:hidden"
             >
               niños
             </button>
             <button
               onClick={toggleDropdown}
-              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center"
+              className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center lg:hidden"
             >
               marcas
             </button>
-            <button className="transition-all ease-in-out uppercase hover:border-b hover:border-b-yellow hover:text-yellow focus:text-yellow ">
+            <Link
+              to={"/:filter"}
+              className="transition-all ease-in-out uppercase border-b border-b-transparent hover:border-b-yellow hover:text-yellow focus:text-yellow "
+              value={"descuento"}
+              onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+            >
               sale
-            </button>
+            </Link>
           </div>
         </div>
         <div className="lg:hidden flex bg-nav w-full justify-center items-center text-white text-xs uppercase py-2 font-medium">
@@ -301,10 +357,19 @@ const Header = () => {
         {navbar && (
           <div className=" relative top-0 right-0  h-screen w-full bg-nav bg-opacity-20 flex items-start justify-start">
             <div className="bg-header text-white max-h-[430px] w-1/2 sm:w-1/3 p-4 ease-in-out transform transition-transform duration-300 delay-150 overflow-y-scroll">
-              <div className=" text-xl font-medium flex justify-center items-center">
-                <button>NEW IN</button>
+              <div className=" text-xl font-medium flex justify-center items-center mb-2">
+                <Link
+                  to={"/:filter"}
+                  value={"nuevo"}
+                  onClick={(e) => {
+                    dispatch(orderProductsAction(e.target.value));
+                    setNavbar(false);
+                  }}
+                >
+                  NEW IN
+                </Link>
               </div>
-              <div className="collapse collapse-arrow ">
+              <div className="collapse collapse-arrow hidden">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium ">TITLE</div>
                 <div className="collapse-content">
@@ -321,7 +386,7 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="collapse collapse-arrow">
+              <div className="collapse collapse-arrow hidden">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium">TITLE</div>
                 <div className="collapse-content">
@@ -338,7 +403,7 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="collapse collapse-arrow focus:bg-yellow">
+              <div className="collapse collapse-arrow focus:bg-yellow hidden">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium ">TITLE</div>
                 <div className="collapse-content">
@@ -355,7 +420,7 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="collapse collapse-arrow">
+              <div className="collapse collapse-arrow hidden">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium ">TITLE</div>
                 <div className="collapse-content">
@@ -372,7 +437,7 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="collapse collapse-arrow focus:bg-yellow">
+              <div className="collapse collapse-arrow focus:bg-yellow hidden">
                 <input type="checkbox" />
                 <div className="collapse-title text-xl font-medium ">TITLE</div>
                 <div className="collapse-content">
@@ -389,10 +454,18 @@ const Header = () => {
                   </ul>
                 </div>
               </div>
-              <div className="text-xl font-medium flex justify-center items-center pb-4">
+              <Link
+                to={"/:filter"}
+                className="text-xl font-medium flex justify-center items-center pb-4 "
+                value={"descuento"}
+                onClick={(e) => {
+                  dispatch(orderProductsAction(e.target.value));
+                  setNavbar(false);
+                }}
+              >
                 <span>SALE</span>
-              </div>
-
+              </Link>
+              {/* 
               <div className="text-xl font-medium flex justify-center items-center ">
                 {!isLoggedIn ? (
                   <Link
@@ -406,7 +479,7 @@ const Header = () => {
                 ) : (
                   <div className="flex flex-col justify-center items-center">
                     <Link
-                      to={isLoggedIn ? "/" : "/login"}
+                      to={isLoggedIn ? "/profile" : "/login"}
                       onClick={() => setNavbar(false)}
                     >
                       <div className="flex flex-row pb-2">
@@ -437,7 +510,7 @@ const Header = () => {
                     </button>
                   </div>
                 )}
-              </div>
+              </div> */}
             </div>
           </div>
         )}

@@ -67,8 +67,7 @@ function validatePassword(input) {
   return errors;
 }
 
-const UserDropdown = () => {
-  const dropdownRef = useRef(null);
+const UserDropdown = ({ toggleDropdownUser, dropdownUserRef }) => {
   const dispatch = useDispatch();
   const currentPath = useLocation();
   const { isLoggedIn, userRole, userError, loading } = useSelector(
@@ -83,11 +82,6 @@ const UserDropdown = () => {
   const [code, setCode] = useState(false);
   const [codeSignUp, setCodeSignUp] = useState(false);
   const [codeReset, setCodeReset] = useState(false);
-
-  const toggleDropdown = () => {
-    dropdownRef.current.classList.toggle("dropdown-open");
-    document.activeElement.blur();
-  };
 
   const handleComponents = (e) => {
     e.preventDefault();
@@ -121,7 +115,7 @@ const UserDropdown = () => {
   return (
     <>
       {condition ? (
-        <div className="flex flex-col justify-center items-center mt-52 bg-grey flex-1 md:flex-auto">
+        <div className="flex flex-col justify-center items-center bg-grey flex-1 md:flex-auto h-[560px] sm:h-[640px] md:h-[215px] lg:h-[330px]">
           {condition && isLoggedIn && <Navigate to="/" replace={true} />}
           <ul
             className={` text-nav w-96 font-medium flex flex-col justify-center items-center p-4 text-base ${
@@ -221,14 +215,14 @@ const UserDropdown = () => {
           </ul>
         </div>
       ) : (
-        <div className="dropdown dropdown-end " ref={dropdownRef}>
+        <div className="dropdown dropdown-end " ref={dropdownUserRef}>
           <div
             tabIndex={0}
             className="btn m-1 bg-header outline-none border-none "
-            onClick={toggleDropdown}
+            onClick={toggleDropdownUser}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                toggleDropdown();
+                toggleDropdownUser();
               }
             }}
           >
