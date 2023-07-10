@@ -1,25 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RiShoppingBagFill } from "react-icons/ri";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { formatearPrecio } from "../../utils/formatPrice";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
+import { postCartAction } from "../../redux/shoppingCartActions";
+import Loading from "../../utils/Loading";
+import {
+  clearCart,
+  clearOrder,
+  setLoading,
+} from "../../redux/shopingCartSlice";
+import { BsFillCheckCircleFill } from "react-icons/bs";
 
 function CheckoutForm({ productsData = [] }) {
+  const modalRef = useRef(null);
+  const toggleModal = (e) => {
+    modalRef?.current?.classList?.toggle("modal-open");
+    document?.activeElement?.blur();
+  };
+  const dispatch = useDispatch();
   let getUserData;
-  const { productos, totalSinDescuento, totalConDescuento } = useSelector(
-    (state) => state.cart
-  );
+  const { loading, productos, totalSinDescuento, totalConDescuento, order } =
+    useSelector((state) => state.cart);
   const { products } = useSelector((state) => state.products);
   const [productsInCart, setProductsInCart] = useState([]);
   const [form, setForm] = useState({
     nombre: "",
     correo: "",
+    cuit: "",
     dni: "",
   });
   const [errorForm, setErrorForm] = useState({
     nombre: "",
     correo: "",
+    cuit: "",
     dni: "",
   });
   const [secondForm, setSecondForm] = useState({
@@ -44,14 +59,15 @@ function CheckoutForm({ productsData = [] }) {
   useEffect(() => {
     getUserData = JSON.parse(localStorage.getItem("userData"));
 
-    console.log(getUserData, "data");
     if (
       getUserData?.nombre?.length ||
       getUserData?.correo?.length ||
+      getUserData?.cuit?.length ||
       getUserData?.dni?.length
     ) {
       setForm({
         nombre: getUserData.nombre?.length ? getUserData.nombre : "",
+        cuit: getUserData.cuit?.length ? getUserData.cuit : "",
         correo: getUserData.correo?.length ? getUserData.correo : "",
         dni: getUserData.dni?.length ? getUserData.dni : "",
       });
@@ -102,6 +118,28 @@ function CheckoutForm({ productsData = [] }) {
     }
   }, [products, productos]);
 
+  useEffect(() => {
+    // Verifica si el usuario ya ha sido redirigido.
+    if (!order?.linkMP?.length) {
+      localStorage.setItem("alreadyRedirected", "false");
+    }
+    if (
+      localStorage.getItem("alreadyRedirected") === "false" &&
+      order?.linkMP?.length
+    ) {
+      // Redirecciona al usuario.
+
+      const redirect = async () => {
+        window.open(order.linkMP, "_blank");
+        await dispatch(setLoading(false));
+        toggleModal();
+        // Guarda en localStorage que el usuario ya ha sido redirigido.
+        localStorage.setItem("alreadyRedirected", "true");
+      };
+      redirect();
+    }
+  }, [order.linkMP]);
+
   const validarEmail = (input) => {
     // Patrón básico de validación de correo electrónico
     let error = {};
@@ -142,11 +180,23 @@ function CheckoutForm({ productsData = [] }) {
 
     return error;
   };
+  const validarCUIT = (input) => {
+    // Validaciones requeridas
+    let error = {};
+
+    if (!input.cuit) {
+      error.cuit = "Debe ingresar un CUIT/CUIL.";
+    } else {
+      error.cuit = "";
+    }
+
+    return error;
+  };
 
   const validarDireccion = (input) => {
     let error = {};
 
-    if (input.hasOwnProperty("direccion") && !input.direccion.length) {
+    if (!input.direccion.length) {
       error.direccion = "Debe ingresar una Dirección.";
     } else {
       error.direccion = "";
@@ -157,7 +207,7 @@ function CheckoutForm({ productsData = [] }) {
   const validarCiudad = (input) => {
     let error = {};
 
-    if (input.hasOwnProperty("ciudad") && !input.ciudad?.length) {
+    if (!input.ciudad?.length) {
       error.ciudad = "Debe ingresar una Ciudad.";
     } else {
       error.ciudad = "";
@@ -168,12 +218,9 @@ function CheckoutForm({ productsData = [] }) {
   const validarCodigoPostal = (input) => {
     let error = {};
 
-    if (input.hasOwnProperty("codigoPostal") && !input.codigoPostal?.length) {
+    if (!input.codigoPostal?.length) {
       error.codigoPostal = "Debe ingresar un Código postal.";
-    } else if (
-      input.hasOwnProperty("codigoPostal") &&
-      Number(input.codigoPostal) === NaN
-    ) {
+    } else if (!Number(input.codigoPostal)) {
       error.codigoPostal = "El Código postal solo debe contener números.";
     } else {
       error.codigoPostal = "";
@@ -184,7 +231,7 @@ function CheckoutForm({ productsData = [] }) {
   const validarProvincia = (input) => {
     let error = {};
 
-    if (input.hasOwnProperty("provincia") && !input.provincia?.length) {
+    if (!input.provincia?.length) {
       error.provincia = "Debe ingresar una Provincia.";
     } else {
       error.provincia = "";
@@ -195,7 +242,7 @@ function CheckoutForm({ productsData = [] }) {
   const validarPais = (input) => {
     let error = {};
 
-    if (input.hasOwnProperty("pais") && !input.pais?.length) {
+    if (!input.pais?.length) {
       error.pais = "Debe ingresar un País.";
     } else {
       error.pais = "";
@@ -213,6 +260,10 @@ function CheckoutForm({ productsData = [] }) {
       setErrorForm((prev) => ({ ...prev, ...errorFormValidation }));
     } else if (name === "dni") {
       let errorFormValidation = validarDNI({ [name]: value });
+      setForm((prev) => ({ ...prev, [name]: value }));
+      setErrorForm((prev) => ({ ...prev, ...errorFormValidation }));
+    } else if (name === "cuit") {
+      let errorFormValidation = validarCUIT({ [name]: value });
       setForm((prev) => ({ ...prev, [name]: value }));
       setErrorForm((prev) => ({ ...prev, ...errorFormValidation }));
     } else if (name === "correo") {
@@ -259,10 +310,15 @@ function CheckoutForm({ productsData = [] }) {
       setErrorForm((prev) => ({ ...prev, ...error }));
       setForm((prev) => ({ ...prev, [name]: value.trim() }));
     }
+    if (name === "cuit") {
+      let error = validarCUIT({ [name]: value });
+      setErrorForm((prev) => ({ ...prev, ...error }));
+      setForm((prev) => ({ ...prev, [name]: value.trim() }));
+    }
     if (name === "direccion") {
       let error = validarDireccion({ [name]: value });
       setErrorSecondForm((prev) => ({ ...prev, ...error }));
-      setSecondForm((prev) => ({ ...prev, [name]: value.trim() }));
+      setSecondForm((prev) => ({ ...prev, [name]: value }));
     }
     if (name === "codigoPostal") {
       let error = validarCodigoPostal({ [name]: value });
@@ -272,20 +328,20 @@ function CheckoutForm({ productsData = [] }) {
     if (name === "provincia") {
       let error = validarProvincia({ [name]: value });
       setErrorSecondForm((prev) => ({ ...prev, ...error }));
-      setSecondForm((prev) => ({ ...prev, [name]: value.trim() }));
+      setSecondForm((prev) => ({ ...prev, [name]: value }));
     }
     if (name === "pais") {
       let error = validarPais({ [name]: value });
       setErrorSecondForm((prev) => ({ ...prev, ...error }));
-      setSecondForm((prev) => ({ ...prev, [name]: value.trim() }));
+      setSecondForm((prev) => ({ ...prev, [name]: value }));
     }
     if (name === "ciudad") {
       let error = validarCiudad({ [name]: value });
       setErrorSecondForm((prev) => ({ ...prev, ...error }));
-      setSecondForm((prev) => ({ ...prev, [name]: value.trim() }));
+      setSecondForm((prev) => ({ ...prev, [name]: value }));
     }
     if (name === "departamento") {
-      setSecondForm((prev) => ({ ...prev, [name]: value.trim() }));
+      setSecondForm((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -298,19 +354,51 @@ function CheckoutForm({ productsData = [] }) {
     );
 
     if (
-      Object.values(form)?.length === 3 &&
-      Object.values(secondForm)?.length >= 5
+      Object.values(form)?.length === 4 &&
+      Object.values(secondForm)?.length >= 5 &&
+      mostrarSegundoForm
     ) {
-      console.log("a comprar");
+      //post
+      dispatch(
+        postCartAction({
+          products: productos.map((item) => ({
+            product: item.producto,
+            quantity: item.cantidad,
+          })),
+          Customer: {
+            fullName: form.nombre,
+            email: form.correo,
+            dni: form.dni,
+            cuit: form.cuit,
+            address: secondForm.direccion,
+            city: secondForm.ciudad,
+            province: secondForm.provincia,
+            country: secondForm.pais,
+            zipCode: secondForm.codigoPostal,
+            paymentMethod: "MERCADOPAGO",
+          },
+          payType: "MERCADOPAGO",
+          shiping: true,
+          isFacturaA: false,
+        })
+      );
     }
     setMostrarSegundoForm(true);
   };
+
+  const handleBack = () => {
+    /*  localStorage.removeItem("alreadyRedirected");
+    dispatch(clearOrder()); */
+  };
+
   let disabled =
     !form?.correo?.length ||
     !form?.nombre?.length ||
+    !form?.cuit?.length ||
     !form?.dni?.length ||
     errorForm?.correo?.length ||
     errorForm?.nombre?.length ||
+    errorForm?.cuit?.length ||
     errorForm?.dni?.length
       ? true
       : false;
@@ -329,6 +417,41 @@ function CheckoutForm({ productsData = [] }) {
       : false;
   return (
     <div className="flex flex-col  items-center justify-start min-h-[450px] sm:min-h-[650px] md:min-h-[450px] w-full border border-yellow">
+      <dialog ref={modalRef} className="modal bg-grey/40">
+        <div className="modal-box bg-white">
+          <div className="w-full flex flex-col justify-center items-center text-header">
+            <div className="py-4 flex flex-col justify-center items-center">
+              <BsFillCheckCircleFill fontSize={45} className="text-green-400" />
+              <h2 className="text-center w-full text-4xl font-semibold py-4">
+                Felicidades!
+              </h2>
+              <div className="flex flex-col justify-center items-start py-2">
+                <p className="text-lg">
+                  Por favor, completa tu compra en la nueva pestaña que se ha
+                  abierto.
+                </p>
+                <span className="text-header/70">
+                  *También puedes hacerlo desde este link
+                </span>
+                <a
+                  href={order.linkMP}
+                  target="_blank"
+                  className="text-lg underline text-blue-500 font-semibold"
+                >
+                  Ir a MercadoPago
+                </a>
+              </div>
+            </div>
+            <Link
+              to="/"
+              className="w-full text-center border hover:border-header bg-yellow/70 border-transparent text-header font-semibold py-1 px-4 rounded text-lg hover:text-header transition-all"
+              onClick={handleBack}
+            >
+              Volver al Inicio
+            </Link>
+          </div>
+        </div>
+      </dialog>
       <div className=" w-full h-full p-4 text-3xl flex flex-col justify-center items-center sm:items-start bg-yellow/60 text-header/70 mt-8 sm:mt-0 ">
         <span className="text-lg flex items-center ">
           Estas a unos pasos de completar tu pedido.
@@ -337,244 +460,274 @@ function CheckoutForm({ productsData = [] }) {
           Ve detalles y agrega los datos:
         </h1>
       </div>
+
       <div className="w-full flex sm:flex-row flex-col justify-center items-start p-4 gap-4 ">
-        <aside className="flex flex-col w-full sm:w-1/2  justify-center items-center">
-          {!mostrarSegundoForm ? (
-            <div className="flex flex-col w-full justify-center">
-              <h2 className="w-auto text-2xl text-header font-semibold text-center sm:text-start">
-                Completa con tus datos para continuar.{" "}
-              </h2>
-              <form
-                onSubmit={handleSubmit}
-                className="w-full flex flex-col items-start justify-center text-lg md:pr-14 2xl:pr-0"
-              >
-                <div className="mb-2 sm:max-w-xs lg:max-w-full w-full">
-                  <label className="block text-header my-2">
-                    Nombre completo:
-                    <input
-                      autoComplete="off"
-                      className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
-                      type="text"
-                      name="nombre"
-                      value={form.nombre}
-                      onChange={handleChange}
-                      onBlur={validateOnFocus}
-                      required
-                    />
-                    {errorForm?.nombre?.length ? (
-                      <small className="h-6 text-red-600 w-full flex self-start mb-1">
-                        {errorForm.nombre}
-                      </small>
-                    ) : null}
-                  </label>
-                </div>
-                <div className="mb-2 sm:max-w-xs w-full lg:max-w-full ">
-                  <label className="block text-header my-2">
-                    Correo electrónico:
-                    <input
-                      autoComplete="off"
-                      className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
-                      type="email"
-                      name="correo"
-                      value={form.correo}
-                      onBlur={validateOnFocus}
-                      onChange={handleChange}
-                      required
-                    />
-                    {errorForm?.correo?.length ? (
-                      <small className="h-6 text-red-600 w-full flex self-start mb-1">
-                        {errorForm.correo}
-                      </small>
-                    ) : null}
-                  </label>
-                </div>
-                <div className="mb-2 sm:max-w-xs w-full lg:max-w-full ">
-                  <label className="block text-header mb-4">
-                    DNI:
-                    <input
-                      autoComplete="off"
-                      className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
-                      type="text"
-                      name="dni"
-                      value={form.dni}
-                      onBlur={validateOnFocus}
-                      onChange={handleChange}
-                      required
-                    />
-                    {errorForm?.dni?.length ? (
-                      <small className="h-6 text-red-600 w-full flex self-start mb-1">
-                        {errorForm.dni}
-                      </small>
-                    ) : null}
-                  </label>
-                </div>
-                <div className="flex items-center self-end w-auto">
-                  <button
-                    className="bg-yellow border
-                    disabled:bg-yellow/40 border-yellow hover:bg-yellow/80  text-header py-2 px-4 rounded focus:outline-none flex flex-row-reverse items-center justify-between w-36 font-semibold"
-                    type="submit"
-                    disabled={disabled}
-                  >
-                    <AiOutlineArrowRight
-                      className="flex self-center"
-                      fontSize={20}
-                    />
-                    Continuar
-                  </button>
-                </div>
-              </form>
+        {loading ? (
+          <div className="flex flex-col w-full h-96 sm:w-1/2  justify-center items-center">
+            <div className="py-4">
+              <Loading />
             </div>
-          ) : (
-            <div className="flex flex-col w-full py-4 justify-center items-center">
-              <h2 className="w-auto text-2xl text-header font-semibold text-center sm:text-start">
-                Ingresa tu dirección de envío.{" "}
-              </h2>
-              <form
-                onSubmit={handleSubmit}
-                className="w-full flex flex-col items-start justify-center text-lg md:pr-14 xl:pr-0 max-w-3xl"
-              >
-                <div className="mb-2 max-w-lg w-full lg:max-w-full">
-                  <label className="block text-header my-2">
-                    Dirección:
-                    <input
-                      autoComplete="off"
-                      className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
-                      type="text"
-                      name="direccion"
-                      value={secondForm.direccion}
-                      onChange={handleChange}
-                      onBlur={validateOnFocus}
-                      required
-                    />
-                    {errorSecondForm?.direccion?.length ? (
-                      <small className="h-6 text-red-600 w-full flex self-start mb-1">
-                        {errorSecondForm.direccion}
-                      </small>
-                    ) : null}
-                  </label>
-                </div>
-                <div className="mb-2 max-w-lg w-full lg:max-w-full">
-                  <label className="block text-header my-2">
-                    Departamento/Piso (opcional):
-                    <input
-                      autoComplete="off"
-                      className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
-                      type="text"
-                      name="departamento"
-                      value={secondForm.departamento}
-                      onChange={handleChange}
-                    />
-                  </label>
-                </div>
-                <div className="mb-2 max-w-lg w-full lg:max-w-full">
-                  <label className="block text-header mb-4">
-                    Ciudad:
-                    <input
-                      autoComplete="off"
-                      className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
-                      type="text"
-                      name="ciudad"
-                      value={secondForm.ciudad}
-                      onBlur={validateOnFocus}
-                      onChange={handleChange}
-                      required
-                    />
-                    {errorSecondForm?.ciudad?.length ? (
-                      <small className="h-6 text-red-600 w-full flex self-start mb-1">
-                        {errorSecondForm.ciudad}
-                      </small>
-                    ) : null}
-                  </label>
-                </div>
+            <span className="text-header text-lg">Procesando orden...</span>
+          </div>
+        ) : (
+          <aside className="flex flex-col w-full sm:w-1/2  justify-center items-center">
+            {!mostrarSegundoForm ? (
+              <div className="flex flex-col w-full justify-center items-center">
+                <h2 className="w-auto text-2xl text-header font-semibold text-center sm:text-start">
+                  Completa con tus datos para continuar.{" "}
+                </h2>
+                <form
+                  onSubmit={handleSubmit}
+                  className="w-full flex flex-col items-start justify-center text-lg md:pr-14 2xl:pr-0 max-w-3xl"
+                >
+                  <div className="mb-2 sm:max-w-xs lg:max-w-full w-full">
+                    <label className="block text-header my-2">
+                      Nombre completo:
+                      <input
+                        autoComplete="off"
+                        className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
+                        type="text"
+                        name="nombre"
+                        value={form.nombre}
+                        onChange={handleChange}
+                        onBlur={validateOnFocus}
+                        required
+                      />
+                      {errorForm?.nombre?.length ? (
+                        <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                          {errorForm.nombre}
+                        </small>
+                      ) : null}
+                    </label>
+                  </div>
+                  <div className="mb-2 sm:max-w-xs w-full lg:max-w-full ">
+                    <label className="block text-header my-2">
+                      Correo electrónico:
+                      <input
+                        autoComplete="off"
+                        className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
+                        type="email"
+                        name="correo"
+                        value={form.correo}
+                        onBlur={validateOnFocus}
+                        onChange={handleChange}
+                        required
+                      />
+                      {errorForm?.correo?.length ? (
+                        <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                          {errorForm.correo}
+                        </small>
+                      ) : null}
+                    </label>
+                  </div>
+                  <div className="mb-2 sm:max-w-xs w-full lg:max-w-full ">
+                    <label className="block text-header mb-4">
+                      DNI:
+                      <input
+                        autoComplete="off"
+                        className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
+                        type="text"
+                        name="dni"
+                        value={form.dni}
+                        onBlur={validateOnFocus}
+                        onChange={handleChange}
+                        required
+                      />
+                      {errorForm?.dni?.length ? (
+                        <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                          {errorForm.dni}
+                        </small>
+                      ) : null}
+                    </label>
+                  </div>
+                  <div className="mb-2 sm:max-w-xs w-full lg:max-w-full ">
+                    <label className="block text-header mb-4">
+                      CUIT/CUIL:
+                      <input
+                        autoComplete="off"
+                        className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
+                        type="text"
+                        name="cuit"
+                        value={form.cuit}
+                        onBlur={validateOnFocus}
+                        onChange={handleChange}
+                        required
+                      />
+                      {errorForm?.cuit?.length ? (
+                        <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                          {errorForm.cuit}
+                        </small>
+                      ) : null}
+                    </label>
+                  </div>
+                  <div className="flex items-center self-end w-auto">
+                    <button
+                      className="bg-yellow border
+                    disabled:bg-yellow/40 border-yellow hover:bg-yellow/80  text-header py-2 px-4 rounded focus:outline-none flex flex-row-reverse items-center justify-between w-36 font-semibold"
+                      type="submit"
+                      disabled={disabled}
+                    >
+                      <AiOutlineArrowRight
+                        className="flex self-center"
+                        fontSize={20}
+                      />
+                      Continuar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            ) : (
+              <div className="flex flex-col w-full py-4 justify-center items-center">
+                <h2 className="w-auto text-2xl text-header font-semibold text-center sm:text-start">
+                  Ingresa tu dirección de envío.{" "}
+                </h2>
+                <form
+                  onSubmit={handleSubmit}
+                  className="w-full flex flex-col items-start justify-center text-lg md:pr-14 xl:pr-0 max-w-3xl"
+                >
+                  <div className="mb-2 max-w-lg w-full lg:max-w-full">
+                    <label className="block text-header my-2">
+                      Dirección:
+                      <input
+                        autoComplete="off"
+                        className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
+                        type="text"
+                        name="direccion"
+                        value={secondForm.direccion}
+                        onChange={handleChange}
+                        onBlur={validateOnFocus}
+                        required
+                      />
+                      {errorSecondForm?.direccion?.length ? (
+                        <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                          {errorSecondForm.direccion}
+                        </small>
+                      ) : null}
+                    </label>
+                  </div>
+                  <div className="mb-2 max-w-lg w-full lg:max-w-full">
+                    <label className="block text-header my-2">
+                      Departamento/Piso (opcional):
+                      <input
+                        autoComplete="off"
+                        className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
+                        type="text"
+                        name="departamento"
+                        value={secondForm.departamento}
+                        onChange={handleChange}
+                      />
+                    </label>
+                  </div>
+                  <div className="mb-2 max-w-lg w-full lg:max-w-full">
+                    <label className="block text-header mb-4">
+                      Ciudad:
+                      <input
+                        autoComplete="off"
+                        className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
+                        type="text"
+                        name="ciudad"
+                        value={secondForm.ciudad}
+                        onBlur={validateOnFocus}
+                        onChange={handleChange}
+                        required
+                      />
+                      {errorSecondForm?.ciudad?.length ? (
+                        <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                          {errorSecondForm.ciudad}
+                        </small>
+                      ) : null}
+                    </label>
+                  </div>
 
-                <div className="mb-2 max-w-lg w-full lg:max-w-full flex flex-row gap-4 justify-between items-center">
-                  <label className="block text-header mb-4">
-                    Provincia:
-                    <input
-                      autoComplete="off"
-                      className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
-                      type="text"
-                      name="provincia"
-                      value={secondForm.provincia}
-                      onBlur={validateOnFocus}
-                      onChange={handleChange}
-                      required
-                    />
-                    {errorSecondForm?.provincia?.length ? (
-                      <small className="h-6 text-red-600 w-full flex self-start mb-1">
-                        {errorSecondForm.provincia}
-                      </small>
-                    ) : null}
-                  </label>
+                  <div className="mb-2 max-w-lg w-full lg:max-w-full flex flex-row gap-4 justify-between items-center">
+                    <label className="block text-header mb-4">
+                      Provincia:
+                      <input
+                        autoComplete="off"
+                        className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
+                        type="text"
+                        name="provincia"
+                        value={secondForm.provincia}
+                        onBlur={validateOnFocus}
+                        onChange={handleChange}
+                        required
+                      />
+                      {errorSecondForm?.provincia?.length ? (
+                        <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                          {errorSecondForm.provincia}
+                        </small>
+                      ) : null}
+                    </label>
 
-                  <label className="block text-header mb-4">
-                    Código postal:
-                    <input
-                      autoComplete="off"
-                      className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
-                      type="text"
-                      name="codigoPostal"
-                      value={secondForm.codigoPostal}
-                      onBlur={validateOnFocus}
-                      onChange={handleChange}
-                      required
-                    />
-                    {errorSecondForm?.codigoPostal?.length ? (
-                      <small className="h-6 text-red-600 w-full flex self-start mb-1">
-                        {errorSecondForm.codigoPostal}
-                      </small>
-                    ) : null}
-                  </label>
-                </div>
-                <div className="mb-2 max-w-lg w-full lg:max-w-full">
-                  <label className="block text-header mb-4">
-                    País:
-                    <input
-                      autoComplete="off"
-                      className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
-                      type="text"
-                      name="pais"
-                      value={secondForm.pais}
-                      onBlur={validateOnFocus}
-                      onChange={handleChange}
-                      required
-                    />
-                    {errorSecondForm?.pais?.length ? (
-                      <small className="h-6 text-red-600 w-full flex self-start mb-1">
-                        {errorSecondForm.pais}
-                      </small>
-                    ) : null}
-                  </label>
-                </div>
-                <div className="flex items-center self-end w-full justify-between">
-                  <button
-                    className="bg-header border
+                    <label className="block text-header mb-4">
+                      Código postal:
+                      <input
+                        autoComplete="off"
+                        className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
+                        type="text"
+                        name="codigoPostal"
+                        value={secondForm.codigoPostal}
+                        onBlur={validateOnFocus}
+                        onChange={handleChange}
+                        required
+                      />
+                      {errorSecondForm?.codigoPostal?.length ? (
+                        <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                          {errorSecondForm.codigoPostal}
+                        </small>
+                      ) : null}
+                    </label>
+                  </div>
+                  <div className="mb-2 max-w-lg w-full lg:max-w-full">
+                    <label className="block text-header mb-4">
+                      País:
+                      <input
+                        autoComplete="off"
+                        className=" appearance-none  rounded w-full py-2 px-3 text-header bg-white border-2 focus:outline-none my-1"
+                        type="text"
+                        name="pais"
+                        value={secondForm.pais}
+                        onBlur={validateOnFocus}
+                        onChange={handleChange}
+                        required
+                      />
+                      {errorSecondForm?.pais?.length ? (
+                        <small className="h-6 text-red-600 w-full flex self-start mb-1">
+                          {errorSecondForm.pais}
+                        </small>
+                      ) : null}
+                    </label>
+                  </div>
+                  <div className="flex items-center self-end w-full justify-between">
+                    <button
+                      className="bg-header border
                     disabled:bg-header/40 border-yellow hover:bg-header/80  text-yellow py-2 px-4 rounded focus:outline-none flex flex-row-reverse items-center justify-between w-28 font-semibold"
-                    onClick={() => setMostrarSegundoForm(false)}
-                  >
-                    Atrás
-                    <AiOutlineArrowLeft
-                      className="flex self-center"
-                      fontSize={20}
-                    />
-                  </button>
-                  <button
-                    className="bg-yellow border
+                      onClick={() => setMostrarSegundoForm(false)}
+                    >
+                      Atrás
+                      <AiOutlineArrowLeft
+                        className="flex self-center"
+                        fontSize={20}
+                      />
+                    </button>
+                    <button
+                      className="bg-yellow border
                     disabled:bg-yellow/40 border-yellow hover:bg-yellow/80  text-header py-2 px-4 rounded focus:outline-none flex flex-row-reverse items-center justify-between w-36 font-semibold"
-                    type="submit"
-                    disabled={disabled}
-                  >
-                    <AiOutlineArrowRight
-                      className="flex self-center"
-                      fontSize={20}
-                    />
-                    Continuar
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-        </aside>
+                      type="submit"
+                      disabled={disabledSecond}
+                    >
+                      <AiOutlineArrowRight
+                        className="flex self-center"
+                        fontSize={20}
+                      />
+                      Continuar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+          </aside>
+        )}
         <aside
           className="flex 
           w-full sm:w-1/2 flex-row justify-center"

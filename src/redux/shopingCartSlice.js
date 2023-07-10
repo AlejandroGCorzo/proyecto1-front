@@ -31,6 +31,7 @@ const initialState = {
   usuario: null,
   estadoDeCompra: null,
   nombreCupon: null,
+  order: {},
 };
 
 const cartSlice = createSlice({
@@ -40,17 +41,8 @@ const cartSlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
-    setCart: (state, action) => {
-      state.productos = action.payload.productos;
-      state.totalConDescuento = action.payload.totalConDescuento;
-      state.totalSinDescuento = action.payload.totalSinDescuento;
-      state.tipoDePago = action.payload.tipoDePago;
-      state.envio = action.payload.envio;
-      state.isFacturaA = action.payload.isFacturaA;
-      state.cupon = action.payload.cupon;
-      state.usuario = action.payload.usuario;
-      state.estadoDeCompra = action.payload.estadoDeCompra;
-      state.nombreCupon = action.payload.nombreCupon;
+    setOrder: (state, action) => {
+      state.order = action.payload;
     },
     addItem: (state, action) => {
       let newItem = action.payload;
@@ -171,6 +163,9 @@ const cartSlice = createSlice({
       state.errorCupon = "";
       state.successCupon = "";
     },
+    clearOrder: (state, action) => {
+      state.order = {};
+    },
   },
 });
 
@@ -182,7 +177,8 @@ export const {
   setErrorCart,
   setSuccessCart,
   setUserHaveCart,
-  setCart,
+  setOrder,
+  clearOrder,
   addItem,
   removeItem,
   updateQuantity,

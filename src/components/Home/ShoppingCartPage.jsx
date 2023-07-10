@@ -127,10 +127,6 @@ const ShoppingCartPage = () => {
     }
   };
 
-  const handleBuy = (e) => {
-    setBuySteps(true);
-  };
-
   return (
     <div className="w-full h-auto flex flex-col justify-start items-start md:justify-center md:items-center  max-h-max bg-fontGrey">
       <dialog ref={modalRef} className="modal bg-grey/40">
@@ -158,15 +154,15 @@ const ShoppingCartPage = () => {
           )}
         </div>
       </dialog>
-      {!buySteps && (
-        <div className="flex justify-start items-center px-2 ">
-          <h1 className="flex w-full py-6 text-center uppercase text-xl text-header font-semibold">
-            Carrito de compras
-          </h1>
-        </div>
-      )}
+
+      <div className="flex justify-start items-center px-2 ">
+        <h1 className="flex w-full py-6 text-center uppercase text-xl text-header font-semibold">
+          Carrito de compras
+        </h1>
+      </div>
+
       <div className="flex flex-col items-center justify-center w-full bg-grey ">
-        {productos?.length > 0 && !buySteps ? (
+        {productos?.length > 0 ? (
           <>
             <div className="w-full h-full max-w-[90%] flex flex-col lg:flex-row justify-center items-center lg:justify-around lg:items-start gap-6">
               <div className="h-auto w-full 2xl:max-w-[70%] flex flex-col justify-between gap-2 overflow-y-auto p-2 bg-grey">
@@ -319,12 +315,13 @@ const ShoppingCartPage = () => {
                     </button> */}
                   </div>
                   <div className="flex flex-col justify-start items-center  py-4 px-4 gap-6 bg-white rounded-bl-md rounded-br-md">
-                    <button
+                    <Link
+                      to={"/checkout/form"}
                       className="btn bg-header hover:opacity-70 text-white w-full flex justify-center items-center text-[17px]"
-                      onClick={handleBuy}
+                      type="button"
                     >
                       <RiShoppingBagFill /> Finalizar compra
-                    </button>
+                    </Link>
                   </div>
                 </div>
                 <div className="w-full justify-center flex py-4 text-blue-400 text-lg font-medium">

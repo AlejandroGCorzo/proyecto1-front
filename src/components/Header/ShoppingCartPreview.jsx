@@ -305,6 +305,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                     <Link
                       to={"/checkout/form"}
                       className="btn bg-header hover:opacity-70 text-white w-full flex justify-center items-center text-[17px] "
+                      type="button"
                       onClick={() => toggleShoppingCart()}
                     >
                       <RiShoppingBagFill /> Finalizar compra

@@ -11,7 +11,7 @@ import {
   setErrorCart,
   setSuccessCart,
   setUserHaveCart,
-  setCart,
+  setOrder,
 } from "./shopingCartSlice";
 
 export const validateCart = (id) => {
@@ -23,7 +23,7 @@ export const validateCart = (id) => {
         dispatch(setUserHaveCart(res.data));
       } else {
         dispatch(setUserHaveCart(true));
-        dispatch(setCart(res.data));
+        dispatch(setOrder(res.data));
       }
       console.log(res.data);
       setLoading(false);
@@ -38,12 +38,13 @@ export const validateCart = (id) => {
   };
 };
 export const postCartAction = (values) => {
+  console.log(url + "/orden");
+  console.log(values);
   return async function (dispatch) {
     try {
-      setLoading(true);
-      const res = await axios.post(`${url}/ordenes/`, values);
-      /* setCart(res.data); */ console.log(res.data);
-      setLoading(false);
+      dispatch(setLoading(true));
+      const res = await axios.post(`${url}/orden`, values);
+      await dispatch(setOrder(res.data));
     } catch (error) {
       dispatch(setLoading(false));
       if (error.response) {

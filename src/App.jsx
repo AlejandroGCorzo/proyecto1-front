@@ -23,6 +23,8 @@ import {
   validateCart,
 } from "./redux/shoppingCartActions";
 import CheckoutForm from "./components/Checkout/CheckoutForm";
+import SuccessComponent from "./utils/SuccessPage";
+import ErrorComponent from "./utils/FailurePage";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -91,6 +93,8 @@ function App() {
           <Route path="/checkout" element={<ShoppingCartPage />} />
           <Route path="/checkout/form" element={<CheckoutForm />} />
           <Route path="/wishlist" element={<WishList />} />
+          <Route path="/checkout/success" element={<SuccessComponent />} />
+          <Route path="/checkout/failure" element={<ErrorComponent />} />
           <Route element={<PrivateRoutes />}>
             <Route path="/admin/*" element={<PanelHome />} />
           </Route>
