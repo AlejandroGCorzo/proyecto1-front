@@ -25,6 +25,7 @@ import {
 import CheckoutForm from "./components/Checkout/CheckoutForm";
 import SuccessComponent from "./utils/SuccessPage";
 import ErrorComponent from "./utils/FailurePage";
+import ErrorPage from "./components/ErrorPage/ErrorPage";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -86,8 +87,8 @@ function App() {
       <div className="mt-[25%] sm:mt-[17%] md:mt-[13%] lg:mt-[14%] 2xl:mt-[8%] ">
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/:filter" element={<FilterProducts />} />
+          <Route exact path="/" element={<Home />} />
+          <Route path="/products/:filter" element={<FilterProducts />} />
           {/* <Route path="/login" element={<UserDropdown />} /> */}
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/checkout" element={<ShoppingCartPage />} />
@@ -98,6 +99,7 @@ function App() {
           <Route element={<PrivateRoutes />}>
             <Route path="/admin/*" element={<PanelHome />} />
           </Route>
+          <Route path="*" element={<ErrorPage />} />
           {/*  <Route path="/profile" element={<Profile />} /> */}
         </Routes>
       </div>

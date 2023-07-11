@@ -18,6 +18,7 @@ import { FaExchangeAlt } from "react-icons/fa";
 import { MdCheckCircle, MdRemoveCircle } from "react-icons/md";
 import { ConfirmationComponent } from "../utils/DeleteSteps";
 import Loading from "../utils/Loading";
+import { formatearPrecio } from "../utils/formatPrice";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -361,7 +362,11 @@ const ProductDetail = () => {
 
           <div className=" w-full md:w-1/2 flex  h-auto p-2 md:h-[750px] lg:h-[680px] bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
             <img
-              src={detailProduct?.imagen && detailProduct?.imagen}
+              src={
+                detailProduct?.imagen?.length
+                  ? detailProduct?.imagen
+                  : detailProduct?.imagenes
+              }
               alt={detailProduct?.modelo}
               className="w-full h-[80%] object-contain px-4 max-w-sm md:max-w-xl "
             />
@@ -375,14 +380,26 @@ const ProductDetail = () => {
               </div>
 
               <div className="my-5 px-2 py-2 ">
-                <p className="text-3xl text-gray-900">
-                  {detailProduct?.precio.toLocaleString("es-AR", {
-                    style: "currency",
-                    currency: "ARS",
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </p>
+                {detailProduct.descuento > 0 ? (
+                  <div className="flex flex-col w-auto gap-2 justify-center items-start">
+                    <p className="text-xl font-medium text-header/60 w-max text-center line-through">
+                      {formatearPrecio(detailProduct.precio)}
+                    </p>
+                    <p className="text-3xl font-medium text-header w-max text-center flex flex-row items-center">
+                      {formatearPrecio(
+                        detailProduct.precio -
+                          detailProduct.precio * (detailProduct.descuento / 100)
+                      )}{" "}
+                      <span className="text-green-400 text-lg px-2 font-normal">
+                        {detailProduct.descuento + "% OFF"}
+                      </span>
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-3xl pb-1 font-medium text-header w-auto text-center">
+                    {formatearPrecio(detailProduct.precio)}
+                  </p>
+                )}
               </div>
               <hr className="w-full border-gray-300 my-2" />
               <div className="my-3 px-2 py-2 ">

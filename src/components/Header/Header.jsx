@@ -67,7 +67,12 @@ const Header = () => {
   };
 
   const toggleShoppingCart = () => {
-    if (location.pathname !== "/checkout") {
+    if (
+      location.pathname !== "/checkout" &&
+      location.pathname !== "/checkout/success" &&
+      location.pathname !== "/checkout/failure" &&
+      location.pathname !== "/checkout/form"
+    ) {
       setIsOpen(!isOpen);
     }
   };
@@ -297,10 +302,10 @@ const Header = () => {
         >
           <div className="hidden lg:flex flex-row justify-end items-center w-72 gap-6">
             <Link
-              to={"/:filter"}
+              to={"products/:filter"}
               className="transition-all ease-in-out uppercase border-b border-b-transparent  hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center "
-              value={"nuevo"}
-              onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+              name={"nuevo"}
+              onClick={(e) => dispatch(orderProductsAction(e.target.name))}
             >
               new in
             </Link>
@@ -335,10 +340,10 @@ const Header = () => {
               marcas
             </button>
             <Link
-              to={"/:filter"}
+              to={"/products/:filter"}
               className="transition-all ease-in-out uppercase border-b border-b-transparent hover:border-b-yellow hover:text-yellow focus:text-yellow "
-              value={"descuento"}
-              onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+              name={"descuento"}
+              onClick={(e) => dispatch(orderProductsAction(e.target.name))}
             >
               sale
             </Link>
@@ -359,10 +364,10 @@ const Header = () => {
             <div className="bg-header text-white max-h-[430px] w-1/2 sm:w-1/3 p-4 ease-in-out transform transition-transform duration-300 delay-150 overflow-y-scroll">
               <div className=" text-xl font-medium flex justify-center items-center mb-2">
                 <Link
-                  to={"/:filter"}
-                  value={"nuevo"}
+                  to={"/products/:filter"}
+                  id={"nuevo"}
                   onClick={(e) => {
-                    dispatch(orderProductsAction(e.target.value));
+                    dispatch(orderProductsAction(e.target.id));
                     setNavbar(false);
                   }}
                 >
@@ -455,11 +460,11 @@ const Header = () => {
                 </div>
               </div>
               <Link
-                to={"/:filter"}
+                to={"/products/:filter"}
                 className="text-xl font-medium flex justify-center items-center pb-4 "
-                value={"descuento"}
+                id={"descuento"}
                 onClick={(e) => {
-                  dispatch(orderProductsAction(e.target.value));
+                  dispatch(orderProductsAction(e.target.id));
                   setNavbar(false);
                 }}
               >

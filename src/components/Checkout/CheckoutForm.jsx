@@ -375,6 +375,9 @@ function CheckoutForm({ productsData = [] }) {
             province: secondForm.provincia,
             country: secondForm.pais,
             zipCode: secondForm.codigoPostal,
+            department: secondForm?.departamento?.length
+              ? secondForm.departamento
+              : "",
             paymentMethod: "MERCADOPAGO",
           },
           payType: "MERCADOPAGO",
@@ -559,7 +562,18 @@ function CheckoutForm({ productsData = [] }) {
                       ) : null}
                     </label>
                   </div>
-                  <div className="flex items-center self-end w-auto">
+                  <div className="flex items-center self-end w-full justify-between">
+                    <Link
+                      to={"/checkout"}
+                      className="bg-header border
+                    disabled:bg-header/40 hover:bg-header/80  text-yellow py-2 px-4 rounded focus:outline-none flex flex-row-reverse items-center justify-between w-max font-semibold"
+                    >
+                      Volver al Carrito
+                      <AiOutlineArrowLeft
+                        className="flex self-center "
+                        fontSize={20}
+                      />
+                    </Link>
                     <button
                       className="bg-yellow border
                     disabled:bg-yellow/40 border-yellow hover:bg-yellow/80  text-header py-2 px-4 rounded focus:outline-none flex flex-row-reverse items-center justify-between w-36 font-semibold"
@@ -735,7 +749,7 @@ function CheckoutForm({ productsData = [] }) {
             <h2 className="w-full text-center uppercase text-xl text-header font-semibold py-2 bg-grey rounded-tl-md rounded-tr-md">
               Resumen de cuenta
             </h2>
-            <div className="h-full min-h-[200px] max-h-96 overflow-y-auto bg-white p-2 gap-2">
+            <div className="h-full min-h-[200px] max-h-96 overflow-y-auto bg-white p-2 gap-2 contentScroll">
               {productsInCart &&
                 productsInCart?.length > 0 &&
                 productsInCart?.map((elem) => (
@@ -744,6 +758,13 @@ function CheckoutForm({ productsData = [] }) {
                     className=" flex flex-row  justify-center items-center
                       w-auto h-32 border-y  bg-white"
                   >
+                    <span className="px-4 text-header">
+                      {
+                        productos?.find((item) => item.producto === elem._id)
+                          ?.cantidad
+                      }
+                      x
+                    </span>
                     <div className="flex h-20 w-20 py-1 border">
                       <img
                         className="h-16 w-full object-contain aspect-auto"

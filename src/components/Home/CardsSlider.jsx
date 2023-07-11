@@ -9,6 +9,7 @@ import {
 } from "react-icons/md";
 import { useSelector } from "react-redux";
 import Loading from "../../utils/Loading";
+import { formatearPrecio } from "../../utils/formatPrice";
 
 const CustomPrevArrow = ({ onClick }) => {
   return (
@@ -153,10 +154,29 @@ const CardsSlider = ({ data, mounth }) => {
                   <p className="text-gray-400 py-4 uppercase font-medium h-20 w-full max-w-52 text-center">
                     {item.descripcion}
                   </p>
-                  <div className="h-auto flex flex-col justify-start items-start w-full">
-                    <p className="text-lg">
+                  <div className="h-auto flex flex-col justify-start items-end w-full">
+                    {/* <p className="text-lg">
                       <strong className="text-xl">${item.precio},00</strong>
-                    </p>
+                    </p> */}
+                    {item.descuento > 0 ? (
+                      <div className="flex flex-col w-full gap-1 justify-center items-end">
+                        <p className="text-lg font-medium text-header/60 w-max text-center line-through">
+                          {formatearPrecio(item.precio)}
+                        </p>
+                        <p className="text-xl font-medium text-header w-max text-center flex flex-row items-center">
+                          <span className="text-green-400 text-xs pr-2 font-normal">
+                            {item.descuento + "% OFF"}
+                          </span>
+                          {formatearPrecio(
+                            item.precio - item.precio * (item.descuento / 100)
+                          )}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-xl pb-1 font-medium text-header  text-end w-full mt-7">
+                        {formatearPrecio(item.precio)}
+                      </p>
+                    )}
 
                     <p className="font-medium text-yellow text-sm flex justify-start items-end">
                       ENVÍO GRATIS
