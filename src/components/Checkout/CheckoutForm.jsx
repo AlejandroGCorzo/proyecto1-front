@@ -770,6 +770,9 @@ function CheckoutForm({ productsData = [] }) {
                         className="h-16 w-full object-contain aspect-auto"
                         src={elem?.imagen?.length ? elem.imagen : elem.imagenes}
                         alt={elem.descripcion}
+                        onError={(e) => {
+                          e.target.src = "/nodisponible.jpg";
+                        }}
                       />
                     </div>
                     <div className="w-2/3  flex flex-col sm:flex-row justify-center items-center px-2">

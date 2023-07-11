@@ -212,6 +212,9 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                               elem.imagen?.length ? elem.imagen : elem.imagenes
                             }
                             alt={elem.descripcion}
+                            onError={(e) => {
+                              e.target.src = "/nodisponible.jpg";
+                            }}
                           />
                         </div>
                         <div className="w-[65%] flex flex-col justify-between items-center pl-4">

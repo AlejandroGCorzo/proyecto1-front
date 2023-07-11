@@ -43,7 +43,7 @@ const Home = () => {
       ) : (
         <>
           {lanzamientos?.length > 0 && (
-            <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col">
+            <div className="w-full 2xl:w-[90%] h-auto flex justify-center items-center flex-col">
               <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
                 <p className="text-lg md:text-2xl py-1">LANZAMIENTOS</p>
                 <Link
@@ -60,7 +60,7 @@ const Home = () => {
             </div>
           )}
           {recomendados?.length > 0 && (
-            <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col mb-10">
+            <div className="w-full 2xl:w-[90%] h-auto flex justify-center items-center flex-col mb-10">
               <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
                 <p className="text-lg md:text-2xl py-1">RECOMENDADOS</p>
                 <Link
@@ -169,7 +169,7 @@ const Home = () => {
             </div>
           </div> */}
           {destacados?.length > 0 && (
-            <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col mb-10">
+            <div className="w-full 2xl:w-[90%] h-auto flex justify-center items-center flex-col mb-10">
               <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between  text-nav font-semibold">
                 <p className="text-lg md:text-2xl py-1">DESTACADOS</p>
                 <Link

@@ -367,8 +367,11 @@ const ProductDetail = () => {
                   ? detailProduct?.imagen
                   : detailProduct?.imagenes
               }
-              alt={detailProduct?.modelo}
+              alt={detailProduct?.descripcion}
               className="w-full h-[80%] object-contain px-4 max-w-sm md:max-w-xl "
+              onError={(e) => {
+                e.target.src = "/nodisponible.jpg";
+              }}
             />
           </div>
           <div className="flex flex-col w-full h-[750px] lg:h-[680px] p-2 bg-white  md:w-1/2 md:mt-0 lg:mt-0 xl:mt-0">

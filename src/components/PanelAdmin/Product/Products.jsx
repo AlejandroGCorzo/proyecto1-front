@@ -172,6 +172,9 @@ const Products = () => {
                                         : item.imagenes
                                     }
                                     className="w-16 max-h-20 m-1 object-contain"
+                                    onError={(e) => {
+                                      e.target.src = "/nodisponible.jpg";
+                                    }}
                                   />
                                 </div>
                               ) : (

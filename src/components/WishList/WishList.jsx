@@ -106,7 +106,7 @@ const WishList = () => {
   };
 
   return (
-    <div className="w-full h-auto flex flex-col justify-start items-start sm:justify-center sm:items-center  max-h-max  min-h-[450px] sm:min-h-[650px] md:min-h-[450px] bg-fontGrey mt-10 sm:mt-0">
+    <div className="w-full h-auto flex flex-col justify-start items-start md:justify-center md:items-center  max-h-max  min-h-[450px] sm:min-h-[650px] md:min-h-[450px] bg-fontGrey mt-10 sm:mt-0">
       <dialog ref={modalWishlistRef} className="modal bg-grey/40">
         <div className="modal-box bg-white">
           <button
@@ -159,6 +159,9 @@ const WishList = () => {
                       className="w-full h-full object-contain aspect-auto "
                       src={elem.imagen?.length ? elem.imagen : elem.imagenes}
                       alt={elem.modelo}
+                      onError={(e) => {
+                        e.target.src = "/nodisponible.jpg";
+                      }}
                     />
                   </div>
                   <div className="flex items-center justify-between w-[55%] sm:w-[80%] flex-col sm:flex-row">

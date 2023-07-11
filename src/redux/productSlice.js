@@ -41,10 +41,10 @@ const productSlice = createSlice({
       let orderedProducts = state.productsFilter;
 
       if (action.payload === "asc") {
-        orderedProducts = orderedProducts.sort((a, b) => a.precio - b.precio);
+        orderedProducts = orderedProducts.sort((a, b) => b.precio - a.precio);
       }
       if (action.payload === "desc") {
-        orderedProducts = orderedProducts.sort((a, b) => b.precio - a.precio);
+        orderedProducts = orderedProducts.sort((a, b) => a.precio - b.precio);
       }
       if (action.payload === "A-Z") {
         orderedProducts = orderedProducts.sort((a, b) =>

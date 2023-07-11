@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Filters from "../../utils/Filters";
@@ -9,6 +9,7 @@ import {
 } from "../../redux/productActions";
 import Loading from "../../utils/Loading";
 import { formatearPrecio } from "../../utils/formatPrice";
+import useViewport from "../../hooks/useViewport";
 
 const FilterProducts = () => {
   const distpatch = useDispatch();
@@ -20,8 +21,16 @@ const FilterProducts = () => {
   );
   let fechaActual = new Date();
   let mounth = String(fechaActual.getMonth() + 1).padStart(2, "0");
+  let { viewportSize, setViewportSize } = useViewport();
+  const [maxSlice, setMaxSlice] = useState(0);
 
-  const [maxSlice, setMaxSlice] = useState(6);
+  useEffect(() => {
+    if (viewportSize?.width && viewportSize.width > 1280) {
+      setMaxSlice(8);
+    } else {
+      setMaxSlice(6);
+    }
+  }, [viewportSize.width]);
 
   const handleOrder = (e) => {
     e.preventDefault();
@@ -33,13 +42,14 @@ const FilterProducts = () => {
   };
 
   const handleSlice = (e) => {
+    let itemsToSum = viewportSize?.width > 1280 ? 8 : 6;
     if (
       maxSlice === productsFilter?.length ||
-      maxSlice + 6 > productsFilter?.length
+      maxSlice + itemsToSum > productsFilter?.length
     ) {
       setMaxSlice(productsFilter?.length);
     } else {
-      setMaxSlice(maxSlice + 6);
+      setMaxSlice(maxSlice + itemsToSum);
     }
   };
 
@@ -208,6 +218,9 @@ const FilterProducts = () => {
                             }
                             alt={item.descripcion}
                             className="h-44 w-auto max-w-44 aspect-auto object-contain"
+                            onError={(e) => {
+                              e.target.src = "/nodisponible.jpg";
+                            }}
                           />
                         ) : null}
                       </div>

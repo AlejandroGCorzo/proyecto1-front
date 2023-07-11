@@ -159,7 +159,10 @@ const Header = () => {
                       <FiShoppingCart color="white" fontSize={26} />
                     </button>
                   </div>
-                  <Link to={"/wishlist"} className="px-3 pt-1">
+                  <Link
+                    to={"/wishlist"}
+                    className="px-3 pt-1 flex items-center"
+                  >
                     <div className="indicator">
                       {wishedProducts?.length > 0 && (
                         <span className="indicator-item badge badge-warning -left-1">
@@ -246,6 +249,7 @@ const Header = () => {
                     )}
                     {showItems && (
                       <SearchItems
+                        showItems={showItems}
                         setShowItems={setShowItems}
                         error={errorSearch}
                         debouncedSearchValue={debouncedSearchValue}
@@ -257,7 +261,7 @@ const Header = () => {
                   <div className=" lg:flex hidden flex-row-reverse items-center w-[35%] pr-8 ">
                     <div className="indicator">
                       {productos.length > 0 && (
-                        <span className="indicator-item badge badge-warning -left-1">
+                        <span className="indicator-item badge badge-warning left-4">
                           {productos.length}
                         </span>
                       )}

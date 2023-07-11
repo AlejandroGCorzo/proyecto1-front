@@ -5,6 +5,8 @@ import { getProductsAction } from "../redux/productActions";
 import CardsSlider from "./Home/CardsSlider";
 
 const ProductosDestacados = ({ productType }) => {
+  let fechaActual = new Date();
+  let mes = String(fechaActual.getMonth() + 1).padStart(2, "0");
   const dispatch = useDispatch();
   const allProducts = useSelector((state) => state.products.featuredProducts);
 
@@ -13,12 +15,12 @@ const ProductosDestacados = ({ productType }) => {
   }, [dispatch]);
 
   return (
-    <>
-      <h2 className="text-2xl font-bold mx-4 my-4 px-2 py-2">
-        Productos Relacionados
+    <div className="w-full flex flex-col justify-center items-center">
+      <h2 className="text-2xl font-bold mx-4 my-4 px-2 py-2 flex md:self-start">
+        También te puede interesar
       </h2>
-      <CardsSlider data={allProducts} />
-    </>
+      <CardsSlider data={allProducts} mounth={mes} />
+    </div>
   );
 };
 

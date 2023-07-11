@@ -189,6 +189,9 @@ const ShoppingCartPage = () => {
                             elem?.imagen?.length ? elem.imagen : elem.imagenes
                           }
                           alt={elem.descripcion}
+                          onError={(e) => {
+                            e.target.src = "/nodisponible.jpg";
+                          }}
                         />
                       </Link>
                       <div className="w-full flex flex-col sm:flex-row justify-center items-center sm:justify-between sm:items-center pl-4">
