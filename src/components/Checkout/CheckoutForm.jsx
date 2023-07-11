@@ -375,6 +375,9 @@ function CheckoutForm({ productsData = [] }) {
             province: secondForm.provincia,
             country: secondForm.pais,
             zipCode: secondForm.codigoPostal,
+            department: secondForm?.departamento?.length
+              ? secondForm.departamento
+              : "",
             paymentMethod: "MERCADOPAGO",
           },
           payType: "MERCADOPAGO",
