@@ -20,7 +20,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
   );
   const { isLoggedIn } = useSelector((state) => state.users);
   const { products } = useSelector((state) => state.products);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [onDelete, setOnDelete] = useState(null);
   const [itemToDelete, setItemToDelete] = useState({ nombre: "", id: "" });
   const [section, setSection] = useState("carrito de compras");
@@ -59,7 +59,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
 
   const handleRemove = (e) => {
     if (error) {
-      setError(false);
+      setError("");
     }
     if (e.target.parentElement) {
       setItemToDelete({
@@ -84,16 +84,21 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
     );
 
     if (value === "+") {
-      dispatch(
-        updateCartAction({
-          itemId: name,
-          cantidad: itemToUpdate.cantidad + 1,
-        })
-      );
+      if (itemToUpdate.cantidad + 1 > productData.stock) {
+        setError("Ha agregado todos los productos disponibles al carrito");
+        toggleModal();
+      } else {
+        dispatch(
+          updateCartAction({
+            itemId: name,
+            cantidad: itemToUpdate.cantidad + 1,
+          })
+        );
+      }
     } else {
       if (itemToUpdate.cantidad - 1 === 0) {
         if (error) {
-          setError(false);
+          setError("");
         }
         setItemToDelete({
           nombre: "producto",
@@ -134,7 +139,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
               <div className="w-full h-28 flex justify-center items-center">
                 <Loading />
               </div>
-            ) : error ? (
+            ) : error.length ? (
               <div className="alert alert-warning w-[97%]">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -149,21 +154,20 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                   />
                 </svg>
-                <span>
-                  Ha agregado todos los productos en stock del Talle
-                  seleccionado.
-                </span>
+                <span>{error}</span>
               </div>
             ) : (
-              <ConfirmationComponent
-                onDelete={onDelete}
-                toggleModal={toggleModal}
-                confirmed={confirmed}
-                setConfirmed={setConfirmed}
-                itemToDelete={itemToDelete}
-                setItemToDelete={setItemToDelete}
-                section={section}
-              />
+              !error.length && (
+                <ConfirmationComponent
+                  onDelete={onDelete}
+                  toggleModal={toggleModal}
+                  confirmed={confirmed}
+                  setConfirmed={setConfirmed}
+                  itemToDelete={itemToDelete}
+                  setItemToDelete={setItemToDelete}
+                  section={section}
+                />
+              )
             )}
           </div>
         </dialog>
@@ -201,88 +205,99 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
                 <div className="max-h-[60%] h-full md:h-[30%] xl:h-[50%] w-full px-2 self-start overflow-y-auto">
                   {productsInCart?.length > 0 &&
                     productsInCart.map((elem) => (
-                      <div
-                        key={elem._id + "cartPreview"}
-                        className="border-b flex flex-row justify-start items-center py-5 w-full"
-                      >
-                        <div className="flex h-1/3 w-1/3 justify-center items-center">
-                          <img
-                            className="max-w-[100px] h-24"
-                            src={
-                              elem.imagen?.length ? elem.imagen : elem.imagenes
-                            }
-                            alt={elem.descripcion}
-                            onError={(e) => {
-                              e.target.src = "/nodisponible.jpg";
-                            }}
-                          />
-                        </div>
-                        <div className="w-[65%] flex flex-col justify-between items-center pl-4">
-                          <h2 className="text-header uppercase text-center w-auto h-auto">
-                            {elem.descripcion}
-                          </h2>
-                          {productos?.find((item) => item.producto === elem._id)
-                            ?.precio < elem.precio ? (
-                            <div className="flex flex-col w-auto gap-1 justify-center items-center py-2 ">
-                              <p className="text-lg font-medium text-header/60 w-max text-center line-through">
+                      <div key={elem._id + "cartPreview"}>
+                        <div className="border-b flex flex-row justify-start items-center py-5 w-full">
+                          <div className="flex h-1/3 w-1/3 justify-center items-center">
+                            <img
+                              className="max-w-[100px] h-24"
+                              src={
+                                elem.imagen?.length
+                                  ? elem.imagen
+                                  : elem.imagenes
+                              }
+                              alt={elem.descripcion}
+                              onError={(e) => {
+                                e.target.src = "/nodisponible.jpg";
+                              }}
+                            />
+                          </div>
+                          <div className="w-[65%] flex flex-col justify-between items-center pl-4">
+                            <h2 className="text-header uppercase text-center w-auto h-auto">
+                              {elem.descripcion}
+                            </h2>
+                            {productos?.find(
+                              (item) => item.producto === elem._id
+                            )?.precio < elem.precio ? (
+                              <div className="flex flex-col w-auto gap-1 justify-center items-center py-2 ">
+                                <p className="text-lg font-medium text-header/60 w-max text-center line-through">
+                                  {formatearPrecio(elem.precio)}
+                                </p>
+                                <p className="text-xl font-medium text-header w-max text-center flex flex-row items-center">
+                                  <span className="text-green-400 text-xs pr-2 font-normal">
+                                    {elem.descuento + "% OFF"}
+                                  </span>
+                                  {formatearPrecio(
+                                    elem.precio -
+                                      elem.precio * (elem.descuento / 100)
+                                  )}
+                                </p>
+                              </div>
+                            ) : (
+                              <p className="text-xl py-2 font-medium text-header  text-center w-full">
                                 {formatearPrecio(elem.precio)}
                               </p>
-                              <p className="text-xl font-medium text-header w-max text-center flex flex-row items-center">
-                                <span className="text-green-400 text-xs pr-2 font-normal">
-                                  {elem.descuento + "% OFF"}
-                                </span>
-                                {formatearPrecio(
-                                  elem.precio -
-                                    elem.precio * (elem.descuento / 100)
-                                )}
-                              </p>
+                            )}
+
+                            <div className="w-auto flex justify-center items-center flex-row flex-nowrap px-2">
+                              <button
+                                className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
+                                value={"-"}
+                                name={elem._id}
+                                onClick={handleAmount}
+                                disabled={elem.stock === 0 ? true : false}
+                              >
+                                -
+                              </button>
+                              <span className="py-1 px-2 text-header text-xl">
+                                {
+                                  productos?.find(
+                                    (item) => item.producto === elem._id
+                                  )?.cantidad
+                                }
+                              </span>
+
+                              <button
+                                className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
+                                value={"+"}
+                                name={elem._id}
+                                onClick={handleAmount}
+                                disabled={elem.stock === 0 ? true : false}
+                              >
+                                +
+                              </button>
                             </div>
-                          ) : (
-                            <p className="text-xl py-2 font-medium text-header  text-center w-full">
-                              {formatearPrecio(elem.precio)}
-                            </p>
-                          )}
-
-                          <div className="w-auto flex justify-center items-center flex-row flex-nowrap px-2">
-                            <button
-                              className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
-                              value={"-"}
-                              name={elem._id}
-                              onClick={handleAmount}
-                            >
-                              -
-                            </button>
-                            <span className="py-1 px-2 text-header text-xl">
-                              {
-                                productos?.find(
-                                  (item) => item.producto === elem._id
-                                )?.cantidad
-                              }
-                            </span>
-
-                            <button
-                              className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
-                              value={"+"}
-                              name={elem._id}
-                              onClick={handleAmount}
-                            >
-                              +
-                            </button>
                           </div>
-                        </div>
-                        <button
-                          className="w-[10%] pt-2"
-                          onClick={handleRemove}
-                          id={elem._id}
-                          name={elem.descripcion}
-                        >
-                          <MdDeleteOutline
-                            fontSize={20}
+                          <button
+                            className="w-[10%] pt-2"
+                            onClick={handleRemove}
                             id={elem._id}
                             name={elem.descripcion}
-                            className="w-full text-header"
-                          />
-                        </button>
+                          >
+                            <MdDeleteOutline
+                              fontSize={20}
+                              id={elem._id}
+                              name={elem.descripcion}
+                              className="w-full text-header"
+                            />
+                          </button>
+                        </div>
+                        {elem.stock === 0 && (
+                          <div className="w-96 bg-yellow/70 h-auto text-lg md:text-xl text-header flex justify-center items-center">
+                            <p className="text-center">
+                              Este producto no está disponible actualmente.
+                            </p>
+                          </div>
+                        )}
                       </div>
                     ))}
                 </div>

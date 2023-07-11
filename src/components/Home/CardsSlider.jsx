@@ -100,14 +100,14 @@ const CardsSlider = ({ data, mounth }) => {
     <div className="container">
       <div
         className={
-          data?.length < 5 && viewportSize.width > 1280
+          data?.length < 5 && viewportSize?.width > 1280
             ? "w-[70%]"
             : "containerSlider"
         }
       >
-        <Slider {...settings}>
-          {data?.length &&
-            data.map((item, index) => (
+        {data?.length > 0 && (
+          <Slider {...settings}>
+            {data.map((item, index) => (
               <div
                 key={item._id}
                 className="h-auto max-w-[270px] border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header  bg-white flex self-center"
@@ -204,7 +204,8 @@ const CardsSlider = ({ data, mounth }) => {
                 </Link>
               </div>
             ))}
-        </Slider>
+          </Slider>
+        )}
       </div>
     </div>
   );

@@ -29,7 +29,7 @@ const ProductDetail = () => {
   const detailProduct = useSelector((state) => state.products.detail);
   const { productos, loading } = useSelector((state) => state.cart);
   const { isLoggedIn } = useSelector((state) => state.users);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [isCambioOpen, setIsCambioOpen] = useState(false);
@@ -120,8 +120,8 @@ const ProductDetail = () => {
         })
       );
     } else if (itemToUpdate && itemToUpdate.cantidad - 1 === 0) {
-      if (error) {
-        setError(false);
+      if (error?.length) {
+        setError("");
       }
       setItemToDelete({
         nombre: "producto",
@@ -137,15 +137,21 @@ const ProductDetail = () => {
 
   const handleIncreaseQuantity = () => {
     const itemToUpdate = productos.find((elem) => elem.producto === id);
-    if (itemToUpdate) {
+    if (itemToUpdate && itemToUpdate?.cantidad + 1 <= detailProduct.stock) {
       dispatch(
         updateCartAction({
           itemId: id,
           cantidad: itemToUpdate.cantidad + 1,
         })
       );
-    } else {
+    } else if (itemToUpdate?.cantidad === detailProduct.stock) {
+      setError("Ha agregado todos los productos disponibles al carrito.");
+      toggleModal();
+    } else if (quantity + 1 <= detailProduct.stock) {
       setQuantity(quantity + 1);
+    } else if (quantity === detailProduct.stock) {
+      setError("Ha sumado todos los productos disponibles.");
+      toggleModal();
     }
   };
 
@@ -164,33 +170,43 @@ const ProductDetail = () => {
 
   const handleAddToCart = async (e) => {
     const { value } = e.target;
-    let itemToAdd = productos.filter((el) => el.product === id);
+    let itemToAdd = productos.find((el) => el.producto === id);
     setItemToDelete({ nombre: "", id: "" });
-    if (error) {
-      setError(false);
+
+    if (itemToAdd?.cantidad + 1 > detailProduct.stock) {
+      setError("Ha agregado todos los productos disponibles al carrito.");
+      toggleModal();
+    } else {
+      if (error?.length) {
+        setError("");
+      }
+
+      let precioFinal = detailProduct.precio;
+
+      if (detailProduct.descuento > 0) {
+        // Aplicar el descuento al precio total
+        const descuento =
+          detailProduct.precio * (detailProduct.descuento / 100);
+        precioFinal = detailProduct.precio - descuento;
+      }
+
+      await dispatch(
+        addToCartAction({
+          cantidad: itemToAdd ? itemToAdd.cantidad + 1 : quantity,
+          precio: precioFinal,
+          producto: id,
+        })
+      );
+
+      if (value === "comprar") {
+        navigate("/checkout/form");
+      } else {
+        setSuccess(true);
+        toggleModal();
+      }
     }
-
-    let precioFinal = detailProduct.precio;
-
-    if (detailProduct.descuento > 0) {
-      // Aplicar el descuento al precio total
-      const descuento = detailProduct.precio * (detailProduct.descuento / 100);
-      precioFinal = detailProduct.precio - descuento;
-    }
-
-    await dispatch(
-      addToCartAction({
-        cantidad: quantity,
-        precio: precioFinal,
-        producto: id,
-      })
-    );
-
     if (value === "comprar") {
       navigate("/checkout/form");
-    } else {
-      setSuccess(true);
-      toggleModal();
     }
   };
 
@@ -225,7 +241,7 @@ const ProductDetail = () => {
   const handleImageClick = (imageName) => {
     setSelectedImage(imageName);
   };
-  console.log(detailProduct);
+
   const handleSwipe = (direction) => {
     if (direction === "LEFT") {
       const currentIndex = detailProduct?.imagenes.indexOf(selectedImage);
@@ -281,8 +297,7 @@ const ProductDetail = () => {
               >
                 ✕
               </button>
-
-              {/*  {error && (
+              {error.length > 0 && (
                 <div className="alert alert-warning w-[97%]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -297,13 +312,11 @@ const ProductDetail = () => {
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                     />
                   </svg>
-                  <span>
-                    Ha agregado todos los productos en stock del Talle
-                    seleccionado.
-                  </span>
+                  <span>{error}</span>
                 </div>
               )}
-              {selectedSize?.length === 0 && !success && (
+
+              {/*  {selectedSize?.length === 0 && !success && (
                 <div className="alert alert-warning w-[97%]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -322,8 +335,8 @@ const ProductDetail = () => {
                 </div>
               )} */}
               {productos.length &&
-              !error &&
-              !itemToDelete.nombre &&
+              !error.length &&
+              !itemToDelete?.nombre?.length &&
               productos.filter((el) => el.producto === id).length ? (
                 <div className="flex flex-col w-[97%] justify-between items-center p-6 gap-8">
                   <h2 className="uppercase text-lg w-full text-header text-center font-medium">
@@ -347,15 +360,17 @@ const ProductDetail = () => {
                   <Loading />
                 </div>
               ) : (
-                <ConfirmationComponent
-                  onDelete={onDelete}
-                  toggleModal={toggleModal}
-                  confirmed={confirmed}
-                  setConfirmed={setConfirmed}
-                  itemToDelete={itemToDelete}
-                  setItemToDelete={setItemToDelete}
-                  section={section}
-                />
+                !error.length && (
+                  <ConfirmationComponent
+                    onDelete={onDelete}
+                    toggleModal={toggleModal}
+                    confirmed={confirmed}
+                    setConfirmed={setConfirmed}
+                    itemToDelete={itemToDelete}
+                    setItemToDelete={setItemToDelete}
+                    section={section}
+                  />
+                )
               )}
             </div>
           </dialog>
@@ -399,7 +414,7 @@ const ProductDetail = () => {
                     </p>
                   </div>
                 ) : (
-                  <p className="text-3xl pb-1 font-medium text-header w-auto text-center">
+                  <p className="text-3xl pb-1 font-medium text-header w-auto text-start">
                     {formatearPrecio(detailProduct.precio)}
                   </p>
                 )}
@@ -497,13 +512,17 @@ const ProductDetail = () => {
               )}
 
               <div className="flex flex-col items-start my-5">
-                <label htmlFor="cantidad" className="mr-2 text-black font-bold">
+                <label
+                  htmlFor="cantidad"
+                  className="mr-2 text-header font-bold"
+                >
                   CANTIDAD
                 </label>
                 <div className="flex items-center rounded">
                   <button
-                    className="hover:opacity-70 min-h-6 h-9 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
+                    className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-9 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
                     onClick={() => handleDecreaseQuantity()}
+                    disabled={detailProduct.stock === 0 ? true : false}
                   >
                     -
                   </button>
@@ -518,8 +537,9 @@ const ProductDetail = () => {
                     className="w-16 px-2 py-1 text-xl text-header text-center outline-none bg-grey flex justify-center items-center"
                   />
                   <button
-                    className="hover:opacity-70 min-h-6 h-9 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
+                    className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-9 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
                     onClick={() => handleIncreaseQuantity()}
+                    disabled={detailProduct.stock === 0 ? true : false}
                   >
                     +
                   </button>
@@ -529,28 +549,30 @@ const ProductDetail = () => {
               <div className="w-full lg:w-full  h-auto flex xsm:flex-col py-2 my-5 justify-center lg:justify-between items-center lg:flex-row gap-2">
                 <button
                   value={detailProduct._id}
-                  className="  text-yellow uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-header hover:bg-header/80 border border-yellow md:w-2/4 w-full transition-all  whitespace-nowrap"
+                  className=" disabled:bg-header/70 text-yellow uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-header hover:bg-header/80 border border-yellow md:w-2/4 w-full transition-all  whitespace-nowrap"
                   onClick={handleAddToCart}
+                  disabled={detailProduct.stock > 0 ? false : true}
                 >
                   Agregar al Carrito
                 </button>
                 <button
-                  className=" text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 md:w-2/4 w-full border  border-header transition-all   whitespace-nowrap"
+                  className="disabled:bg-yellow/70 disabled:border-yellow disabled:text-header/80 text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 md:w-2/4 w-full border  border-header transition-all whitespace-nowrap"
                   onClick={handleAddToCart}
                   value={"comprar"}
                   id={detailProduct._id}
+                  disabled={detailProduct.stock > 0 ? false : true}
                 >
                   Comprar Ahora
                 </button>
                 <div className="flex flex-row justify-between items-center gap-2 w-auto">
                   <button
-                    className="bg-black w-auto text-white py-2 px-2   rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
+                    className="bg-header w-auto text-white py-2 px-2   rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
                     onClick={handleWishList}
                   >
                     <MdOutlineFavorite className="text-lg" />
                   </button>
                   <button
-                    className="bg-black w-auto text-white py-2 px-2  rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
+                    className="bg-header w-auto text-white py-2 px-2  rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
                     onClick={handleWishList}
                   >
                     <FaExchangeAlt className="text-lg" />

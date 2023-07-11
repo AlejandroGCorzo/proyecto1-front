@@ -82,9 +82,12 @@ const SearchItems = ({
             }}
           >
             <img
-              src={item.imagen}
+              src={item.imagen?.length ? item.imagen : item.imagenes}
               alt={item.descripcion + "search"}
               className="w-12 max-h-12 overflow-hidden"
+              onError={(e) => {
+                e.target.src = "/nodisponible.jpg";
+              }}
             />
 
             <p className="overflow-hidden whitespace-nowrap w-full">

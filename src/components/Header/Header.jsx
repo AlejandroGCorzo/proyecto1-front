@@ -22,6 +22,7 @@ import {
 } from "../../redux/productSlice";
 import SearchItems from "../../utils/SearchItems";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
+import useClickOutside from "../../hooks/useClickOutside";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState("");
   const [showItems, setShowItems] = useState(false);
   const debouncedSearchValue = useDebounce(searchValue);
+  const refSearch = useClickOutside(() => setShowItems(false));
 
   useEffect(() => {
     const searchProducts = () => {
@@ -218,7 +220,10 @@ const Header = () => {
                 </div>
 
                 <div className="flex w-full flex-row bg-header justify-end items-center py-2 px-3">
-                  <div className="hidden lg:flex justify-between bg-nav w-[410px] md:w-[390px] 2xl:w-1/3 pr-2">
+                  <div
+                    ref={refSearch}
+                    className="hidden lg:flex justify-between bg-nav w-[410px] md:w-[390px] 2xl:w-1/3 pr-2"
+                  >
                     <input
                       autoComplete="off"
                       type="text"
