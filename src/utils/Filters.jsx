@@ -145,7 +145,7 @@ const Filters = () => {
       dispatch(filterProductsAction());
     }
   };
-  console.log(filters, filtersState);
+
   const clearFilters = (e) => {
     e.preventDefault();
     setFiltersState({
@@ -181,7 +181,7 @@ const Filters = () => {
         {filters?.nombre?.length > 0 && viewportSize.width > 1024 && (
           <div className="flex flex-row justify-between items-center pb-6 px-6 gap-4">
             <p className="font-medium text-header ">
-              {filtersState.nombre[0].toUpperCase()}
+              {filters.nombre[0]?.toUpperCase()}
             </p>
             <button
               name="removeNombre"

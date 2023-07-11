@@ -3,7 +3,10 @@ import { FaShoppingCart } from "react-icons/fa";
 import { RiShoppingBagFill } from "react-icons/ri";
 import { MdDeleteOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { updateCartAction } from "../../redux/shoppingCartActions";
+import {
+  clearCartAction,
+  updateCartAction,
+} from "../../redux/shoppingCartActions";
 import { ConfirmationComponent } from "../../utils/DeleteSteps";
 import Loading from "../../utils/Loading";
 import { Link } from "react-router-dom";
@@ -29,7 +32,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
       let foundProduct = [];
       for (let i = 0; i < productos.length; i++) {
         foundProduct.push(
-          products?.find((elem) => elem._id === productos[i].product)
+          products?.find((elem) => elem._id === productos[i].producto)
         );
       }
       foundProduct = foundProduct.sort((a, b) =>
@@ -75,23 +78,20 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
 
   const handleAmount = (e) => {
     const { value, name, id } = e.target;
-    const itemToUpdate = productos.find((elem) => elem.id === name);
+    const itemToUpdate = productos.find((elem) => elem.producto === name);
     const productData = productsInCart.find(
-      (elem) => elem._id === itemToUpdate.product
+      (elem) => elem._id === itemToUpdate.producto
     );
 
     if (value === "+") {
       dispatch(
-        updateCartAction(
-          {
-            itemId: name,
-            quantity: itemToUpdate.quantity + 1,
-          },
-          isLoggedIn
-        )
+        updateCartAction({
+          itemId: name,
+          cantidad: itemToUpdate.cantidad + 1,
+        })
       );
     } else {
-      if (itemToUpdate.quantity - 1 === 0) {
+      if (itemToUpdate.cantidad - 1 === 0) {
         if (error) {
           setError(false);
         }
@@ -101,15 +101,12 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
         });
         toggleModal();
       }
-      if (itemToUpdate.quantity > 0 && itemToUpdate.quantity - 1 !== 0) {
+      if (itemToUpdate.cantidad > 0 && itemToUpdate.cantidad - 1 !== 0) {
         dispatch(
-          updateCartAction(
-            {
-              itemId: name,
-              quantity: itemToUpdate.quantity - 1,
-            },
-            isLoggedIn
-          )
+          updateCartAction({
+            itemId: name,
+            cantidad: itemToUpdate.cantidad - 1,
+          })
         );
       }
     }
@@ -170,7 +167,7 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
             )}
           </div>
         </dialog>
-        <div className="flex flex-col w-3/4 sm:w-1/2 lg:w-[40%] xl:w-[35%] 2xl:w-[20%] bg-white transform transition-transform duration-300 ease-in-out h-auto ">
+        <div className="flex flex-col w-3/4 sm:w-1/2 lg:w-[40%] xl:w-[35%] 2xl:w-[20%] bg-white transform transition-transform duration-300 ease-in-out h-full ">
           <div className="flex justify-between items-center px-4 py-3 bg-gray-200">
             <h1 className="text-xl text-header font-semibold">Carrito</h1>
 
@@ -191,105 +188,137 @@ const ShoppingCart = ({ isOpen, toggleShoppingCart }) => {
             </button>
           </div>
           {productos?.length ? (
-            <div className="w-full h-full flex flex-col justify-start items-center bg-white">
-              <div className="max-h-[50%] xl:max-h-[65%] xl:h-[65%] w-full px-2 self-start overflow-y-auto">
-                {productsInCart?.length > 0 &&
-                  productsInCart.map((elem) => (
-                    <div
-                      key={elem._id + "cartPreview"}
-                      className="border-b flex flex-row justify-start items-center py-5 w-full"
-                    >
-                      <div className="flex h-1/3 border">
-                        <img
-                          className="max-w-[100px]"
-                          src={
-                            elem.imagen?.length
-                              ? elem.imagen
-                              : "/nodisponible.jpg"
-                          }
-                          alt={elem.descripcion}
-                        />
-                      </div>
-                      <div className="w-[65%] flex flex-col justify-between items-center pl-4">
-                        <h2 className="text-header uppercase text-center w-auto h-auto">
-                          {elem.descripcion}
-                        </h2>
-
-                        <p className="text-lg pb-1 font-medium text-header w-full text-center">
-                          {formatearPrecio(elem.precio)}
-                        </p>
-                        <div className="w-auto flex justify-center items-center flex-row flex-nowrap px-2">
-                          <button
-                            className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
-                            value={"-"}
-                            name={elem._id}
-                            onClick={handleAmount}
-                          >
-                            -
-                          </button>
-                          <span className="py-1 px-2 text-header text-xl">
-                            {
-                              productos?.find((item) => item.id === elem._id)
-                                ?.quantity
-                            }
-                          </span>
-
-                          <button
-                            className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
-                            value={"+"}
-                            name={elem._id}
-                            onClick={handleAmount}
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                      <button
-                        className="w-[10%] pt-2"
-                        onClick={handleRemove}
-                        id={elem._id}
-                        name={elem.descripcion}
+            <>
+              <div className="w-full flex justify-end items-center p-2">
+                <button
+                  className=" text-yellow  py-1  px-4 font-medium rounded bg-header hover:bg-yellow/80 hover:text-header border border-header w-auto transition-all  whitespace-nowrap"
+                  onClick={() => dispatch(clearCartAction())}
+                >
+                  Vaciar carrito
+                </button>
+              </div>
+              <div className="w-full h-auto flex flex-col justify-start items-center bg-white">
+                <div className="max-h-[60%] h-full md:h-[30%] xl:h-[50%] w-full px-2 self-start overflow-y-auto">
+                  {productsInCart?.length > 0 &&
+                    productsInCart.map((elem) => (
+                      <div
+                        key={elem._id + "cartPreview"}
+                        className="border-b flex flex-row justify-start items-center py-5 w-full"
                       >
-                        <MdDeleteOutline
-                          fontSize={20}
+                        <div className="flex h-1/3 w-1/3 justify-center items-center">
+                          <img
+                            className="max-w-[100px] h-24"
+                            src={
+                              elem.imagen?.length ? elem.imagen : elem.imagenes
+                            }
+                            alt={elem.descripcion}
+                            onError={(e) => {
+                              e.target.src = "/nodisponible.jpg";
+                            }}
+                          />
+                        </div>
+                        <div className="w-[65%] flex flex-col justify-between items-center pl-4">
+                          <h2 className="text-header uppercase text-center w-auto h-auto">
+                            {elem.descripcion}
+                          </h2>
+                          {productos?.find((item) => item.producto === elem._id)
+                            ?.precio < elem.precio ? (
+                            <div className="flex flex-col w-auto gap-1 justify-center items-center py-2 ">
+                              <p className="text-lg font-medium text-header/60 w-max text-center line-through">
+                                {formatearPrecio(elem.precio)}
+                              </p>
+                              <p className="text-xl font-medium text-header w-max text-center flex flex-row items-center">
+                                <span className="text-green-400 text-xs pr-2 font-normal">
+                                  {elem.descuento + "% OFF"}
+                                </span>
+                                {formatearPrecio(
+                                  elem.precio -
+                                    elem.precio * (elem.descuento / 100)
+                                )}
+                              </p>
+                            </div>
+                          ) : (
+                            <p className="text-xl py-2 font-medium text-header  text-center w-full">
+                              {formatearPrecio(elem.precio)}
+                            </p>
+                          )}
+
+                          <div className="w-auto flex justify-center items-center flex-row flex-nowrap px-2">
+                            <button
+                              className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
+                              value={"-"}
+                              name={elem._id}
+                              onClick={handleAmount}
+                            >
+                              -
+                            </button>
+                            <span className="py-1 px-2 text-header text-xl">
+                              {
+                                productos?.find(
+                                  (item) => item.producto === elem._id
+                                )?.cantidad
+                              }
+                            </span>
+
+                            <button
+                              className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
+                              value={"+"}
+                              name={elem._id}
+                              onClick={handleAmount}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                        <button
+                          className="w-[10%] pt-2"
+                          onClick={handleRemove}
                           id={elem._id}
                           name={elem.descripcion}
-                          className="w-full text-header"
-                        />
-                      </button>
+                        >
+                          <MdDeleteOutline
+                            fontSize={20}
+                            id={elem._id}
+                            name={elem.descripcion}
+                            className="w-full text-header"
+                          />
+                        </button>
+                      </div>
+                    ))}
+                </div>
+                <div className="h-full max-h-[30%] flex flex-col w-full justify-start items-center">
+                  <div className="h-32 2xl:h-72 w-full flex flex-col justify-center items-center px-6 py-4 border-t bg-white z-10">
+                    <div className="flex w-full flex-row justify-between text-header text-lg">
+                      <span>Subtotal</span>{" "}
+                      <span>{formatearPrecio(totalSinDescuento)}</span>
                     </div>
-                  ))}
-              </div>
-              <div className="h-auto max-h-[30%] flex flex-col w-full justify-center items-center">
-                <div className="h-32 2xl:h-72 w-full flex flex-col justify-center items-center px-6 py-4 border-t bg-white z-10">
-                  <div className="flex w-full flex-row justify-between text-header text-lg">
-                    <span>Subtotal</span>{" "}
-                    <span>{formatearPrecio(totalSinDescuento)}</span>
+                    <div className="flex w-full flex-row justify-between py-2 font-bold text-header text-xl">
+                      <span className="uppercase">total</span>{" "}
+                      <span>{formatearPrecio(totalSinDescuento)}</span>
+                    </div>
                   </div>
-                  <div className="flex w-full flex-row justify-between py-2 font-bold text-header text-xl">
-                    <span className="uppercase">total</span>{" "}
-                    <span>{formatearPrecio(totalSinDescuento)}</span>
-                  </div>
-                </div>
-                <div
-                  className="flex flex-col justify-center items-center py-4 xl:py-8 px-6 gap-6 border-t"
-                  style={{
-                    boxShadow: "rgba(0, 0, 0, 0.1) 0px -5px 10px 0px",
-                  }}
-                >
-                  <p className="text-center text-header/80 font-medium text-lg">
-                    Los gastos de envío serán calculados al finalizar tu compra.
-                  </p>{" "}
-                  <Link
-                    to={"/checkout"}
-                    className="btn bg-header hover:opacity-70 text-white w-full flex justify-center items-center text-[17px] "
-                    onClick={() => toggleShoppingCart()}
+                  <div
+                    className="flex flex-col justify-center items-center py-4 xl:py-8 px-6 gap-6 border-t"
+                    style={{
+                      boxShadow: "rgba(0, 0, 0, 0.1) 0px -5px 10px 0px",
+                    }}
                   >
-                    <RiShoppingBagFill /> Finalizar compra
-                  </Link>
+                    <p className="text-center text-header/80 font-medium text-lg">
+                      Los gastos de envío serán calculados al finalizar tu
+                      compra.
+                    </p>{" "}
+                    <Link
+                      to={"/checkout/form"}
+                      className="btn bg-header hover:opacity-70 text-white w-full flex justify-center items-center text-[17px] "
+                      type="button"
+                      onClick={() => toggleShoppingCart()}
+                    >
+                      <RiShoppingBagFill /> Finalizar compra
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
+            </>
           ) : (
             <div className=" flex flex-grow items-center justify-center">
               <div className=" flex flex-col justify-center items-center text-gray-500">

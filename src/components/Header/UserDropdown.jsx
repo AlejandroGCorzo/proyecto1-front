@@ -115,7 +115,7 @@ const UserDropdown = ({ toggleDropdownUser, dropdownUserRef }) => {
   return (
     <>
       {condition ? (
-        <div className="flex flex-col justify-center items-center bg-grey flex-1 md:flex-auto">
+        <div className="flex flex-col justify-center items-center bg-grey flex-1 md:flex-auto h-[560px] sm:h-[640px] md:h-[215px] lg:h-[330px]">
           {condition && isLoggedIn && <Navigate to="/" replace={true} />}
           <ul
             className={` text-nav w-96 font-medium flex flex-col justify-center items-center p-4 text-base ${

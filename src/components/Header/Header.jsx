@@ -67,7 +67,12 @@ const Header = () => {
   };
 
   const toggleShoppingCart = () => {
-    if (location.pathname !== "/checkout") {
+    if (
+      location.pathname !== "/checkout" &&
+      location.pathname !== "/checkout/success" &&
+      location.pathname !== "/checkout/failure" &&
+      location.pathname !== "/checkout/form"
+    ) {
       setIsOpen(!isOpen);
     }
   };
@@ -155,8 +160,8 @@ const Header = () => {
                     </button>
                   </div>
                   <Link
-                    to={isLoggedIn ? "/wishlist" : "/login"}
-                    className="px-3 pt-1"
+                    to={"/wishlist"}
+                    className="px-3 pt-1 flex items-center"
                   >
                     <div className="indicator">
                       {wishedProducts?.length > 0 && (
@@ -244,6 +249,7 @@ const Header = () => {
                     )}
                     {showItems && (
                       <SearchItems
+                        showItems={showItems}
                         setShowItems={setShowItems}
                         error={errorSearch}
                         debouncedSearchValue={debouncedSearchValue}
@@ -252,10 +258,10 @@ const Header = () => {
                       />
                     )}
                   </div>
-                  <div className=" lg:flex hidden flex-row-reverse items-center w-[35%] ">
+                  <div className=" lg:flex hidden flex-row-reverse items-center w-[35%] pr-8 ">
                     <div className="indicator">
                       {productos.length > 0 && (
-                        <span className="indicator-item badge badge-warning -left-1">
+                        <span className="indicator-item badge badge-warning left-4">
                           {productos.length}
                         </span>
                       )}
@@ -264,15 +270,11 @@ const Header = () => {
                       </button>
                     </div>
 
-                    <UserDropdown
+                    {/*  <UserDropdown
                       toggleDropdownUser={toggleDropdownUser}
                       dropdownUserRef={dropdownUserRef}
-                    />
-                    <Link
-                      to={isLoggedIn ? "/wishlist" : "/"}
-                      onClick={handleWishList}
-                      className="px-4 flex"
-                    >
+                    /> */}
+                    <Link to={"/wishlist"} className="px-4 flex">
                       <div className="indicator">
                         {wishedProducts?.length > 0 && (
                           <span className="indicator-item badge badge-warning -left-1">
@@ -302,12 +304,12 @@ const Header = () => {
           className="bg-nav text-white text-center text-xs font-semibold uppercase flex-col w-full h-10 justify-center lg:justify-between items-center py-2 lg:py-3 lg:px-20 hidden lg:flex "
           style={{ fontSize: "16px" }}
         >
-          <div className="hidden lg:flex flex-row justify-center items-center w-full gap-6">
+          <div className="hidden lg:flex flex-row justify-end items-center w-72 gap-6">
             <Link
-              to={"/:filter"}
+              to={"products/:filter"}
               className="transition-all ease-in-out uppercase border-b border-b-transparent  hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center "
-              value={"nuevo"}
-              onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+              name={"nuevo"}
+              onClick={(e) => dispatch(orderProductsAction(e.target.name))}
             >
               new in
             </Link>
@@ -342,10 +344,10 @@ const Header = () => {
               marcas
             </button>
             <Link
-              to={"/:filter"}
+              to={"/products/:filter"}
               className="transition-all ease-in-out uppercase border-b border-b-transparent hover:border-b-yellow hover:text-yellow focus:text-yellow "
-              value={"descuento"}
-              onClick={(e) => dispatch(orderProductsAction(e.target.value))}
+              name={"descuento"}
+              onClick={(e) => dispatch(orderProductsAction(e.target.name))}
             >
               sale
             </Link>
@@ -366,10 +368,10 @@ const Header = () => {
             <div className="bg-header text-white max-h-[430px] w-1/2 sm:w-1/3 p-4 ease-in-out transform transition-transform duration-300 delay-150 overflow-y-scroll">
               <div className=" text-xl font-medium flex justify-center items-center mb-2">
                 <Link
-                  to={"/:filter"}
-                  value={"nuevo"}
+                  to={"/products/:filter"}
+                  id={"nuevo"}
                   onClick={(e) => {
-                    dispatch(orderProductsAction(e.target.value));
+                    dispatch(orderProductsAction(e.target.id));
                     setNavbar(false);
                   }}
                 >
@@ -462,17 +464,17 @@ const Header = () => {
                 </div>
               </div>
               <Link
-                to={"/:filter"}
-                className="text-xl font-medium flex justify-center items-center pb-4"
-                value={"descuento"}
+                to={"/products/:filter"}
+                className="text-xl font-medium flex justify-center items-center pb-4 "
+                id={"descuento"}
                 onClick={(e) => {
-                  dispatch(orderProductsAction(e.target.value));
+                  dispatch(orderProductsAction(e.target.id));
                   setNavbar(false);
                 }}
               >
                 <span>SALE</span>
               </Link>
-
+              {/* 
               <div className="text-xl font-medium flex justify-center items-center ">
                 {!isLoggedIn ? (
                   <Link
@@ -486,7 +488,7 @@ const Header = () => {
                 ) : (
                   <div className="flex flex-col justify-center items-center">
                     <Link
-                      to={isLoggedIn ? "/" : "/login"}
+                      to={isLoggedIn ? "/profile" : "/login"}
                       onClick={() => setNavbar(false)}
                     >
                       <div className="flex flex-row pb-2">
@@ -517,7 +519,7 @@ const Header = () => {
                     </button>
                   </div>
                 )}
-              </div>
+              </div> */}
             </div>
           </div>
         )}

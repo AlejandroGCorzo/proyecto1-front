@@ -9,7 +9,7 @@ import Profile from "./components/Session/Profile";
 import ProductDetail from "./components/ProductDetail";
 import { useEffect } from "react";
 import FilterProducts from "./components/Home/FilterProducts";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getProductsAction } from "./redux/productActions";
 import {
   getCategoriesAction,
@@ -17,6 +17,15 @@ import {
 } from "./redux/categoriesActions";
 import ShoppingCartPage from "./components/Home/ShoppingCartPage";
 import WishList from "./components/WishList/WishList";
+import {
+  patchCartAction,
+  postCartAction,
+  validateCart,
+} from "./redux/shoppingCartActions";
+import CheckoutForm from "./components/Checkout/CheckoutForm";
+import SuccessComponent from "./utils/SuccessPage";
+import ErrorComponent from "./utils/FailurePage";
+import ErrorPage from "./components/ErrorPage/ErrorPage";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -28,6 +37,9 @@ export function ScrollToTop() {
 }
 
 function App() {
+  const { isLoggedIn, userId } = useSelector((state) => state.users);
+  const { productos, isFacturaA, tipoDePago, envio, userHaveCart } =
+    useSelector((state) => state.cart);
   const dispatch = useDispatch();
   useEffect(() => {
     const getProducts = () => {
@@ -38,22 +50,57 @@ function App() {
     getProducts();
   }, []);
 
+  /*  useEffect(() => {
+    const setCart = async () => {
+      if (isLoggedIn && userId?.length) {
+        await dispatch(validateCart(userId));
+      }
+    };
+
+    setCart();
+
+    const postCart = () => {
+      dispatch(
+        postCartAction({
+          productos: productos.map((elem) => ({
+            producto: elem.producto,
+            cantidad: elem.cantidad,
+          })),
+          tipoDePago: tipoDePago,
+          usuario: userId,
+          envio: envio,
+        })
+      );
+    };
+    const patchCart = () => {
+      dispatch(patchCartAction(id, productos));
+    };
+    if (!userHaveCart && isLoggedIn && productos.length) {
+      console.log("me ejecute");
+      postCart();
+    }
+  }, [isLoggedIn, userHaveCart]); */
+
   return (
     <div className="flex flex-col w-full m-auto bg-grey">
       <Header />
-      <div className="mt-[20%] sm:mt-[17%] md:mt-[13%] lg:mt-[14%] 2xl:mt-[8%] ">
+      <div className="mt-[25%] sm:mt-[17%] md:mt-[13%] lg:mt-[14%] 2xl:mt-[8%] ">
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/:filter" element={<FilterProducts />} />
-          <Route path="/login" element={<UserDropdown />} />
+          <Route exact path="/" element={<Home />} />
+          <Route path="/products/:filter" element={<FilterProducts />} />
+          {/* <Route path="/login" element={<UserDropdown />} /> */}
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/checkout" element={<ShoppingCartPage />} />
+          <Route path="/checkout/form" element={<CheckoutForm />} />
           <Route path="/wishlist" element={<WishList />} />
+          <Route path="/checkout/success" element={<SuccessComponent />} />
+          <Route path="/checkout/failure" element={<ErrorComponent />} />
           <Route element={<PrivateRoutes />}>
             <Route path="/admin/*" element={<PanelHome />} />
-            <Route path="/profile" element={<Profile />} />
           </Route>
+          <Route path="*" element={<ErrorPage />} />
+          {/*  <Route path="/profile" element={<Profile />} /> */}
         </Routes>
       </div>
       <Footer />

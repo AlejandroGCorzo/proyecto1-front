@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Filters from "../../utils/Filters";
@@ -8,6 +8,8 @@ import {
   orderProductsAction,
 } from "../../redux/productActions";
 import Loading from "../../utils/Loading";
+import { formatearPrecio } from "../../utils/formatPrice";
+import useViewport from "../../hooks/useViewport";
 
 const FilterProducts = () => {
   const distpatch = useDispatch();
@@ -19,8 +21,16 @@ const FilterProducts = () => {
   );
   let fechaActual = new Date();
   let mounth = String(fechaActual.getMonth() + 1).padStart(2, "0");
+  let { viewportSize, setViewportSize } = useViewport();
+  const [maxSlice, setMaxSlice] = useState(0);
 
-  const [maxSlice, setMaxSlice] = useState(5);
+  useEffect(() => {
+    if (viewportSize?.width && viewportSize.width > 1280) {
+      setMaxSlice(8);
+    } else {
+      setMaxSlice(6);
+    }
+  }, [viewportSize.width]);
 
   const handleOrder = (e) => {
     e.preventDefault();
@@ -32,13 +42,14 @@ const FilterProducts = () => {
   };
 
   const handleSlice = (e) => {
+    let itemsToSum = viewportSize?.width > 1280 ? 8 : 6;
     if (
       maxSlice === productsFilter?.length ||
-      maxSlice + 5 > productsFilter?.length
+      maxSlice + itemsToSum > productsFilter?.length
     ) {
       setMaxSlice(productsFilter?.length);
     } else {
-      setMaxSlice(maxSlice + 5);
+      setMaxSlice(maxSlice + itemsToSum);
     }
   };
 
@@ -47,7 +58,7 @@ const FilterProducts = () => {
     distpatch(clearFiltersAction());
   };
   return (
-    <section className="w-full h-auto flex flex-col justify-center items-center max-h-max bg-grey mt-12 sm:mt-0 ">
+    <section className="w-full h-auto min-h-[450px] sm:min-h-[650px] md:min-h-[450px] flex flex-col justify-center items-center max-h-max bg-grey mt-12 sm:mt-0 ">
       <div
         className={`flex flex-row justify-center  gap-2 w-full ${
           productsFilter?.length === 0
@@ -171,9 +182,9 @@ const FilterProducts = () => {
                 <Link
                   to={`/product/${item._id}`}
                   key={item._id}
-                  className="mb-1 flex flex-col justify-between items-center"
+                  className=" flex flex-col justify-between items-center"
                 >
-                  <div className="h-auto sm:max-w-[280px] w-72 border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
+                  <div className="h-full sm:max-w-[280px] w-72 border border-nav/20 rounded px-3 py-3 hover:shadow-md hover:outline-offset-8 transition-all ease-in-out text-header m-1 bg-white">
                     <div className=" flex flex-col justify-start items-center ">
                       <div className="absolute w-64 sm:w-48 md:w-60 xl:w-48 2xl:w-56 flex items-center justify-between">
                         {item.descuento > 0 && (
@@ -206,7 +217,10 @@ const FilterProducts = () => {
                               item.imagen?.length ? item.imagen : item.imagenes
                             }
                             alt={item.descripcion}
-                            className="h-auto max-h-44 w-auto max-w-44 aspect-auto object-contain"
+                            className="h-44 w-auto max-w-44 aspect-auto object-contain"
+                            onError={(e) => {
+                              e.target.src = "/nodisponible.jpg";
+                            }}
                           />
                         ) : null}
                       </div>
@@ -228,11 +242,26 @@ const FilterProducts = () => {
                     <p className="text-gray-400 py-4 uppercase font-medium h-20 w-full max-w-52 text-center">
                       {item.descripcion}
                     </p>
-                    <div className="h-auto flex flex-col justify-start items-start">
-                      <p className="text-lg">
-                        <strong className="text-xl">${item.precio},00</strong>
-                      </p>
-
+                    <div className="h-auto flex flex-col justify-start items-end">
+                      {item.descuento > 0 ? (
+                        <div className="flex flex-col w-full gap-1 justify-center items-end">
+                          <p className="text-lg font-medium text-header/60 w-max text-center line-through">
+                            {formatearPrecio(item.precio)}
+                          </p>
+                          <p className="text-xl font-medium text-header w-max text-center flex flex-row items-center">
+                            <span className="text-green-400 text-xs pr-2 font-normal">
+                              {item.descuento + "% OFF"}
+                            </span>
+                            {formatearPrecio(
+                              item.precio - item.precio * (item.descuento / 100)
+                            )}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-xl pb-1 font-medium text-header  text-end w-full mt-7">
+                          {formatearPrecio(item.precio)}
+                        </p>
+                      )}
                       <p className="font-medium text-yellow text-sm flex justify-start items-end">
                         ENVÍO GRATIS
                       </p>
@@ -267,7 +296,7 @@ const FilterProducts = () => {
                         <li>
                           <button
                             onClick={clearErrorFilters}
-                            className="btn text-yellow bg-grey border-yellow px-6 hover:bg-yellow hover:text-white transition-all hover:border-yellow"
+                            className="btn text-header bg-yellow border-header px-6 hover:bg-yellow hover:text-white transition-all hover:border-yellow text-base"
                           >
                             Limpiar filtros
                           </button>
@@ -282,7 +311,7 @@ const FilterProducts = () => {
           {productsFilter?.length > 0 && maxSlice < productsFilter?.length && (
             <div className="w-full flex justify-center items-center p-10">
               <button
-                className="px-6 py-2 border border-header/70 text-header/70 uppercase font-medium text-lg"
+                className="px-6 py-2 border border-yellow bg-header hover:bg-header/70 text-yellow uppercase font-medium text-lg"
                 onClick={handleSlice}
               >
                 Ver más productos

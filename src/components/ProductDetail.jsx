@@ -1,27 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProductById, getProductsAction } from "../redux/productActions";
-import { useParams } from "react-router-dom";
+import { fetchProductById } from "../redux/productActions";
+import { useNavigate, useParams } from "react-router-dom";
 import Modal from "./Modal";
 import { useSwipeable } from "react-swipeable";
 import ProductosDestacados from "./ProductosDestacados";
 import { clearDetail } from "../redux/productSlice";
-import { addToCartAction } from "../redux/shoppingCartActions";
+import {
+  addToCartAction,
+  updateCartAction,
+} from "../redux/shoppingCartActions";
 import { useLocation, Link } from "react-router-dom";
 import OtrosProductosInteres from "./OtrosProductosInteres";
 import { MdOutlineFavorite } from "react-icons/md";
 import { addProductToWishlist } from "../redux/wishListActions";
 import { FaExchangeAlt } from "react-icons/fa";
 import { MdCheckCircle, MdRemoveCircle } from "react-icons/md";
+import { ConfirmationComponent } from "../utils/DeleteSteps";
+import Loading from "../utils/Loading";
+import { formatearPrecio } from "../utils/formatPrice";
 
 
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const modalRef = useRef(null);
   const detailProduct = useSelector((state) => state.products.detail);
-  const { productos } = useSelector((state) => state.cart);
+  const { productos, loading } = useSelector((state) => state.cart);
   const { isLoggedIn } = useSelector((state) => state.users);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -36,7 +43,10 @@ const ProductDetail = () => {
   const [shippingCost, setShippingCost] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  
+  const [onDelete, setOnDelete] = useState(null);
+  const [itemToDelete, setItemToDelete] = useState({ nombre: "", id: "" });
+  const [section, setSection] = useState("carrito de compras");
+  const [confirmed, setConfirmed] = useState(false);
   // const [breadcrumbs, setBreadcrumbs] = useState([]);
 
   // useEffect(() => {
@@ -52,21 +62,99 @@ const ProductDetail = () => {
   //   });
   //   setBreadcrumbs(breadcrumbs);
   // }, [location.pathname]);
-
+  /* const handleAmount = (e) => {
+    const { value, name, id } = e.target;
+    const itemToUpdate = productos.find((elem) => elem.producto === name);
+    const productData = productsInCart.find(
+      (elem) => elem._id === itemToUpdate.producto
+      );
+      
+      
+      if (value === "+") {
+        
+        dispatch(
+          updateCartAction({
+            itemId: name,
+            cantidad: itemToUpdate.cantidad + 1,
+          })
+          );
+          
+        } else {
+          if (itemToUpdate.cantidad - 1 === 0) {
+            if (error) {
+              setError(false);
+            }
+            setItemToDelete({
+              nombre: "producto",
+              id: name,
+        });
+        toggleModal();
+      }
+      if (itemToUpdate.cantidad > 0 && itemToUpdate.cantidad - 1 !== 0) {
+        dispatch(
+          updateCartAction({
+            itemId: name,
+            cantidad: itemToUpdate.cantidad - 1,
+          })
+          );
+        }
+      }
+    }; */
+  const toggleModal = () => {
+    modalRef?.current?.classList?.toggle("modal-open");
+    document.activeElement.blur();
+    if (onDelete) {
+      setOnDelete(false);
+    } else {
+      setOnDelete(true);
+    }
+    if (confirmed) {
+      setConfirmed(false);
+    }
+  };
   const handleDecreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
+    const itemToUpdate = productos.find((elem) => elem.producto === id);
+    if (itemToUpdate && itemToUpdate.cantidad - 1 > 0) {
+      dispatch(
+        updateCartAction({
+          itemId: id,
+          cantidad: itemToUpdate.cantidad - 1,
+        })
+      );
+    } else if (itemToUpdate && itemToUpdate.cantidad - 1 === 0) {
+      if (error) {
+        setError(false);
+      }
+      setItemToDelete({
+        nombre: "producto",
+        id: id,
+      });
+      toggleModal();
+    } else {
+      if (quantity > 1) {
+        setQuantity(quantity - 1);
+      }
     }
   };
 
   const handleIncreaseQuantity = () => {
-    setQuantity(quantity + 1);
+    const itemToUpdate = productos.find((elem) => elem.producto === id);
+    if (itemToUpdate) {
+      dispatch(
+        updateCartAction({
+          itemId: id,
+          cantidad: itemToUpdate.cantidad + 1,
+        })
+      );
+    } else {
+      setQuantity(quantity + 1);
+    }
   };
 
   const handleCalculateShipping = () => {};
 
   useEffect(() => {
-    dispatch(getProductsAction());
+    
     dispatch(fetchProductById(id));
 
     return () => {
@@ -76,28 +164,38 @@ const ProductDetail = () => {
 
   //////////////////////////////Carrito/////////////////////////////
 
-  const toggleModal = () => {
-    modalRef.current.classList.toggle("modal-open");
-    document.activeElement.blur();
-  };
-
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (e) => {
+    const { value } = e.target;
     let itemToAdd = productos.filter((el) => el.product === id);
-
+    setItemToDelete({ nombre: "", id: "" });
     if (error) {
       setError(false);
     }
+
+    let precioFinal = detailProduct.precio;
+
+    if (detailProduct.descuento > 0) {
+      // Aplicar el descuento al precio total
+      const descuento = detailProduct.precio * (detailProduct.descuento / 100);
+      precioFinal = detailProduct.precio - descuento;
+    }
+
     await dispatch(
       addToCartAction({
-        id: id,
-        quantity: quantity,
-        precio: detailProduct.precio,
-        product: id,
+        cantidad: quantity,
+        precio: precioFinal,
+        producto: id,
       })
     );
-    setSuccess(true);
-    toggleModal();
+
+    if (value === "comprar") {
+      navigate("/checkout/form");
+    } else {
+      setSuccess(true);
+      toggleModal();
+    }
   };
+
   /////////////////////////////Carrito/////////////////////////////
 
   const handleToggleTooltip = () => {
@@ -129,7 +227,7 @@ const ProductDetail = () => {
   const handleImageClick = (imageName) => {
     setSelectedImage(imageName);
   };
-
+  console.log(detailProduct);
   const handleSwipe = (direction) => {
     if (direction === "LEFT") {
       const currentIndex = detailProduct?.imagenes.indexOf(selectedImage);
@@ -157,9 +255,7 @@ const ProductDetail = () => {
     setIsSucursalesOpen(!isSucursalesOpen);
   };
   const handleWishList = () => {
-    if (isLoggedIn) {
-      dispatch(addProductToWishlist({ id: detailProduct._id }));
-    }
+    dispatch(addProductToWishlist({ id: detailProduct._id }));
   };
   return detailProduct ? (
     <>
@@ -188,7 +284,7 @@ const ProductDetail = () => {
                 ✕
               </button>
 
-              {error && (
+              {/*  {error && (
                 <div className="alert alert-warning w-[97%]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -226,36 +322,58 @@ const ProductDetail = () => {
                   </svg>
                   <span>Debe seleccionar un Talle.</span>
                 </div>
-              )}
+              )} */}
               {productos.length &&
-                !error &&
-                productos.filter((el) => el.product === id).length && (
-                  <div className="flex flex-col w-[97%] justify-between items-center p-6 gap-8">
-                    <h2 className="uppercase text-lg w-full text-header text-center font-medium">
-                      El producto fue agregado al carrito
-                    </h2>
-                    <Link
-                      to={"/checkout"}
-                      className="btn underline text-white bg-yellow hover:bg-yellow/80 border-none focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
-                    >
-                      ir al carrito
-                    </Link>
-                    <button
-                      onClick={toggleModal}
-                      className="btn hover:opacity-80 text-white focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
-                    >
-                      seguir comprando
-                    </button>
-                  </div>
-                )}
+              !error &&
+              !itemToDelete.nombre &&
+              productos.filter((el) => el.producto === id).length ? (
+                <div className="flex flex-col w-[97%] justify-between items-center p-6 gap-8">
+                  <h2 className="uppercase text-lg w-full text-header text-center font-medium">
+                    El producto fue agregado al carrito
+                  </h2>
+                  <Link
+                    to={"/checkout"}
+                    className="btn underline text-white bg-yellow hover:bg-yellow/80 border-none focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
+                  >
+                    ir al carrito
+                  </Link>
+                  <button
+                    onClick={toggleModal}
+                    className="btn hover:opacity-80 text-white focus:outline-none hover:outline-none focus-visible:outline-none rounded w-full"
+                  >
+                    seguir comprando
+                  </button>
+                </div>
+              ) : loading ? (
+                <div className="w-full h-28 flex justify-center items-center">
+                  <Loading />
+                </div>
+              ) : (
+                <ConfirmationComponent
+                  onDelete={onDelete}
+                  toggleModal={toggleModal}
+                  confirmed={confirmed}
+                  setConfirmed={setConfirmed}
+                  itemToDelete={itemToDelete}
+                  setItemToDelete={setItemToDelete}
+                  section={section}
+                />
+              )}
             </div>
           </dialog>
 
-          <div className=" w-full md:w-1/2 flex  h-[550px] sm:h-[750px] lg:h-[680px] bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
+          <div className=" w-full md:w-1/2 flex  h-auto p-2 md:h-[750px] lg:h-[680px] bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
             <img
-              src={detailProduct?.imagen && detailProduct?.imagen}
-              alt={detailProduct?.modelo}
-              className="w-full h-[80%] object-contain px-4  "
+              src={
+                detailProduct?.imagen?.length
+                  ? detailProduct?.imagen
+                  : detailProduct?.imagenes
+              }
+              alt={detailProduct?.descripcion}
+              className="w-full h-[80%] object-contain px-4 max-w-sm md:max-w-xl "
+              onError={(e) => {
+                e.target.src = "/nodisponible.jpg";
+              }}
             />
           </div>
           <div className="flex flex-col w-full h-[750px] lg:h-[680px] p-2 bg-white  md:w-1/2 md:mt-0 lg:mt-0 xl:mt-0">
@@ -265,16 +383,28 @@ const ProductDetail = () => {
                   {detailProduct?.descripcion}
                 </h1>
               </div>
-             
+
               <div className="my-5 px-2 py-2 ">
-                <p className="text-3xl text-gray-900">
-                  {detailProduct?.precio.toLocaleString("es-AR", {
-                    style: "currency",
-                    currency: "ARS",
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </p>
+                {detailProduct.descuento > 0 ? (
+                  <div className="flex flex-col w-auto gap-2 justify-center items-start">
+                    <p className="text-xl font-medium text-header/60 w-max text-center line-through">
+                      {formatearPrecio(detailProduct.precio)}
+                    </p>
+                    <p className="text-3xl font-medium text-header w-max text-center flex flex-row items-center">
+                      {formatearPrecio(
+                        detailProduct.precio -
+                          detailProduct.precio * (detailProduct.descuento / 100)
+                      )}{" "}
+                      <span className="text-green-400 text-lg px-2 font-normal">
+                        {detailProduct.descuento + "% OFF"}
+                      </span>
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-3xl pb-1 font-medium text-header w-auto text-center">
+                    {formatearPrecio(detailProduct.precio)}
+                  </p>
+                )}
               </div>
               <hr className="w-full border-gray-300 my-2" />
               <div className="my-3 px-2 py-2 ">
@@ -295,7 +425,7 @@ const ProductDetail = () => {
                   </div>
                 )}
               </div>
-              
+
               <hr className="w-full border-gray-300 my-2" />
               <div className="flex items-center justify-between my-5  px-1 py-1 border border-gray-300">
                 <div className="flex items-center">
@@ -372,10 +502,9 @@ const ProductDetail = () => {
                 <label htmlFor="cantidad" className="mr-2 text-black font-bold">
                   CANTIDAD
                 </label>
-                <div className="flex items-center border border-gray-400 rounded">
+                <div className="flex items-center rounded">
                   <button
-                   className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
-
+                    className="hover:opacity-70 min-h-6 h-9 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
                     onClick={() => handleDecreaseQuantity()}
                   >
                     -
@@ -383,13 +512,15 @@ const ProductDetail = () => {
                   <input
                     type="number"
                     id="cantidad"
-                    value={quantity}
+                    value={
+                      productos.find((item) => item.producto === id)
+                        ?.cantidad || quantity
+                    }
                     onChange={(e) => setQuantity(e.target.value)}
-                    className="w-16 px-2 py-1 text-xl text-header text-center outline-none"
+                    className="w-16 px-2 py-1 text-xl text-header text-center outline-none bg-grey flex justify-center items-center"
                   />
                   <button
-                    className="hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
-
+                    className="hover:opacity-70 min-h-6 h-9 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
                     onClick={() => handleIncreaseQuantity()}
                   >
                     +
@@ -408,6 +539,7 @@ const ProductDetail = () => {
                 <button
                   className=" text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 md:w-2/4 w-full border  border-header transition-all   whitespace-nowrap"
                   onClick={handleAddToCart}
+                  value={"comprar"}
                   id={detailProduct._id}
                 >
                   Comprar Ahora
@@ -459,22 +591,24 @@ const ProductDetail = () => {
             </aside>
           </div>
         </div>
-        <div className="flex flex-row w-full h-auto  my-4 mx-1 justify-between ">
+        <div className="flex flex-row w-full h-auto  my-4  justify-between px-4">
           <main className="flex-1 h-full w-full  mx-auto justify-center ">
             <div className="flex flex-col w-full items-center py-3 bg-white sm:items-start">
               <h3 className="text-lg3 mx-3 font-bold">DESCRIPCION</h3>
-              <p className="text-gray-500 mx-3 list-disc">{detailProduct?.descripcion}</p>
+              <p className="text-gray-500 mx-3 list-disc">
+                {detailProduct?.descripcion}
+              </p>
             </div>
           </main>
         </div>
-        <div className="flex flex-row w-full h-auto  my-4 mx-1 justify-between ">
+        <div className="flex flex-row w-full h-auto my-4  justify-between px-4">
           <main className="flex-1 h-full w-full  mx-auto justify-center ">
             <div className="flex flex-col w-full items-center py-3 bg-white sm:items-start">
-              <h3 className="text-lg3 mx-3 font-bold">Tambien te puede interesar</h3>
-              <p className="text-gray-500 mx-3 list-disc"><OtrosProductosInteres /></p>
+              <OtrosProductosInteres />
             </div>
           </main>
         </div>
+        
       </div>
     </>
   ) : (

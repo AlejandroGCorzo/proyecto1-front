@@ -31,12 +31,9 @@ export const ConfirmationComponent = ({
     if (value === "true") {
       if (section === "carrito de compras") {
         await dispatch(
-          removeFromCartAction(
-            {
-              id: itemToDelete.id,
-            },
-            isLoggedIn
-          )
+          removeFromCartAction({
+            id: itemToDelete.id,
+          })
         );
 
         toggleModal();

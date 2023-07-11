@@ -43,11 +43,11 @@ const Home = () => {
       ) : (
         <>
           {lanzamientos?.length > 0 && (
-            <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col">
+            <div className="w-full 2xl:w-[90%] h-auto flex justify-center items-center flex-col">
               <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
                 <p className="text-lg md:text-2xl py-1">LANZAMIENTOS</p>
                 <Link
-                  to={"/:filters"}
+                  to={"/products/:filters"}
                   className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow 
                 bg-header hover:text-white hover:bg-yellow transition-all ease-in-out z-10"
                   id={"nuevo"}
@@ -60,11 +60,11 @@ const Home = () => {
             </div>
           )}
           {recomendados?.length > 0 && (
-            <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col mb-10">
+            <div className="w-full 2xl:w-[90%] h-auto flex justify-center items-center flex-col mb-10">
               <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between text-nav font-semibold">
                 <p className="text-lg md:text-2xl py-1">RECOMENDADOS</p>
                 <Link
-                  to={"/:filters"}
+                  to={"/products/:filters"}
                   className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow 
                 bg-header hover:text-white hover:bg-yellow transition-all ease-in-out"
                   id={"descuento"}
@@ -169,11 +169,11 @@ const Home = () => {
             </div>
           </div> */}
           {destacados?.length > 0 && (
-            <div className="w-full 2xl:w-[75%] h-auto flex justify-center items-center flex-col mb-10">
+            <div className="w-full 2xl:w-[90%] h-auto flex justify-center items-center flex-col mb-10">
               <div className="py-4 w-full px-5 lg:px-16 flex items-center justify-between  text-nav font-semibold">
                 <p className="text-lg md:text-2xl py-1">DESTACADOS</p>
                 <Link
-                  to={"/:filters"}
+                  to={"products/:filters"}
                   className="border border-yellow py-1 px-3 rounded-full text-sm md:text-base text-yellow hover:text-white hover:bg-yellow transition-all ease-in-out"
                   id={"relevancia"}
                   onClick={(e) => dispatch(orderProductsAction(e.target.id))}
