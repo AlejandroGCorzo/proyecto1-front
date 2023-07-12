@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProductById, getProductsAction } from "../redux/productActions";
+import { fetchProductById } from "../redux/productActions";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "./Modal";
 import { useSwipeable } from "react-swipeable";
@@ -20,6 +20,7 @@ import { ConfirmationComponent } from "../utils/DeleteSteps";
 import Loading from "../utils/Loading";
 import { formatearPrecio } from "../utils/formatPrice";
 
+
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -36,9 +37,10 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [isSucursalesOpen, setIsSucursalesOpen] = useState(false);
   const [isEnvioOpen, setIsEnvioOpen] = useState(false);
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState("Argentina");
   const [province, setProvince] = useState("");
   const [postalCode, setPostalCode] = useState("");
+  const [shippingCost, setShippingCost] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [onDelete, setOnDelete] = useState(null);
@@ -158,7 +160,7 @@ const ProductDetail = () => {
   const handleCalculateShipping = () => {};
 
   useEffect(() => {
-    dispatch(getProductsAction());
+    
     dispatch(fetchProductById(id));
 
     return () => {
@@ -629,6 +631,7 @@ const ProductDetail = () => {
             </div>
           </main>
         </div>
+        
       </div>
     </>
   ) : (
