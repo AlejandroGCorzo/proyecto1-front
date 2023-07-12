@@ -358,7 +358,7 @@ const Header = () => {
           className="bg-nav text-white text-center text-xs font-semibold uppercase flex-col w-full h-10 justify-center lg:justify-between items-center py-2 lg:py-3 lg:px-20 hidden lg:flex "
           style={{ fontSize: "16px" }}
         >
-          <div className="hidden lg:flex flex-row justify-end items-center w-72 gap-6">
+          <div className="hidden lg:flex flex-row justify-end items-center w-1/6 gap-6">
             <Link
               to={"products/:filter"}
               className="transition-all ease-in-out uppercase border-b border-b-transparent  hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center "
