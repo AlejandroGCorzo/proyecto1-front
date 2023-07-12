@@ -64,9 +64,9 @@ body,
   text-overflow: ellipsis;
 } */
 
-@media (min-width: 640px) {
+/* @media (min-width: 640px) {
   .contentScroll {
     padding: 15px;
     max-height: 600px;
   }
-}
+} */

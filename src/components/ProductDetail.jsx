@@ -274,8 +274,8 @@ const ProductDetail = () => {
   return detailProduct ? (
     <>
       <div className="w-full h-auto flex flex-col md:justify-center sm:items-center mt-[20%] sm:mt-[5%] md:mt-[4%] lg:mt-[15%] xl:mt-[0%] 2xl:mt-10 justify-start items-start  ">
-        <div className="text-gray-500 flex sm:flex-row sm:w-full sm:justify-center md:justify-start xsm: text-xl px-4 sm:py-2  ">
-          Página Principal &gt; {detailProduct.descripcion}
+        <div className="text-gray-500 flex sm:flex-row sm:w-full justify-start xsm:text-xl px-4 pb-6 xl:mt-4  w-full items-start">
+          Página Principal &gt; {detailProduct.descripcion.toUpperCase()}
           {/* {breadcrumbs.map((breadcrumb, index) => (
             <Link
               key={breadcrumb.path}
@@ -288,7 +288,7 @@ const ProductDetail = () => {
             </Link>
           ))} */}
         </div>
-        <div className="w-full flex flex-col h-auto justify-center items-center px-4 gap-4 bg-grey/80  mt-[4%] sm:mt-[5.8%]  md:mt-[2%] md:max-lg:mt-[1.5%] lg:mt-[1.5%]  xsm:mt-[5%]  md:flex-row ">
+        <div className="w-full flex flex-col h-auto justify-center items-center px-4 gap-4 bg-grey/80   md:flex-row ">
           <dialog ref={modalRef} className="modal bg-grey/40">
             <div className="modal-box bg-grey">
               <button
@@ -390,14 +390,14 @@ const ProductDetail = () => {
             />
           </div>
           <div className="flex flex-col w-full h-[750px] lg:h-[680px] p-2 bg-white  md:w-1/2 md:mt-0 lg:mt-0 xl:mt-0">
-            <aside className="flex-1 w-full  bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
+            <aside className=" w-full h-full bg-white flex flex-col  justify-between lg:mt-0 lg:px-2 lg:py-2">
               <div className="w-full flex flex-row justify-center items-center">
-                <h1 className="font-extrabold tracking-tight items-center justify-center text-gray-900 text-2xl  xsm:mt.0 ">
+                <h1 className="font-bold py-2 tracking-tight items-center justify-center text-gray-900 text-2xl  uppercase">
                   {detailProduct?.descripcion}
                 </h1>
               </div>
 
-              <div className="my-5 px-2 py-2 ">
+              <div className="px-2 py-2 ">
                 {detailProduct.descuento > 0 ? (
                   <div className="flex flex-col w-auto gap-2 justify-center items-start">
                     <p className="text-xl font-medium text-header/60 w-max text-center line-through">
@@ -420,21 +420,21 @@ const ProductDetail = () => {
                 )}
               </div>
               <hr className="w-full border-gray-300 my-2" />
-              <div className="my-3 px-2 py-2 ">
+              <div className="px-2 py-2 ">
                 <p className="ml-3 text-sm text-gray-500">
                   CODIGO: {detailProduct?.codigo}
                 </p>
               </div>
-              <div className="my-5  py-2">
+              <div className=" py-2">
                 {detailProduct.stock > 0 ? (
                   <div className="flex items-center ml-3">
                     <MdCheckCircle className="text-green-500 mr-1" />
-                    <p className="text-sm text-green-500">HAY STOCK</p>
+                    <p className="text-sm text-green-500">STOCK DISPONIBLE</p>
                   </div>
                 ) : (
                   <div className="flex items-center ml-3">
                     <MdRemoveCircle className="text-red-500 mr-1" />
-                    <p className="text-sm text-red-500">NO HAY STOCK</p>
+                    <p className="text-sm text-red-500">STOCK NO DISPONIBLE</p>
                   </div>
                 )}
               </div>
@@ -511,52 +511,53 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              <div className="flex flex-col items-start my-5">
-                <label
-                  htmlFor="cantidad"
-                  className="mr-2 text-header font-bold"
-                >
-                  CANTIDAD
-                </label>
-                <div className="flex items-center rounded">
-                  <button
-                    className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-9 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
-                    onClick={() => handleDecreaseQuantity()}
-                    disabled={detailProduct.stock === 0 ? true : false}
+              {detailProduct.stock > 0 && (
+                <div className="flex flex-col items-start my-5">
+                  <label
+                    htmlFor="cantidad"
+                    className="mr-2 text-header font-bold"
                   >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    id="cantidad"
-                    value={
-                      productos.find((item) => item.producto === id)
-                        ?.cantidad || quantity
-                    }
-                    onChange={(e) => setQuantity(e.target.value)}
-                    className="w-16 px-2 py-1 text-xl text-header text-center outline-none bg-grey flex justify-center items-center"
-                  />
-                  <button
-                    className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-9 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
-                    onClick={() => handleIncreaseQuantity()}
-                    disabled={detailProduct.stock === 0 ? true : false}
-                  >
-                    +
-                  </button>
+                    CANTIDAD
+                  </label>
+                  <div className="flex items-center rounded">
+                    <button
+                      className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-9 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
+                      onClick={() => handleDecreaseQuantity()}
+                      disabled={detailProduct.stock === 0 ? true : false}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      id="cantidad"
+                      value={
+                        productos.find((item) => item.producto === id)
+                          ?.cantidad || quantity
+                      }
+                      onChange={(e) => setQuantity(e.target.value)}
+                      className="w-16 px-2 py-1 text-xl text-header text-center outline-none bg-grey flex justify-center items-center"
+                    />
+                    <button
+                      className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-9 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
+                      onClick={() => handleIncreaseQuantity()}
+                      disabled={detailProduct.stock === 0 ? true : false}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
-
-              <div className="w-full lg:w-full  h-auto flex xsm:flex-col py-2 my-5 justify-center lg:justify-between items-center lg:flex-row gap-2">
+              )}
+              <div className="w-full lg:w-full  h-auto flex flex-col py-2 my-2 justify-center lg:justify-between items-center lg:flex-row gap-2">
                 <button
                   value={detailProduct._id}
-                  className=" disabled:bg-header/70 text-yellow uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-header hover:bg-header/80 border border-yellow md:w-2/4 w-full transition-all  whitespace-nowrap"
+                  className=" disabled:bg-grey disabled:text-header/40 disabled:border-header/40 text-yellow uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-header hover:bg-header/80 border border-yellow lg:w-2/4 w-full transition-all  whitespace-nowrap"
                   onClick={handleAddToCart}
                   disabled={detailProduct.stock > 0 ? false : true}
                 >
                   Agregar al Carrito
                 </button>
                 <button
-                  className="disabled:bg-yellow/70 disabled:border-yellow disabled:text-header/80 text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 md:w-2/4 w-full border  border-header transition-all whitespace-nowrap"
+                  className="disabled:bg-grey disabled:text-header/40 disabled:border-header/40 text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 lg:w-2/4 w-full border  border-header transition-all whitespace-nowrap"
                   onClick={handleAddToCart}
                   value={"comprar"}
                   id={detailProduct._id}
@@ -579,7 +580,7 @@ const ProductDetail = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex items-center my-3 justify-between xsm:py-2 sm:py-6">
+              <div className="flex items-center justify-between xsm:py-2 sm:py-6">
                 <div className="flex flex-col">
                   <p className="mr-3 font-bold">INFORMACIÓN GENERAL</p>
                   <p>{detailProduct.descripcion}</p>

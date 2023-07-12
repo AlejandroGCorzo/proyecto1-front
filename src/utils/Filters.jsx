@@ -65,7 +65,7 @@ const Filters = () => {
 
   useEffect(() => {
     setFiltersState(filters);
-  }, [params.filter]);
+  }, [filters]);
 
   const handlePrice = (e) => {
     const { value, name } = e.target;
@@ -171,7 +171,7 @@ const Filters = () => {
       className={`lg:block flex flex-col w-full h-full justify-between  ${
         filters?.nombre?.length > 0 && viewportSize.width > 1024
           ? "mt-0"
-          : "lg:mt-12"
+          : "lg:mt-7"
       }`}
     >
       <div className="lg:block flex flex-col w-full h-auto overflow-y-auto ">

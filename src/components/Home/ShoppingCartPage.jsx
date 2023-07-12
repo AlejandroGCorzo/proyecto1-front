@@ -17,9 +17,13 @@ import { formatearPrecio } from "../../utils/formatPrice";
 const ShoppingCartPage = () => {
   const dispatch = useDispatch();
   const modalRef = useRef(null);
-  const { productos, totalSinDescuento, loading } = useSelector(
-    (state) => state.cart
-  );
+  const {
+    productos,
+    productosDiponibles,
+    productosNoDisponibles,
+    totalSinDescuento,
+    loading,
+  } = useSelector((state) => state.cart);
   const { isLoggedIn } = useSelector((state) => state.users);
   const { products } = useSelector((state) => state.products);
   const [productsInCart, setProductsInCart] = useState([]);
@@ -123,7 +127,7 @@ const ShoppingCartPage = () => {
   };
 
   return (
-    <div className="w-full h-auto flex flex-col justify-start items-start md:justify-center md:items-center  max-h-max  min-h-[450px] sm:min-h-[650px] md:min-h-[450px] bg-fontGrey">
+    <div className="w-full h-auto flex flex-col justify-start items-start md:justify-between md:items-center  max-h-max  min-h-[450px] sm:min-h-[650px] md:min-h-[450px] bg-grey">
       <dialog ref={modalRef} className="modal bg-grey/40">
         <div className="modal-box bg-white">
           <button
@@ -170,8 +174,8 @@ const ShoppingCartPage = () => {
         </div>
       </dialog>
 
-      <div className=" flex justify-start items-center px-4 mt-10 sm:mt-2 lg:mt-0">
-        <h1 className="flex py-4 w-full text-center uppercase text-xl text-header font-semibold">
+      <div className=" flex justify-center items-center px-4 mt-10 sm:mt-6 lg:mt-0 ">
+        <h1 className="flex px-4 pt-6 pb-2 lg:py-3 w-full text-center uppercase text-xl text-header font-semibold">
           Carrito de compras
         </h1>
       </div>
@@ -195,7 +199,7 @@ const ShoppingCartPage = () => {
                       <div className=" flex flex-row justify-center sm:justify-between items-center w-full sm:h-40 border py-3 px-2 sm:px-6 bg-white">
                         <Link
                           to={`/product/${elem._id}`}
-                          className="flex h-36 w-36 py-1 border"
+                          className="flex h-36 w-36 py-1 "
                         >
                           <img
                             className="h-full w-full object-contain aspect-auto"
@@ -242,42 +246,44 @@ const ShoppingCartPage = () => {
                               {formatearPrecio(elem.precio)}
                             </p>
                           )}
-                          <div className="w-auto flex justify-center items-center flex-row flex-nowrap pr-2">
-                            <button
-                              className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
-                              value={"-"}
-                              name={
-                                productos.find(
-                                  (item) => item.producto === elem._id
-                                )?.producto
-                              }
-                              onClick={handleAmount}
-                              disabled={elem.stock === 0 ? true : false}
-                            >
-                              -
-                            </button>
-                            <span className="py-1 px-2 text-header text-xl">
-                              {
-                                productos.find(
-                                  (item) => item.producto === elem._id
-                                )?.cantidad
-                              }
-                            </span>
+                          {elem.stock > 0 && (
+                            <div className="w-auto flex justify-center items-center flex-row flex-nowrap pr-2">
+                              <button
+                                className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-8 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
+                                value={"-"}
+                                name={
+                                  productos.find(
+                                    (item) => item.producto === elem._id
+                                  )?.producto
+                                }
+                                onClick={handleAmount}
+                                disabled={elem.stock === 0 ? true : false}
+                              >
+                                -
+                              </button>
+                              <span className="py-1 px-2 text-header text-xl">
+                                {
+                                  productos.find(
+                                    (item) => item.producto === elem._id
+                                  )?.cantidad
+                                }
+                              </span>
 
-                            <button
-                              className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
-                              value={"+"}
-                              name={
-                                productos.find(
-                                  (item) => item.producto === elem._id
-                                )?.producto
-                              }
-                              onClick={handleAmount}
-                              disabled={elem.stock === 0 ? true : false}
-                            >
-                              +
-                            </button>
-                          </div>
+                              <button
+                                className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-8 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
+                                value={"+"}
+                                name={
+                                  productos.find(
+                                    (item) => item.producto === elem._id
+                                  )?.producto
+                                }
+                                onClick={handleAmount}
+                                disabled={elem.stock === 0 ? true : false}
+                              >
+                                +
+                              </button>
+                            </div>
+                          )}
                         </div>
                         <button
                           className="w-[10%] "

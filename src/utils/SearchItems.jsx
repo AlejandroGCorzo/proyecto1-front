@@ -16,6 +16,7 @@ const SearchItems = ({
   debouncedSearchValue,
   error,
   setNavbar,
+  toggleModal,
 }) => {
   const { productsSearch, productsFilter, loading } = useSelector(
     (state) => state.products
@@ -24,7 +25,7 @@ const SearchItems = ({
   const dispatch = useDispatch();
 
   return (
-    <div className="w-[95%] md:w-2/3 lg:w-[350px] 2xl:w-[500px] h-auto contentScroll max-h-[80%] sm:max-h-[70%] xl:max-h-[600px] bg-white absolute top-[120px] xl:left-[500px] 2xl:left-[790px] z-[9999] overflow-y-auto font-medium">
+    <div className="w-max max-w-sm sm:max-w-lg lg:max-w-sm sm:w-full 2xl:max-w-md 3xl:max-w-lg h-max contentScroll max-h-full md:max-h-[400px] xl:max-h-[600px] bg-white absolute top-[50px] lg:top-[120px] left-auto z-[9999] overflow-y-auto font-medium min-h-[400px] lg:min-w-0 text-header/60 p-4 shadow-md">
       <Link
         to={`/products/${debouncedSearchValue}`}
         className="flex flex-row gap-2 px-2 py-4 hover:bg-grey"
@@ -35,9 +36,7 @@ const SearchItems = ({
           setShowItems(false);
           setNavbar(false);
           setSearchValue("");
-          if (isSearchOpen) {
-            setIsSearchOpen(false);
-          }
+          toggleModal();
         }}
       >
         <p>Buscar por "{debouncedSearchValue}"</p>
@@ -76,9 +75,7 @@ const SearchItems = ({
               setShowItems(false);
               setNavbar(false);
               setSearchValue("");
-              if (isSearchOpen) {
-                setIsSearchOpen(false);
-              }
+              toggleModal();
             }}
           >
             <img

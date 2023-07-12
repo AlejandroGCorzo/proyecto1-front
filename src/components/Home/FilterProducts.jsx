@@ -58,7 +58,7 @@ const FilterProducts = () => {
     distpatch(clearFiltersAction());
   };
   return (
-    <section className="w-full h-auto min-h-[450px] sm:min-h-[650px] md:min-h-[450px] flex flex-col justify-center items-center max-h-max bg-grey mt-12 sm:mt-0 pb-2">
+    <section className="w-full h-auto min-h-[450px] sm:min-h-[650px] md:min-h-[450px] flex flex-col justify-center items-center max-h-max bg-grey mt-12 sm:mt-5 2xl:mt-6 lg:mt-0 pb-2">
       <div
         className={`flex flex-row justify-center  gap-2 w-full ${
           productsFilter?.length === 0
@@ -66,7 +66,7 @@ const FilterProducts = () => {
             : "h-auto items-start"
         }`}
       >
-        <aside className="w-72 pt-7 pl-2 hidden lg:block">
+        <aside className="w-72 h-auto pl-2 hidden lg:block">
           {productsFilter?.length > 0 && <Filters />}
         </aside>
         <aside className="flex flex-col justify-center items-center w-full md:max-w-5xl lg:max-w-7xl bg-grey">
