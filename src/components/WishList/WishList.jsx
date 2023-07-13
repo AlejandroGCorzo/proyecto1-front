@@ -21,6 +21,7 @@ const WishList = () => {
   const modalWishlistRef = useRef(null);
   const { wishedProducts, loading } = useSelector((state) => state.wishlist);
   const { products } = useSelector((state) => state.products);
+  const { productos } = useSelector((state) => state.cart);
   const [error, setError] = useState(false);
   const [onDelete, setOnDelete] = useState(null);
   const [itemToDelete, setItemToDelete] = useState({ nombre: "", id: "" });
@@ -71,24 +72,27 @@ const WishList = () => {
     }
 
     const itemToAdd = wishedProducts.find((elem) => elem.id === e.target.id);
+    const itemInCart = productos?.find((elem) => elem.producto === e.target.id);
 
-    let productPrice = products?.find((elem) => elem._id === itemToAdd?.id);
+    if (!itemInCart) {
+      let productPrice = products?.find((elem) => elem._id === itemToAdd?.id);
 
-    if (productPrice.descuento > 0) {
-      // Aplicar el descuento al precio total
-      const descuento = productPrice.precio * (productPrice.descuento / 100);
-      productPrice = productPrice.precio - descuento;
-    } else {
-      productPrice = productPrice.precio;
+      if (productPrice.descuento > 0) {
+        // Aplicar el descuento al precio total
+        const descuento = productPrice.precio * (productPrice.descuento / 100);
+        productPrice = productPrice.precio - descuento;
+      } else {
+        productPrice = productPrice.precio;
+      }
+
+      await dispatch(
+        addToCartAction({
+          producto: itemToAdd.id,
+          cantidad: 1,
+          precio: productPrice,
+        })
+      );
     }
-
-    await dispatch(
-      addToCartAction({
-        producto: itemToAdd.id,
-        cantidad: 1,
-        precio: productPrice,
-      })
-    );
     dispatch(removeProductFromWishlist({ id: itemToAdd.id }));
     navigate("/checkout/form");
   };
@@ -202,13 +206,15 @@ const WishList = () => {
                       >
                         Eliminar
                       </button>
-                      <button
-                        className=" text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 border border-header w-full md:w-auto transition-all  whitespace-nowrap"
-                        onClick={handleWishlistAddToCart}
-                        id={elem._id}
-                      >
-                        Comprar Ahora
-                      </button>
+                      {elem.stock > 0 && (
+                        <button
+                          className=" text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 border border-header w-full md:w-auto transition-all  whitespace-nowrap"
+                          onClick={handleWishlistAddToCart}
+                          id={elem._id}
+                        >
+                          Comprar Ahora
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

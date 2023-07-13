@@ -20,7 +20,6 @@ import { ConfirmationComponent } from "../utils/DeleteSteps";
 import Loading from "../utils/Loading";
 import { formatearPrecio } from "../utils/formatPrice";
 
-
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -160,7 +159,6 @@ const ProductDetail = () => {
   const handleCalculateShipping = () => {};
 
   useEffect(() => {
-    
     dispatch(fetchProductById(id));
 
     return () => {
@@ -182,7 +180,6 @@ const ProductDetail = () => {
       if (error?.length) {
         setError("");
       }
-
       let precioFinal = detailProduct.precio;
 
       if (detailProduct.descuento > 0) {
@@ -192,13 +189,23 @@ const ProductDetail = () => {
         precioFinal = detailProduct.precio - descuento;
       }
 
-      await dispatch(
-        addToCartAction({
-          cantidad: itemToAdd ? itemToAdd.cantidad + 1 : quantity,
-          precio: precioFinal,
-          producto: id,
-        })
-      );
+      if (itemToAdd && value !== "comprar") {
+        await dispatch(
+          addToCartAction({
+            cantidad: 1,
+            precio: precioFinal,
+            producto: id,
+          })
+        );
+      } else if (!itemToAdd) {
+        await dispatch(
+          addToCartAction({
+            cantidad: quantity,
+            precio: precioFinal,
+            producto: id,
+          })
+        );
+      }
 
       if (value === "comprar") {
         navigate("/checkout/form");
@@ -209,6 +216,9 @@ const ProductDetail = () => {
     }
     if (value === "comprar") {
       navigate("/checkout/form");
+    }
+    if (quantity > 1) {
+      setQuantity(1);
     }
   };
 
@@ -631,7 +641,6 @@ const ProductDetail = () => {
             </div>
           </main>
         </div>
-        
       </div>
     </>
   ) : (

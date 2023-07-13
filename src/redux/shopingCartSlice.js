@@ -57,9 +57,11 @@ const cartSlice = createSlice({
     setProducts: (state, action) => {
       state.productosDisponibles = action.payload?.productosDisponibles;
       state.productosNoDisponibles = action.payload?.productosNoDisponibles;
-      state.totalSinDescuento = action.payload.productosDisponibles
-        ?.map((elem) => elem.cantidad * elem.precio)
-        .reduce((acc, elem) => (acc += elem));
+      if (action.payload?.productosDisponibles?.length) {
+        state.totalSinDescuento = action.payload.productosDisponibles
+          ?.map((elem) => elem.cantidad * elem.precio)
+          .reduce((acc, elem) => (acc += elem));
+      }
     },
     addItem: (state, action) => {
       let newItem = action.payload;
@@ -173,7 +175,8 @@ const cartSlice = createSlice({
     clearCart: (state, action) => {
       localStorage.removeItem("cart");
       state.loading = false;
-      /*     state.productosNoDisponibles = []; */
+      state.productosNoDisponibles = [];
+      state.productosDisponibles = [];
       state.productos = [];
       state.totalConDescuento = 0;
       state.totalSinDescuento = 0;

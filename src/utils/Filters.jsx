@@ -148,6 +148,7 @@ const Filters = () => {
 
   const clearFilters = (e) => {
     e.preventDefault();
+    setPrice(maxPrice);
     setFiltersState({
       nombre: [],
       /*  category: [],
@@ -519,12 +520,19 @@ const Filters = () => {
                 value={price}
                 onChange={handlePrice}
                 className="range range-warning "
-                onMouseUp={handleRange}
               />
               <div className="w-[90%] lg:w-full flex flex-row justify-between items-center text-lg text-nav">
                 <span>${minPrice},00</span>
                 <span>${price},00</span>
               </div>
+            </div>
+            <div className="w-full hidden justify-center items-center lg:flex">
+              <button
+                className="bg-yellow py-1 px-4 rounded-full border border-header uppercase text-sm font-semibold"
+                onClick={handleRange}
+              >
+                aplicar rango
+              </button>
             </div>
           </div>
         </div>
