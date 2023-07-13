@@ -83,7 +83,7 @@ const Products = () => {
 
   return (
     <>
-      <div className="flex flex-col  w-full max-w-full h-full justify-center items-center lg:p-6">
+      <div className="flex flex-col  w-full max-w-full h-full justify-center items-center lg:px-6">
         <div className="w-full max-w-[350px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-between gap-1 my-2 ">
           <Link
             to="/admin/products/form"

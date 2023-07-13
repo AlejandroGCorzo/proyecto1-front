@@ -92,7 +92,7 @@ const Sidebar = () => {
           </ul>
         </nav>
       </div>
-      <div className="hidden lg:flex justify-center items-start mt-10">
+      <div className="hidden lg:flex justify-center items-start ">
         <nav
           className={`h-full bg-grey w-1/4  min-w-[150px] flex flex-col justify-center items-center `}
         >
