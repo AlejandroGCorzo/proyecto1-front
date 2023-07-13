@@ -17,15 +17,11 @@ import {
 } from "./redux/categoriesActions";
 import ShoppingCartPage from "./components/Home/ShoppingCartPage";
 import WishList from "./components/WishList/WishList";
-import {
-  patchCartAction,
-  postCartAction,
-  validateCart,
-} from "./redux/shoppingCartActions";
 import CheckoutForm from "./components/Checkout/CheckoutForm";
 import SuccessComponent from "./utils/SuccessPage";
 import ErrorComponent from "./utils/FailurePage";
 import ErrorPage from "./components/ErrorPage/ErrorPage";
+import { setProductsCartAction } from "./redux/shoppingCartActions";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -38,8 +34,10 @@ export function ScrollToTop() {
 
 function App() {
   const { isLoggedIn, userId } = useSelector((state) => state.users);
-  const { productos, isFacturaA, tipoDePago, envio, userHaveCart } =
-    useSelector((state) => state.cart);
+  const { products } = useSelector((state) => state.products);
+  const { productos, isFacturaA, tipoDePago, envio } = useSelector(
+    (state) => state.cart
+  );
   const dispatch = useDispatch();
   useEffect(() => {
     const getProducts = () => {
@@ -49,37 +47,26 @@ function App() {
     };
     getProducts();
   }, []);
+  useEffect(() => {
+    if (productos?.length && products?.length) {
+      let productsWithStock = products
+        .filter((prod) => prod.stock > 0)
+        .map((prod) => prod._id);
 
-  /*  useEffect(() => {
-    const setCart = async () => {
-      if (isLoggedIn && userId?.length) {
-        await dispatch(validateCart(userId));
-      }
-    };
-
-    setCart();
-
-    const postCart = () => {
+      let productsToAdd = productos.filter((elem) =>
+        productsWithStock.includes(elem.producto)
+      );
+      let productsToIgnore = productos.filter(
+        (elem) => !productsWithStock.includes(elem.producto)
+      );
       dispatch(
-        postCartAction({
-          productos: productos.map((elem) => ({
-            producto: elem.producto,
-            cantidad: elem.cantidad,
-          })),
-          tipoDePago: tipoDePago,
-          usuario: userId,
-          envio: envio,
+        setProductsCartAction({
+          productosDisponibles: productsToAdd,
+          productosNoDisponibles: productsToIgnore,
         })
       );
-    };
-    const patchCart = () => {
-      dispatch(patchCartAction(id, productos));
-    };
-    if (!userHaveCart && isLoggedIn && productos.length) {
-      console.log("me ejecute");
-      postCart();
     }
-  }, [isLoggedIn, userHaveCart]); */
+  }, [productos, products]);
 
   return (
     <div className="flex flex-col w-full m-auto bg-grey">

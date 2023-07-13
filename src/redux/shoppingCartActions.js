@@ -2,6 +2,7 @@ const url = import.meta.env.VITE_REACT_APP_API;
 import axios from "axios";
 
 import {
+  setProducts,
   setLoading,
   addItem,
   removeItem,
@@ -14,7 +15,7 @@ import {
   setOrder,
 } from "./shopingCartSlice";
 
-export const validateCart = (id) => {
+/* export const validateCart = (id) => {
   return async function (dispatch) {
     try {
       setLoading(true);
@@ -36,7 +37,7 @@ export const validateCart = (id) => {
       }
     }
   };
-};
+}; */
 export const postCartAction = (values) => {
   return async function (dispatch) {
     try {
@@ -53,12 +54,12 @@ export const postCartAction = (values) => {
     }
   };
 };
-export const patchCartAction = (id) => {
+/* export const patchCartAction = (id) => {
   return async function (dispatch) {
     try {
       setLoading(true);
       const res = await axios.patch(`${url}/ordenes/${id}`);
-      /* setUserHaveCart(res.data); */
+      setUserHaveCart(res.data);
       console.log(res);
       setLoading(false);
     } catch (error) {
@@ -70,8 +71,13 @@ export const patchCartAction = (id) => {
       }
     }
   };
-};
+}; */
 
+export const setProductsCartAction = (values) => {
+  return function (dispatch) {
+    dispatch(setProducts(values));
+  };
+};
 export const addToCartAction = (values) => {
   return function (dispatch) {
     dispatch(addItem(values));

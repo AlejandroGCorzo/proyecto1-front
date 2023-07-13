@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProductById, getProductsAction } from "../redux/productActions";
+import { fetchProductById } from "../redux/productActions";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "./Modal";
 import { useSwipeable } from "react-swipeable";
@@ -29,16 +29,17 @@ const ProductDetail = () => {
   const detailProduct = useSelector((state) => state.products.detail);
   const { productos, loading } = useSelector((state) => state.cart);
   const { isLoggedIn } = useSelector((state) => state.users);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [isCambioOpen, setIsCambioOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [isSucursalesOpen, setIsSucursalesOpen] = useState(false);
   const [isEnvioOpen, setIsEnvioOpen] = useState(false);
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState("Argentina");
   const [province, setProvince] = useState("");
   const [postalCode, setPostalCode] = useState("");
+  const [shippingCost, setShippingCost] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [onDelete, setOnDelete] = useState(null);
@@ -120,8 +121,8 @@ const ProductDetail = () => {
         })
       );
     } else if (itemToUpdate && itemToUpdate.cantidad - 1 === 0) {
-      if (error) {
-        setError(false);
+      if (error?.length) {
+        setError("");
       }
       setItemToDelete({
         nombre: "producto",
@@ -137,22 +138,27 @@ const ProductDetail = () => {
 
   const handleIncreaseQuantity = () => {
     const itemToUpdate = productos.find((elem) => elem.producto === id);
-    if (itemToUpdate) {
+    if (itemToUpdate && itemToUpdate?.cantidad + 1 <= detailProduct.stock) {
       dispatch(
         updateCartAction({
           itemId: id,
           cantidad: itemToUpdate.cantidad + 1,
         })
       );
-    } else {
+    } else if (itemToUpdate?.cantidad === detailProduct.stock) {
+      setError("Ha agregado todos los productos disponibles al carrito.");
+      toggleModal();
+    } else if (quantity + 1 <= detailProduct.stock) {
       setQuantity(quantity + 1);
+    } else if (quantity === detailProduct.stock) {
+      setError("Ha sumado todos los productos disponibles.");
+      toggleModal();
     }
   };
 
   const handleCalculateShipping = () => {};
 
   useEffect(() => {
-    dispatch(getProductsAction());
     dispatch(fetchProductById(id));
 
     return () => {
@@ -164,33 +170,55 @@ const ProductDetail = () => {
 
   const handleAddToCart = async (e) => {
     const { value } = e.target;
-    let itemToAdd = productos.filter((el) => el.product === id);
+    let itemToAdd = productos.find((el) => el.producto === id);
     setItemToDelete({ nombre: "", id: "" });
-    if (error) {
-      setError(false);
+
+    if (itemToAdd?.cantidad + 1 > detailProduct.stock) {
+      setError("Ha agregado todos los productos disponibles al carrito.");
+      toggleModal();
+    } else {
+      if (error?.length) {
+        setError("");
+      }
+      let precioFinal = detailProduct.precio;
+
+      if (detailProduct.descuento > 0) {
+        // Aplicar el descuento al precio total
+        const descuento =
+          detailProduct.precio * (detailProduct.descuento / 100);
+        precioFinal = detailProduct.precio - descuento;
+      }
+
+      if (itemToAdd && value !== "comprar") {
+        await dispatch(
+          addToCartAction({
+            cantidad: 1,
+            precio: precioFinal,
+            producto: id,
+          })
+        );
+      } else if (!itemToAdd) {
+        await dispatch(
+          addToCartAction({
+            cantidad: quantity,
+            precio: precioFinal,
+            producto: id,
+          })
+        );
+      }
+
+      if (value === "comprar") {
+        navigate("/checkout/form");
+      } else {
+        setSuccess(true);
+        toggleModal();
+      }
     }
-
-    let precioFinal = detailProduct.precio;
-
-    if (detailProduct.descuento > 0) {
-      // Aplicar el descuento al precio total
-      const descuento = detailProduct.precio * (detailProduct.descuento / 100);
-      precioFinal = detailProduct.precio - descuento;
-    }
-
-    await dispatch(
-      addToCartAction({
-        cantidad: quantity,
-        precio: precioFinal,
-        producto: id,
-      })
-    );
-
     if (value === "comprar") {
       navigate("/checkout/form");
-    } else {
-      setSuccess(true);
-      toggleModal();
+    }
+    if (quantity > 1) {
+      setQuantity(1);
     }
   };
 
@@ -225,7 +253,7 @@ const ProductDetail = () => {
   const handleImageClick = (imageName) => {
     setSelectedImage(imageName);
   };
-  console.log(detailProduct);
+
   const handleSwipe = (direction) => {
     if (direction === "LEFT") {
       const currentIndex = detailProduct?.imagenes.indexOf(selectedImage);
@@ -258,8 +286,8 @@ const ProductDetail = () => {
   return detailProduct ? (
     <>
       <div className="w-full h-auto flex flex-col md:justify-center sm:items-center mt-[20%] sm:mt-[5%] md:mt-[4%] lg:mt-[15%] xl:mt-[0%] 2xl:mt-10 justify-start items-start  ">
-        <div className="text-gray-500 flex sm:flex-row sm:w-full sm:justify-center md:justify-start xsm: text-xl px-4 sm:py-2  ">
-          Página Principal &gt; {detailProduct.descripcion}
+        <div className="text-gray-500 flex sm:flex-row sm:w-full justify-start xsm:text-xl px-4 pb-6 xl:mt-4  w-full items-start">
+          Página Principal &gt; {detailProduct.descripcion.toUpperCase()}
           {/* {breadcrumbs.map((breadcrumb, index) => (
             <Link
               key={breadcrumb.path}
@@ -272,7 +300,7 @@ const ProductDetail = () => {
             </Link>
           ))} */}
         </div>
-        <div className="w-full flex flex-col h-auto justify-center items-center px-4 gap-4 bg-grey/80  mt-[4%] sm:mt-[5.8%]  md:mt-[2%] md:max-lg:mt-[1.5%] lg:mt-[1.5%]  xsm:mt-[5%]  md:flex-row ">
+        <div className="w-full flex flex-col h-auto justify-center items-center px-4 gap-4 bg-grey/80   md:flex-row ">
           <dialog ref={modalRef} className="modal bg-grey/40">
             <div className="modal-box bg-grey">
               <button
@@ -281,8 +309,7 @@ const ProductDetail = () => {
               >
                 ✕
               </button>
-
-              {/*  {error && (
+              {error.length > 0 && (
                 <div className="alert alert-warning w-[97%]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -297,13 +324,11 @@ const ProductDetail = () => {
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                     />
                   </svg>
-                  <span>
-                    Ha agregado todos los productos en stock del Talle
-                    seleccionado.
-                  </span>
+                  <span>{error}</span>
                 </div>
               )}
-              {selectedSize?.length === 0 && !success && (
+
+              {/*  {selectedSize?.length === 0 && !success && (
                 <div className="alert alert-warning w-[97%]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -322,8 +347,8 @@ const ProductDetail = () => {
                 </div>
               )} */}
               {productos.length &&
-              !error &&
-              !itemToDelete.nombre &&
+              !error.length &&
+              !itemToDelete?.nombre?.length &&
               productos.filter((el) => el.producto === id).length ? (
                 <div className="flex flex-col w-[97%] justify-between items-center p-6 gap-8">
                   <h2 className="uppercase text-lg w-full text-header text-center font-medium">
@@ -347,15 +372,17 @@ const ProductDetail = () => {
                   <Loading />
                 </div>
               ) : (
-                <ConfirmationComponent
-                  onDelete={onDelete}
-                  toggleModal={toggleModal}
-                  confirmed={confirmed}
-                  setConfirmed={setConfirmed}
-                  itemToDelete={itemToDelete}
-                  setItemToDelete={setItemToDelete}
-                  section={section}
-                />
+                !error.length && (
+                  <ConfirmationComponent
+                    onDelete={onDelete}
+                    toggleModal={toggleModal}
+                    confirmed={confirmed}
+                    setConfirmed={setConfirmed}
+                    itemToDelete={itemToDelete}
+                    setItemToDelete={setItemToDelete}
+                    section={section}
+                  />
+                )
               )}
             </div>
           </dialog>
@@ -367,19 +394,22 @@ const ProductDetail = () => {
                   ? detailProduct?.imagen
                   : detailProduct?.imagenes
               }
-              alt={detailProduct?.modelo}
+              alt={detailProduct?.descripcion}
               className="w-full h-[80%] object-contain px-4 max-w-sm md:max-w-xl "
+              onError={(e) => {
+                e.target.src = "/nodisponible.jpg";
+              }}
             />
           </div>
           <div className="flex flex-col w-full h-[750px] lg:h-[680px] p-2 bg-white  md:w-1/2 md:mt-0 lg:mt-0 xl:mt-0">
-            <aside className="flex-1 w-full  bg-white items-center justify-center lg:mt-0 lg:px-2 lg:py-2">
+            <aside className=" w-full h-full bg-white flex flex-col  justify-between lg:mt-0 lg:px-2 lg:py-2">
               <div className="w-full flex flex-row justify-center items-center">
-                <h1 className="font-extrabold tracking-tight items-center justify-center text-gray-900 text-2xl  xsm:mt.0 ">
+                <h1 className="font-bold py-2 tracking-tight items-center justify-center text-gray-900 text-2xl  uppercase">
                   {detailProduct?.descripcion}
                 </h1>
               </div>
 
-              <div className="my-5 px-2 py-2 ">
+              <div className="px-2 py-2 ">
                 {detailProduct.descuento > 0 ? (
                   <div className="flex flex-col w-auto gap-2 justify-center items-start">
                     <p className="text-xl font-medium text-header/60 w-max text-center line-through">
@@ -396,27 +426,27 @@ const ProductDetail = () => {
                     </p>
                   </div>
                 ) : (
-                  <p className="text-3xl pb-1 font-medium text-header w-auto text-center">
+                  <p className="text-3xl pb-1 font-medium text-header w-auto text-start">
                     {formatearPrecio(detailProduct.precio)}
                   </p>
                 )}
               </div>
               <hr className="w-full border-gray-300 my-2" />
-              <div className="my-3 px-2 py-2 ">
+              <div className="px-2 py-2 ">
                 <p className="ml-3 text-sm text-gray-500">
                   CODIGO: {detailProduct?.codigo}
                 </p>
               </div>
-              <div className="my-5  py-2">
+              <div className=" py-2">
                 {detailProduct.stock > 0 ? (
                   <div className="flex items-center ml-3">
                     <MdCheckCircle className="text-green-500 mr-1" />
-                    <p className="text-sm text-green-500">HAY STOCK</p>
+                    <p className="text-sm text-green-500">STOCK DISPONIBLE</p>
                   </div>
                 ) : (
                   <div className="flex items-center ml-3">
                     <MdRemoveCircle className="text-red-500 mr-1" />
-                    <p className="text-sm text-red-500">NO HAY STOCK</p>
+                    <p className="text-sm text-red-500">STOCK NO DISPONIBLE</p>
                   </div>
                 )}
               </div>
@@ -493,68 +523,76 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              <div className="flex flex-col items-start my-5">
-                <label htmlFor="cantidad" className="mr-2 text-black font-bold">
-                  CANTIDAD
-                </label>
-                <div className="flex items-center rounded">
-                  <button
-                    className="hover:opacity-70 min-h-6 h-9 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
-                    onClick={() => handleDecreaseQuantity()}
+              {detailProduct.stock > 0 && (
+                <div className="flex flex-col items-start my-5">
+                  <label
+                    htmlFor="cantidad"
+                    className="mr-2 text-header font-bold"
                   >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    id="cantidad"
-                    value={
-                      productos.find((item) => item.producto === id)
-                        ?.cantidad || quantity
-                    }
-                    onChange={(e) => setQuantity(e.target.value)}
-                    className="w-16 px-2 py-1 text-xl text-header text-center outline-none bg-grey flex justify-center items-center"
-                  />
-                  <button
-                    className="hover:opacity-70 min-h-6 h-9 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
-                    onClick={() => handleIncreaseQuantity()}
-                  >
-                    +
-                  </button>
+                    CANTIDAD
+                  </label>
+                  <div className="flex items-center rounded">
+                    <button
+                      className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-9 flex justify-center items-center py-1 px-[6px] bg-header text-white font-medium text-xl rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-none outline-none"
+                      onClick={() => handleDecreaseQuantity()}
+                      disabled={detailProduct.stock === 0 ? true : false}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      id="cantidad"
+                      value={
+                        productos.find((item) => item.producto === id)
+                          ?.cantidad || quantity
+                      }
+                      onChange={(e) => setQuantity(e.target.value)}
+                      className="w-16 px-2 py-1 text-xl text-header text-center outline-none bg-grey flex justify-center items-center"
+                    />
+                    <button
+                      className="disabled:bg-header/70 hover:opacity-70 min-h-6 h-9 flex justify-center items-center p-1 bg-header text-white font-medium text-lg rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none border-none outline-none"
+                      onClick={() => handleIncreaseQuantity()}
+                      disabled={detailProduct.stock === 0 ? true : false}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
-
-              <div className="w-full lg:w-full  h-auto flex xsm:flex-col py-2 my-5 justify-center lg:justify-between items-center lg:flex-row gap-2">
+              )}
+              <div className="w-full lg:w-full  h-auto flex flex-col py-2 my-2 justify-center lg:justify-between items-center lg:flex-row gap-2">
                 <button
                   value={detailProduct._id}
-                  className="  text-yellow uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-header hover:bg-header/80 border border-yellow md:w-2/4 w-full transition-all  whitespace-nowrap"
+                  className=" disabled:bg-grey disabled:text-header/40 disabled:border-header/40 text-yellow uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-header hover:bg-header/80 border border-yellow lg:w-2/4 w-full transition-all  whitespace-nowrap"
                   onClick={handleAddToCart}
+                  disabled={detailProduct.stock > 0 ? false : true}
                 >
                   Agregar al Carrito
                 </button>
                 <button
-                  className=" text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 md:w-2/4 w-full border  border-header transition-all   whitespace-nowrap"
+                  className="disabled:bg-grey disabled:text-header/40 disabled:border-header/40 text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 lg:w-2/4 w-full border  border-header transition-all whitespace-nowrap"
                   onClick={handleAddToCart}
                   value={"comprar"}
                   id={detailProduct._id}
+                  disabled={detailProduct.stock > 0 ? false : true}
                 >
                   Comprar Ahora
                 </button>
                 <div className="flex flex-row justify-between items-center gap-2 w-auto">
                   <button
-                    className="bg-black w-auto text-white py-2 px-2   rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
+                    className="bg-header w-auto text-white py-2 px-2   rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
                     onClick={handleWishList}
                   >
                     <MdOutlineFavorite className="text-lg" />
                   </button>
                   <button
-                    className="bg-black w-auto text-white py-2 px-2  rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
+                    className="bg-header w-auto text-white py-2 px-2  rounded-md hover:bg-yellow hover:text-white text-sm transition-colors duration-300"
                     onClick={handleWishList}
                   >
                     <FaExchangeAlt className="text-lg" />
                   </button>
                 </div>
               </div>
-              <div className="flex items-center my-3 justify-between xsm:py-2 sm:py-6">
+              <div className="flex items-center justify-between xsm:py-2 sm:py-6">
                 <div className="flex flex-col">
                   <p className="mr-3 font-bold">INFORMACIÓN GENERAL</p>
                   <p>{detailProduct.descripcion}</p>

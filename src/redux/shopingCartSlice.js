@@ -4,6 +4,16 @@ let getStorage = JSON.parse(localStorage.getItem("cart"));
 
 const initialState = {
   loading: false,
+  productosNoDisponibles:
+    getStorage?.productosNoDisponibles &&
+    getStorage.productosNoDisponibles?.length > 0
+      ? getStorage.productosNoDisponibles
+      : [],
+  productosDisponibles:
+    getStorage?.productosDisponibles &&
+    getStorage.productosDisponibles?.length > 0
+      ? getStorage.productosDisponibles
+      : [],
   productos:
     getStorage?.productos && getStorage.productos?.length > 0
       ? getStorage.productos
@@ -44,6 +54,15 @@ const cartSlice = createSlice({
     setOrder: (state, action) => {
       state.order = action.payload;
     },
+    setProducts: (state, action) => {
+      state.productosDisponibles = action.payload?.productosDisponibles;
+      state.productosNoDisponibles = action.payload?.productosNoDisponibles;
+      if (action.payload?.productosDisponibles?.length) {
+        state.totalSinDescuento = action.payload.productosDisponibles
+          ?.map((elem) => elem.cantidad * elem.precio)
+          .reduce((acc, elem) => (acc += elem));
+      }
+    },
     addItem: (state, action) => {
       let newItem = action.payload;
       let existingItem;
@@ -68,6 +87,7 @@ const cartSlice = createSlice({
       localStorage.setItem(
         "cart",
         JSON.stringify({
+          /* productosNoDisponibles: state.productosNoDisponibles, */
           productos: state.productos,
           totalSinDescuento: state.totalSinDescuento,
           totalConDescuento: 0,
@@ -94,6 +114,7 @@ const cartSlice = createSlice({
         localStorage.setItem(
           "cart",
           JSON.stringify({
+            /* productosNoDisponibles: state.productosNoDisponibles, */
             productos: state.productos,
             totalSinDescuento: state.totalSinDescuento,
             totalConDescuento: 0,
@@ -122,6 +143,7 @@ const cartSlice = createSlice({
         localStorage.setItem(
           "cart",
           JSON.stringify({
+            /* productosNoDisponibles: state.productosNoDisponibles, */
             productos: state.productos,
             totalSinDescuento: state.totalSinDescuento,
             totalConDescuento: 0,
@@ -153,6 +175,8 @@ const cartSlice = createSlice({
     clearCart: (state, action) => {
       localStorage.removeItem("cart");
       state.loading = false;
+      state.productosNoDisponibles = [];
+      state.productosDisponibles = [];
       state.productos = [];
       state.totalConDescuento = 0;
       state.totalSinDescuento = 0;
@@ -171,6 +195,7 @@ const cartSlice = createSlice({
 
 export const {
   setLoading,
+  setProducts,
   setCupon,
   setErrorCupon,
   setSuccessCupon,

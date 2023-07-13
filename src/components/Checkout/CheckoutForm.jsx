@@ -13,7 +13,7 @@ import {
 } from "../../redux/shopingCartSlice";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 
-function CheckoutForm({ productsData = [] }) {
+function CheckoutForm() {
   const modalRef = useRef(null);
   const toggleModal = (e) => {
     modalRef?.current?.classList?.toggle("modal-open");
@@ -21,8 +21,14 @@ function CheckoutForm({ productsData = [] }) {
   };
   const dispatch = useDispatch();
   let getUserData;
-  const { loading, productos, totalSinDescuento, totalConDescuento, order } =
-    useSelector((state) => state.cart);
+  const {
+    loading,
+    productos,
+    totalSinDescuento,
+    totalConDescuento,
+    order,
+    productosDisponibles,
+  } = useSelector((state) => state.cart);
   const { products } = useSelector((state) => state.products);
   const [productsInCart, setProductsInCart] = useState([]);
   const [form, setForm] = useState({
@@ -96,11 +102,13 @@ function CheckoutForm({ productsData = [] }) {
   }, [getUserData]);
 
   useEffect(() => {
-    if (!productsData?.length && productos?.length && products?.length) {
+    if (productosDisponibles?.length && products?.length) {
       let foundProduct = [];
-      for (let i = 0; i < productos?.length; i++) {
+      for (let i = 0; i < productosDisponibles?.length; i++) {
         foundProduct.push(
-          products?.find((elem) => elem._id === productos[i].producto)
+          products?.find(
+            (elem) => elem._id === productosDisponibles[i].producto
+          )
         );
       }
       foundProduct = foundProduct?.sort((a, b) =>
@@ -109,14 +117,10 @@ function CheckoutForm({ productsData = [] }) {
       if (foundProduct?.length) {
         setProductsInCart(foundProduct);
       }
-    } else if (productsData?.length) {
-      setProductsInCart(
-        productsData?.sort((a, b) => a.descripcion.localeCompare(b.descripcion))
-      );
-    } else if (!productos?.length && productsData?.length) {
+    } else if (!productosDisponibles?.length) {
       setProductsInCart([]);
     }
-  }, [products, productos]);
+  }, [products, productosDisponibles]);
 
   useEffect(() => {
     // Verifica si el usuario ya ha sido redirigido.
@@ -361,7 +365,7 @@ function CheckoutForm({ productsData = [] }) {
       //post
       dispatch(
         postCartAction({
-          products: productos.map((item) => ({
+          products: productosDisponibles.map((item) => ({
             product: item.producto,
             quantity: item.cantidad,
           })),
@@ -418,7 +422,7 @@ function CheckoutForm({ productsData = [] }) {
       ? true
       : false;
   return (
-    <div className="flex flex-col  items-center justify-start min-h-[450px] sm:min-h-[650px] md:min-h-[450px] w-full border border-yellow">
+    <div className="flex flex-col  items-center justify-start min-h-[450px] sm:min-h-[650px] md:min-h-[450px] w-full border border-yellow mt-5 xl:mt-0">
       <dialog ref={modalRef} className="modal bg-grey/40">
         <div className="modal-box bg-white">
           <div className="w-full flex flex-col justify-center items-center text-header">
@@ -770,6 +774,9 @@ function CheckoutForm({ productsData = [] }) {
                         className="h-16 w-full object-contain aspect-auto"
                         src={elem?.imagen?.length ? elem.imagen : elem.imagenes}
                         alt={elem.descripcion}
+                        onError={(e) => {
+                          e.target.src = "/nodisponible.jpg";
+                        }}
                       />
                     </div>
                     <div className="w-2/3  flex flex-col sm:flex-row justify-center items-center px-2">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Filters from "../../utils/Filters";
@@ -9,6 +9,7 @@ import {
 } from "../../redux/productActions";
 import Loading from "../../utils/Loading";
 import { formatearPrecio } from "../../utils/formatPrice";
+import useViewport from "../../hooks/useViewport";
 
 const FilterProducts = () => {
   const distpatch = useDispatch();
@@ -20,8 +21,16 @@ const FilterProducts = () => {
   );
   let fechaActual = new Date();
   let mounth = String(fechaActual.getMonth() + 1).padStart(2, "0");
+  let { viewportSize, setViewportSize } = useViewport();
+  const [maxSlice, setMaxSlice] = useState(0);
 
-  const [maxSlice, setMaxSlice] = useState(6);
+  useEffect(() => {
+    if (viewportSize?.width && viewportSize.width > 1280) {
+      setMaxSlice(8);
+    } else {
+      setMaxSlice(6);
+    }
+  }, [viewportSize.width]);
 
   const handleOrder = (e) => {
     e.preventDefault();
@@ -33,13 +42,14 @@ const FilterProducts = () => {
   };
 
   const handleSlice = (e) => {
+    let itemsToSum = viewportSize?.width > 1280 ? 8 : 6;
     if (
       maxSlice === productsFilter?.length ||
-      maxSlice + 6 > productsFilter?.length
+      maxSlice + itemsToSum > productsFilter?.length
     ) {
       setMaxSlice(productsFilter?.length);
     } else {
-      setMaxSlice(maxSlice + 6);
+      setMaxSlice(maxSlice + itemsToSum);
     }
   };
 
@@ -48,7 +58,7 @@ const FilterProducts = () => {
     distpatch(clearFiltersAction());
   };
   return (
-    <section className="w-full h-auto min-h-[450px] sm:min-h-[650px] md:min-h-[450px] flex flex-col justify-center items-center max-h-max bg-grey mt-12 sm:mt-0 ">
+    <section className="w-full h-auto min-h-[450px] sm:min-h-[650px] md:min-h-[450px] flex flex-col justify-center items-center max-h-max bg-grey mt-12 sm:mt-5 2xl:mt-6 lg:mt-0 pb-2">
       <div
         className={`flex flex-row justify-center  gap-2 w-full ${
           productsFilter?.length === 0
@@ -56,7 +66,7 @@ const FilterProducts = () => {
             : "h-auto items-start"
         }`}
       >
-        <aside className="w-72 pt-7 pl-2 hidden lg:block">
+        <aside className="w-72 h-auto pl-2 hidden lg:block">
           {productsFilter?.length > 0 && <Filters />}
         </aside>
         <aside className="flex flex-col justify-center items-center w-full md:max-w-5xl lg:max-w-7xl bg-grey">
@@ -208,6 +218,9 @@ const FilterProducts = () => {
                             }
                             alt={item.descripcion}
                             className="h-44 w-auto max-w-44 aspect-auto object-contain"
+                            onError={(e) => {
+                              e.target.src = "/nodisponible.jpg";
+                            }}
                           />
                         ) : null}
                       </div>

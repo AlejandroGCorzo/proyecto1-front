@@ -22,10 +22,15 @@ import {
 } from "../../redux/productSlice";
 import SearchItems from "../../utils/SearchItems";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
+import useClickOutside from "../../hooks/useClickOutside";
+import useViewport from "../../hooks/useViewport";
+import { BsList } from "react-icons/bs";
 
 const Header = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const modalRef = useRef(null);
+  const { viewportSize } = useViewport();
   const dropdownUserRef = useRef(null);
   const { isLoggedIn, userRole } = useSelector((state) => state.users);
   const { products, loading, errorSearch } = useSelector(
@@ -40,6 +45,7 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState("");
   const [showItems, setShowItems] = useState(false);
   const debouncedSearchValue = useDebounce(searchValue);
+  const refSearch = useClickOutside(() => setShowItems(false));
 
   useEffect(() => {
     const searchProducts = () => {
@@ -66,16 +72,18 @@ const Header = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const toggleShoppingCart = () => {
-    if (
-      location.pathname !== "/checkout" &&
-      location.pathname !== "/checkout/success" &&
-      location.pathname !== "/checkout/failure" &&
-      location.pathname !== "/checkout/form"
-    ) {
-      setIsOpen(!isOpen);
-    }
+  const toggleModal = (e) => {
+    modalRef?.current?.classList?.toggle("modal-open");
+    document.activeElement.blur();
   };
+
+  const conditionShoppingCart =
+    location.pathname !== "/checkout" &&
+    location.pathname !== "/checkout/success" &&
+    location.pathname !== "/checkout/failure" &&
+    location.pathname !== "/checkout/form"
+      ? true
+      : false;
 
   const toggleSearchBar = () => {
     setIsSearchOpen(!isSearchOpen);
@@ -96,27 +104,6 @@ const Header = () => {
 
   return (
     <>
-      {isOpen && (
-        <ShoppingCartPreview
-          isOpen={isOpen}
-          toggleShoppingCart={toggleShoppingCart}
-        />
-      )}
-      {isSearchOpen && (
-        <SearchBar
-          isSearchOpen={isSearchOpen}
-          toggleSearchBar={toggleSearchBar}
-          searchValue={searchValue}
-          setSearchValue={setSearchValue}
-          error={errorSearch}
-          setShowItems={setShowItems}
-          showItems={showItems}
-          setNavbar={setNavbar}
-          setIsSearchOpen={setIsSearchOpen}
-          debouncedSearchValue={debouncedSearchValue}
-        />
-      )}
-
       <header className="z-[999] w-full flex flex-col items-start justify-center fixed top-0 h-auto">
         <div className="flex flex-row w-full bg-header justify-center items-center">
           <div
@@ -146,20 +133,13 @@ const Header = () => {
                   Sucursales
                 </button>
                 <div className="w-auto flex justify-center items-center lg:hidden pr-4 ">
-                  <div className="lg:hidden indicator ">
-                    {productos?.length > 0 && (
-                      <span className="indicator-item badge badge-warning -left-1">
-                        {productos?.length}
-                      </span>
-                    )}
-                    <button
-                      className=" lg:hidden flex pr-2"
-                      onClick={toggleShoppingCart}
-                    >
-                      <FiShoppingCart color="white" fontSize={26} />
-                    </button>
-                  </div>
-                  <Link to={"/wishlist"} className="px-3 pt-1">
+                  {viewportSize.width < 1026 && conditionShoppingCart ? (
+                    <ShoppingCartPreview />
+                  ) : null}
+                  <Link
+                    to={"/wishlist"}
+                    className="px-3 pt-1 flex items-center"
+                  >
                     <div className="indicator">
                       {wishedProducts?.length > 0 && (
                         <span className="indicator-item badge badge-warning -left-1">
@@ -175,7 +155,60 @@ const Header = () => {
             </section>
             <nav className="h-full w-full  bg-header flex flex-col items-center justify-center">
               <div className=" w-full h-2/3 flex flex-row justify-between  items-center ">
-                <div
+                <div className="drawer lg:hidden w-1/2">
+                  <input
+                    id="my-drawer-3"
+                    type="checkbox"
+                    className="drawer-toggle"
+                  />
+                  <div className="drawer-content transition-all">
+                    <label
+                      htmlFor="my-drawer-3"
+                      className="drawer-button p-2 rounded-lg flex justify-between lg:justify-center items-center lg:max-w-max w-ful text-white font-normal whitespace-nowrap text-lg"
+                    >
+                      <BsList fontSize={44} fontWeight={700} />
+                    </label>
+                  </div>
+
+                  <div className="drawer-side z-[9999] ">
+                    <label
+                      htmlFor="my-drawer-3"
+                      className="drawer-overlay"
+                    ></label>
+                    <ul className="mt-[155px] w-2/3 sm:w-2/4 h-auto max-h-screen bg-header text-white p-0 overflow-y-auto ">
+                      <Link
+                        to={"/products/:filter"}
+                        id={"nuevo"}
+                        className="text-xl font-medium flex justify-center items-center my-2 w-full "
+                        onClick={(e) => {
+                          dispatch(orderProductsAction(e.target.id));
+                          setNavbar(false);
+                          document.getElementById(
+                            "my-drawer-3"
+                          ).checked = false;
+                        }}
+                      >
+                        NEW IN
+                      </Link>
+
+                      <Link
+                        to={"/products/:filter"}
+                        className="text-xl w-full font-medium flex justify-center items-center pb-4 "
+                        id={"descuento"}
+                        onClick={(e) => {
+                          dispatch(orderProductsAction(e.target.id));
+                          setNavbar(false);
+                          document.getElementById(
+                            "my-drawer-3"
+                          ).checked = false;
+                        }}
+                      >
+                        SALE
+                      </Link>
+                    </ul>
+                  </div>
+                </div>
+                {/* <div
                   className={`lg:hidden flex justify-center items-center w-auto px-2`}
                 >
                   <button
@@ -213,9 +246,12 @@ const Header = () => {
                     )}
                   </button>
                 </div>
-
+ */}
                 <div className="flex w-full flex-row bg-header justify-end items-center py-2 px-3">
-                  <div className="hidden lg:flex justify-between bg-nav w-[410px] md:w-[390px] 2xl:w-1/3 pr-2">
+                  <div
+                    ref={refSearch}
+                    className="hidden lg:flex justify-between items-center bg-nav w-[410px] md:w-full md:max-w-sm 2xl:max-w-md 3xl:max-w-lg pr-2"
+                  >
                     <input
                       autoComplete="off"
                       type="text"
@@ -246,6 +282,7 @@ const Header = () => {
                     )}
                     {showItems && (
                       <SearchItems
+                        showItems={showItems}
                         setShowItems={setShowItems}
                         error={errorSearch}
                         debouncedSearchValue={debouncedSearchValue}
@@ -254,17 +291,10 @@ const Header = () => {
                       />
                     )}
                   </div>
-                  <div className=" lg:flex hidden flex-row-reverse items-center w-[35%] pr-8 ">
-                    <div className="indicator">
-                      {productos.length > 0 && (
-                        <span className="indicator-item badge badge-warning -left-1">
-                          {productos.length}
-                        </span>
-                      )}
-                      <button onClick={toggleShoppingCart} className="px-5">
-                        <FiShoppingCart color="white" fontSize={22} />
-                      </button>
-                    </div>
+                  <div className=" lg:flex hidden flex-row-reverse items-center w-[37%] pr-8 ">
+                    {viewportSize.width >= 1026 && conditionShoppingCart ? (
+                      <ShoppingCartPreview />
+                    ) : null}
 
                     {/*  <UserDropdown
                       toggleDropdownUser={toggleDropdownUser}
@@ -283,14 +313,42 @@ const Header = () => {
                   </div>
                 </div>
 
-                <div
-                  className={`lg:hidden flex justify-center w-auto px-2 ${
-                    isSearchOpen ? "hidden" : "flex"
-                  }`}
-                >
-                  <button onClick={toggleSearchBar}>
+                <div className={`lg:hidden flex justify-center w-auto px-2 `}>
+                  <button
+                    onClick={toggleModal}
+                    className="focus:outline-none focus-visible:outline-none"
+                  >
                     <IoIosSearch color="white" fontSize={32} />
                   </button>
+                  <dialog
+                    ref={modalRef}
+                    id="my_modal_2"
+                    className="modal transition-all justify-center items-start w-full bg-header/40"
+                  >
+                    <form
+                      method="dialog"
+                      className=" modal-box mt-20 p-0 h-max w-2/3 rounded-none max-h-max max-w-full overflow-visible"
+                    >
+                      <SearchBar
+                        isSearchOpen={isSearchOpen}
+                        toggleSearchBar={toggleSearchBar}
+                        searchValue={searchValue}
+                        setSearchValue={setSearchValue}
+                        error={errorSearch}
+                        setShowItems={setShowItems}
+                        showItems={showItems}
+                        setNavbar={setNavbar}
+                        setIsSearchOpen={setIsSearchOpen}
+                        debouncedSearchValue={debouncedSearchValue}
+                        toggleModal={toggleModal}
+                      />
+                    </form>
+                    <button
+                      className="modal-backdrop w-screen"
+                      onClick={toggleModal}
+                      type="button"
+                    ></button>
+                  </dialog>
                 </div>
               </div>
             </nav>
@@ -300,7 +358,7 @@ const Header = () => {
           className="bg-nav text-white text-center text-xs font-semibold uppercase flex-col w-full h-10 justify-center lg:justify-between items-center py-2 lg:py-3 lg:px-20 hidden lg:flex "
           style={{ fontSize: "16px" }}
         >
-          <div className="hidden lg:flex flex-row justify-end items-center w-72 gap-6">
+          <div className="hidden lg:flex flex-row justify-end items-center w-1/6 gap-6">
             <Link
               to={"products/:filter"}
               className="transition-all ease-in-out uppercase border-b border-b-transparent  hover:border-b-yellow hover:text-yellow focus:text-yellow flex items-center "
@@ -359,7 +417,7 @@ const Header = () => {
             toggleDropdown={toggleDropdown}
           />
         )}
-        {navbar && (
+        {/* {navbar && (
           <div className=" relative top-0 right-0  h-screen w-full bg-nav bg-opacity-20 flex items-start justify-start">
             <div className="bg-header text-white max-h-[430px] w-1/2 sm:w-1/3 p-4 ease-in-out transform transition-transform duration-300 delay-150 overflow-y-scroll">
               <div className=" text-xl font-medium flex justify-center items-center mb-2">
@@ -469,8 +527,8 @@ const Header = () => {
                 }}
               >
                 <span>SALE</span>
-              </Link>
-              {/* 
+              </Link> */}
+        {/* 
               <div className="text-xl font-medium flex justify-center items-center ">
                 {!isLoggedIn ? (
                   <Link
@@ -516,9 +574,9 @@ const Header = () => {
                   </div>
                 )}
               </div> */}
-            </div>
+        {/*   </div>
           </div>
-        )}
+        )} */}
       </header>
     </>
   );

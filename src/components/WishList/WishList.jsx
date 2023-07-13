@@ -21,6 +21,7 @@ const WishList = () => {
   const modalWishlistRef = useRef(null);
   const { wishedProducts, loading } = useSelector((state) => state.wishlist);
   const { products } = useSelector((state) => state.products);
+  const { productos } = useSelector((state) => state.cart);
   const [error, setError] = useState(false);
   const [onDelete, setOnDelete] = useState(null);
   const [itemToDelete, setItemToDelete] = useState({ nombre: "", id: "" });
@@ -71,24 +72,27 @@ const WishList = () => {
     }
 
     const itemToAdd = wishedProducts.find((elem) => elem.id === e.target.id);
+    const itemInCart = productos?.find((elem) => elem.producto === e.target.id);
 
-    let productPrice = products?.find((elem) => elem._id === itemToAdd?.id);
+    if (!itemInCart) {
+      let productPrice = products?.find((elem) => elem._id === itemToAdd?.id);
 
-    if (productPrice.descuento > 0) {
-      // Aplicar el descuento al precio total
-      const descuento = productPrice.precio * (productPrice.descuento / 100);
-      productPrice = productPrice.precio - descuento;
-    } else {
-      productPrice = productPrice.precio;
+      if (productPrice.descuento > 0) {
+        // Aplicar el descuento al precio total
+        const descuento = productPrice.precio * (productPrice.descuento / 100);
+        productPrice = productPrice.precio - descuento;
+      } else {
+        productPrice = productPrice.precio;
+      }
+
+      await dispatch(
+        addToCartAction({
+          producto: itemToAdd.id,
+          cantidad: 1,
+          precio: productPrice,
+        })
+      );
     }
-
-    await dispatch(
-      addToCartAction({
-        producto: itemToAdd.id,
-        cantidad: 1,
-        precio: productPrice,
-      })
-    );
     dispatch(removeProductFromWishlist({ id: itemToAdd.id }));
     navigate("/checkout/form");
   };
@@ -106,7 +110,7 @@ const WishList = () => {
   };
 
   return (
-    <div className="w-full h-auto flex flex-col justify-start items-start sm:justify-center sm:items-center  max-h-max  min-h-[450px] sm:min-h-[650px] md:min-h-[450px] bg-fontGrey mt-10 sm:mt-0">
+    <div className="w-full h-auto flex flex-col justify-start items-start md:justify-center md:items-center  max-h-max  min-h-[450px] sm:min-h-[650px] md:min-h-[450px] bg-fontGrey mt-10 md:mt-0">
       <dialog ref={modalWishlistRef} className="modal bg-grey/40">
         <div className="modal-box bg-white">
           <button
@@ -131,7 +135,7 @@ const WishList = () => {
         </div>
       </dialog>
 
-      <ul className=" bg-grey w-full flex flex-col justify-start items-center">
+      <ul className=" bg-grey w-full flex flex-col justify-start items-center mt-10 ">
         <li className="w-full text-header font-medium text-xl flex justify-center items-center h-16 uppercase  bg-grey/80">
           Tu lista de deseados{" "}
           <span className="pl-2 flex justify-center items-center">
@@ -139,7 +143,7 @@ const WishList = () => {
           </span>
         </li>
         {productsInWishlist?.length ? (
-          <div className="w-full xl:w-[80%] flex flex-col justify-start items-center min-h-[355px] overflow-y-auto  contentScroll">
+          <div className="w-full xl:w-[80%] flex flex-col justify-start items-center min-h-[355px] overflow-y-auto contentScroll">
             <div className="w-full justify-end items-center flex pb-4">
               <button
                 className=" text-yellow  py-1  px-4 font-medium rounded bg-header hover:bg-yellow/80 hover:text-header border border-header w-auto transition-all  whitespace-nowrap"
@@ -151,7 +155,7 @@ const WishList = () => {
             {productsInWishlist.map((elem) => (
               <li
                 key={elem._id + "wishlist"}
-                className=" flex flex-col md:flex-row justify-center xl:justify-between items-center py-3 w-full bg-white"
+                className=" flex flex-col md:flex-row justify-center xl:justify-between items-center p-3 w-full bg-white"
               >
                 <div className=" w-full flex flex-row justify-center  items-center h-full gap-4">
                   <div className="flex  justify-center items-center w-1/3 sm:w-32 h-32 ">
@@ -159,6 +163,9 @@ const WishList = () => {
                       className="w-full h-full object-contain aspect-auto "
                       src={elem.imagen?.length ? elem.imagen : elem.imagenes}
                       alt={elem.modelo}
+                      onError={(e) => {
+                        e.target.src = "/nodisponible.jpg";
+                      }}
                     />
                   </div>
                   <div className="flex items-center justify-between w-[55%] sm:w-[80%] flex-col sm:flex-row">
@@ -199,13 +206,15 @@ const WishList = () => {
                       >
                         Eliminar
                       </button>
-                      <button
-                        className=" text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 border border-header w-full md:w-auto transition-all  whitespace-nowrap"
-                        onClick={handleWishlistAddToCart}
-                        id={elem._id}
-                      >
-                        Comprar Ahora
-                      </button>
+                      {elem.stock > 0 && (
+                        <button
+                          className=" text-header uppercase py-1 sm:py-2 px-4 font-medium rounded-full bg-yellow hover:bg-yellow/80 border border-header w-full md:w-auto transition-all  whitespace-nowrap"
+                          onClick={handleWishlistAddToCart}
+                          id={elem._id}
+                        >
+                          Comprar Ahora
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
