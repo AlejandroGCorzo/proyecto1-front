@@ -51,9 +51,7 @@ const cartSlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
-    setOrder: (state, action) => {
-      state.order = action.payload;
-    },
+
     setProducts: (state, action) => {
       state.productosDisponibles = action.payload?.productosDisponibles;
       state.productosNoDisponibles = action.payload?.productosNoDisponibles;
@@ -187,9 +185,6 @@ const cartSlice = createSlice({
       state.errorCupon = "";
       state.successCupon = "";
     },
-    clearOrder: (state, action) => {
-      state.order = initialState.order;
-    },
   },
 });
 
@@ -202,8 +197,6 @@ export const {
   setErrorCart,
   setSuccessCart,
   setUserHaveCart,
-  setOrder,
-  clearOrder,
   addItem,
   removeItem,
   updateQuantity,

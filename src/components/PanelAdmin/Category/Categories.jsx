@@ -84,7 +84,7 @@ const Categories = () => {
       <div className="w-full max-w-[350px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl h-auto flex justify-between gap-1 mb-2">
         <Link
           to="/admin/categories/form"
-          className="btn text-white hover:bg-grey hover:text-header transition-all ease-in-out w-1/3 md:w-auto"
+          className="btn bg-header text-white hover:bg-grey hover:text-header transition-all ease-in-out w-1/3 md:w-auto"
         >
           Crear categoría
         </Link>

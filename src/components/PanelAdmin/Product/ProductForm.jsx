@@ -59,112 +59,83 @@ function validateSize(input, form = null) {
 
   return errorsSize;
 }
-function validateProduct(input, products) {
-  let errorsProduct = {};
-  if (
-    /*  input.tipo === "Elige una categoría" &&
-    !input.marca && */
-    /* !input.colores &&
-    !input.talle &&
-    !input.modelo && */
-    !input.descripcion &&
-    !input.precio &&
-    !input.stock &&
-    !input.qxbulto &&
-    !input.codigo /*  &&
-   !input.genero &&
-    !input.proveedor &&
-    !input.disciplina */
-  ) {
-    /*    errorsProduct.tipo = "Seleccione una categoría.";
-    errorsProduct.marca = "Seleccione una subcategoría."; */
-    /*     errorsProduct.descripcion = "El campo Descripción no puede estar vacío.";
-    errorsProduct.colores = "Añadir al menos un color.";
-    errorsProduct.talle = "Añadir al menos un Talle y una Cantidad.";
-    errorsProduct.modelo = "El campo Modelo no puede estar vacío."; */
-    errorsProduct.precio = "El campo Precio no puede estar vacío.";
-    errorsProduct.codigo = "El campo Código no puede estar vacío.";
-    errorsProduct.descripcion = "El campo Código no puede estar vacío.";
-    errorsProduct.qxbulto = "El campo Código no puede estar vacío.";
-    errorsProduct.stock = "El campo Código no puede estar vacío.";
-    /*     errorsProduct.genero = "El campo Género no puede estar vacío.";
-    errorsProduct.proveedor = "El campo Proveedor no puede estar vacío.";
-    errorsProduct.disciplina = "El campo Disciplina no puede estar vacío."; */
-  }
 
-  /*   if (!input.tipo || input.tipo === "Elige un tipo de producto") {
-    errorsProduct.tipo = "Seleccione un tipo de producto.";
-  }*/
-  /*   if (!input.modelo) {
-    errorsProduct.modelo = "El campo Modelo no puede estar vacío.";
-  }*/
-  /* 
-  if (!input.marca.length || input.marca === "Elige una marca") {
-    errorsProduct.marca = "Seleccione una marca.";
-  } */
+function validateDescripcion(input, products, id = null) {
+  let error = {};
   if (
+    input.descripcion &&
     products
       .map((item) => item.descripcion.toUpperCase())
       .includes(input.descripcion.toUpperCase())
   ) {
-    errorsProduct.descripcion =
-      "La Descripción ya existe, ingrese un valor diferente.";
+    error.descripcion = "La Descripción ya existe, ingrese un valor diferente.";
+  } else if (!input.descripcion && !id) {
+    error.descripcion = "El campo Descripción no puede estar vacío.";
+  } else {
+    error.descripcion = "";
   }
-  if (!input.descripcion) {
-    errorsProduct.descripcion = "El campo Descripción no puede estar vacío.";
-  }
-
+  return error;
+}
+function validatePrecio(input, id = null) {
+  let error = {};
   if (input.precio && !Number(input.precio)) {
-    errorsProduct.precio = "El campo Precio solo debe contener numeros.";
+    error.precio = "El campo Precio solo debe contener números.";
+  } else if (!input.precio && !id) {
+    error.precio = "El campo Precio no puede estar vacío.";
+  } else {
+    error.precio = "";
   }
-  if (!input.precio) {
-    errorsProduct.precio = "El campo Precio no puede estar vacío.";
-  }
+  return error;
+}
+function validateStock(input, id = null) {
+  let error = {};
   if (input.stock && !Number(input.stock)) {
-    errorsProduct.stock = "El campo Stock solo debe contener numeros.";
+    error.stock = "El campo Stock solo debe contener números.";
+  } else if (!input.stock && !id) {
+    error.stock = "El campo Stock no puede estar vacío.";
+  } else {
+    error.stock = "";
   }
-  if (!input.stock) {
-    errorsProduct.stock = "El campo Stock no puede estar vacío.";
-  }
-  if (input.qxbulto && !Number(input.qxbulto)) {
-    errorsProduct.qxbulto =
-      "El campo Cantidad por bulto solo debe contener numeros.";
-  }
-  if (!input.qxbulto) {
-    errorsProduct.qxbulto = "El campo Cantidad por bulto no puede estar vacío.";
-  }
+  return error;
+}
 
+function validateQxBulto(input, id = null) {
+  let error = {};
+  if (input.qxbulto && !Number(input.qxbulto)) {
+    error.qxbulto = "El campo Cantidad por bulto solo debe contener números.";
+  } else if (!input.qxbulto && !id) {
+    error.qxbulto = "El campo Cantidad por bulto no puede estar vacío.";
+  } else {
+    error.qxbulto = "";
+  }
+  return error;
+}
+
+function validateCodigo(input, products, id = null) {
+  let error = {};
   if (
+    input.codigo &&
     products
       .map((item) => item.codigo.toUpperCase())
       .includes(input.codigo.toUpperCase())
   ) {
-    errorsProduct.codigo = "El Código ya existe, ingrese un valor diferente.";
+    error.codigo = "El Código ya existe, ingrese un valor diferente.";
+  } else if (!input.codigo && !id) {
+    error.codigo = "El campo Código no puede estar vacío.";
+  } else {
+    error.codigo = "";
   }
-
-  if (!input.codigo) {
-    errorsProduct.codigo = "El campo Código no puede estar vacío.";
-  }
-  /*   if (!input.genero) {
-    errorsProduct.genero = "El campo Género no puede estar vacío.";
-  }
-  if (input.proveedor !== input.codigo) {
-    errorsProduct.proveedor = "El campo Proveedor debe ser igual al Código.";
-  }
-  if (!input.proveedor) {
-    errorsProduct.proveedor = "El campo Proveedor no puede estar vacío.";
-  }
-  if (!input.disciplina) {
-    errorsProduct.disciplina = "El campo Disciplina no puede estar vacío.";
-  } */
-
-  return errorsProduct;
+  return error;
 }
 
-function validateDiscount(input) {
+function validateDiscount(input, id = null) {
   let error = {};
-  if (input && input > 100) {
+  if (input.descuento && input.descuento > 100) {
     error.descuento = "El Descuento no puede ser mayor al 100%";
+  } else if (input.descuento && !Number(input.descuento)) {
+    error.descuento = "Debe ingresar solo números.";
+  } else {
+    error.descuento = "";
   }
   return error;
 }
@@ -180,12 +151,12 @@ const ProductForm = () => {
     (state) => state.products
   );
   const { categories } = useSelector((state) => state.categories);
-  const categoriesNameAndId = categories.map((item) => ({
+  const categoriesNameAndId = categories?.map((item) => ({
     nombre: item.nombre,
     id: item._id,
     subcategorias: item.subcategorias,
   }));
-  const productToUpdate = products.find((item) => item._id === params.id);
+  const productToUpdate = products?.find((item) => item._id === params.id);
   const token = localStorage.getItem("token");
   const [onDelete, setOnDelete] = useState(null);
   const [itemToDelete, setItemToDelete] = useState({ idProduct: "", id: "" });
@@ -219,18 +190,29 @@ const ProductForm = () => {
   });
 
   const [formUpdate, setFormUpdate] = useState({
-    /*  talle: productToUpdate?.talle?.length
-      ? productToUpdate.talle.map((item) => ({
-          talle: item.talle,
-          cantidad: Number(item.cantidad),
-        }))
-      : [],
-    colores: productToUpdate?.colores?.length ? productToUpdate.colores : [], */
-
     isActive: true,
     destacado: false,
+    descripcion: "",
+    precio: "",
+    codigo: "",
+    stock: "",
+    qxbulto: "",
+    descuento: "",
   });
   const [errorsForm, setErrorsForm] = useState({});
+
+  function eliminarPropiedadesSinValor(objeto) {
+    for (let propiedad in objeto) {
+      if (
+        objeto[propiedad] === null ||
+        objeto[propiedad] === undefined ||
+        objeto[propiedad] === ""
+      ) {
+        delete objeto[propiedad];
+      }
+    }
+    return objeto;
+  }
 
   const toggleModal = (e) => {
     modalProductRef.current.classList.toggle("modal-open");
@@ -253,12 +235,86 @@ const ProductForm = () => {
       } else */ if (name === "image") {
         let validatedImage = validateImage(files[0]);
         setErrorImage(validatedImage);
-      } else {
-        let errorFormValidation = validateProduct(
-          { ...form, [name]: value },
+      }
+      if (name === "descripcion") {
+        let errorFormValidation = validateDescripcion(
+          { [name]: value },
           products
         );
         setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+      }
+      if (name === "codigo") {
+        let errorFormValidation = validateCodigo({ [name]: value }, products);
+        setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+      }
+      if (name === "qxbulto") {
+        let errorFormValidation = validateQxBulto({ [name]: value });
+        setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+      }
+      if (name === "precio") {
+        let errorFormValidation = validatePrecio({ [name]: value });
+        setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+      }
+      if (name === "descuento") {
+        let errorFormValidation = validateDiscount({ [name]: value });
+        setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+      }
+      if (name === "stock") {
+        let errorFormValidation = validateStock({ [name]: value });
+        setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+      }
+    } else {
+      if (name === "image") {
+        if (productToUpdate?.imagenes?.length) {
+          setItemToDelete({
+            nombre: "imagen",
+            idProduct: productToUpdate._id,
+            id: productToUpdate.imagenes,
+          });
+          setSection("inputProducto");
+          toggleModal();
+        }
+        if (name === "stock") {
+          let errorFormValidation = validateStock({ [name]: value }, params.id);
+          setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+        }
+        if (name === "precio") {
+          let errorFormValidation = validatePrecio(
+            { [name]: value },
+            params.id
+          );
+          setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+        }
+        if (name === "descripcion") {
+          let errorFormValidation = validateDescripcion(
+            { [name]: value },
+            products,
+            params.id
+          );
+          setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+        }
+        if (name === "codigo") {
+          let errorFormValidation = validateCodigo(
+            { [name]: value },
+            products,
+            params.id
+          );
+          setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+        }
+        if (name === "qxbulto") {
+          let errorFormValidation = validateQxBulto(
+            { [name]: value },
+            params.id
+          );
+          setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+        }
+        if (name === "descuento") {
+          let errorFormValidation = validateDiscount(
+            { [name]: value },
+            params.id
+          );
+          setErrorsForm((prev) => ({ ...prev, ...errorFormValidation }));
+        }
       }
     }
     /*  if (name === "talle" || name === "cantidad") {
@@ -269,20 +325,6 @@ const ProductForm = () => {
       let errorColorValidation = validateColor(value, formUpdate);
       setErrorColor(errorColorValidation);
     } */
-    if (name === "image") {
-      if (productToUpdate?.imagenes?.length) {
-        setItemToDelete({
-          nombre: "imagen",
-          idProduct: productToUpdate._id,
-          id: productToUpdate.imagenes,
-        });
-        setSection("inputProducto");
-        toggleModal();
-      } else {
-        let errorFormValidation = validateImage(files[0]);
-        setErrorImage(errorFormValidation);
-      }
-    }
 
     return;
   };
@@ -324,7 +366,16 @@ const ProductForm = () => {
       descuento: "",
     });
     if (params?.id?.length) {
-      setFormUpdate({ isActive: true, destacado: false });
+      setFormUpdate({
+        isActive: true,
+        destacado: false,
+        descripcion: "",
+        precio: "",
+        codigo: "",
+        stock: "",
+        qxbulto: "",
+        descuento: "",
+      });
     }
     /*  setErrorColor({});
     setErrorSize({}); */
@@ -333,6 +384,7 @@ const ProductForm = () => {
     dispatch(setErrorProduct(""));
     dispatch(setSuccessProduct(""));
   };
+
   ///si imagenes es un array
   /*   const handleImageChange = async (e) => {
     const { files, name } = e.target;
@@ -550,52 +602,92 @@ const ProductForm = () => {
     if (params?.id?.length) {
       if (name === "destacado") {
         setFormUpdate((prev) => ({ ...prev, [name]: !formUpdate.destacado }));
-      } else if (name === "isActive") {
+      }
+      if (name === "isActive") {
         setFormUpdate((prev) => ({ ...prev, [name]: !formUpdate.isActive }));
-      } else if (name === "descuento" && value) {
-        setFormUpdate((prev) => ({ ...prev, [name]: Number(value) }));
-        if (value > 100) {
-          let errorObj = validateDiscount(value);
-          setErrorsForm((prev) => ({ ...prev, ...errorObj }));
-        } else {
-          setErrorsForm((prev) => ({ ...prev, descuento: "" }));
-        }
-      } else if (name === "stock" && value) {
-        setFormUpdate((prev) => ({ ...prev, [name]: Number(value) }));
-      } else if (name === "qxbulto" && value) {
-        setFormUpdate((prev) => ({ ...prev, [name]: Number(value) }));
-      } else {
+      }
+      if (name === "descuento") {
         setFormUpdate((prev) => ({ ...prev, [name]: value }));
+
+        let errorObj = validateDiscount({ [name]: value });
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+      }
+      if (name === "stock") {
+        setFormUpdate((prev) => ({ ...prev, [name]: value }));
+        let errorObj = validateStock({ [name]: value }, params?.id);
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+      }
+      if (name === "qxbulto") {
+        setFormUpdate((prev) => ({ ...prev, [name]: value }));
+        let errorObj = validateQxBulto({ [name]: value }, params?.id);
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+      }
+      if (name === "precio") {
+        setFormUpdate((prev) => ({ ...prev, [name]: value }));
+        let errorObj = validatePrecio({ [name]: value }, params?.id);
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+      }
+      if (name === "descripcion") {
+        setFormUpdate((prev) => ({ ...prev, [name]: value }));
+        let errorObj = validateDescripcion(
+          { [name]: value },
+          products,
+          params?.id
+        );
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+      }
+      if (name === "codigo") {
+        setFormUpdate((prev) => ({ ...prev, [name]: value }));
+        let errorObj = validateCodigo({ [name]: value }, products, params?.id);
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
       }
     } else {
       if (name === "destacado") {
         setForm((prev) => ({ ...prev, [name]: !form.destacado }));
-      } else if (name === "isActive") {
+      }
+      if (name === "isActive") {
         setForm((prev) => ({ ...prev, [name]: !form.isActive }));
-      } else if (name === "descuento" && value) {
-        setForm((prev) => ({ ...prev, [name]: Number(value) }));
-        if (value > 100) {
-          let errorObj = validateDiscount(value);
-          setErrorsForm((prev) => ({ ...prev, ...errorObj }));
-        } else {
-          setErrorsForm((prev) => ({ ...prev, descuento: "" }));
-        }
-      } else if (name === "stock" && value) {
-        setForm((prev) => ({ ...prev, [name]: Number(value) }));
-      } else if (name === "qxbulto" && value) {
-        setForm((prev) => ({ ...prev, [name]: Number(value) }));
-      } else {
+      }
+      if (name === "descuento") {
+        setForm((prev) => ({ ...prev, [name]: value }));
+
+        let errorObj = validateDiscount({ [name]: value });
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+      }
+      if (name === "stock") {
+        setForm((prev) => ({ ...prev, [name]: value }));
+        let errorObj = validateStock({ [name]: value });
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+      }
+      if (name === "qxbulto") {
+        setForm((prev) => ({ ...prev, [name]: value }));
+        let errorObj = validateQxBulto({ [name]: value });
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+      }
+      if (name === "descripcion") {
         setForm((prev) => ({
           ...prev,
           [name]: value,
         }));
-      }
-
-      let errorObj = validateProduct({ ...form, [name]: value }, products);
-      if (errorObj?.descuento?.length) {
+        let errorObj = validateDescripcion({ [name]: value }, products);
         setErrorsForm((prev) => ({ ...prev, ...errorObj }));
       }
-      setErrorsForm(errorObj);
+      if (name === "codigo") {
+        setForm((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+        let errorObj = validateCodigo({ [name]: value }, products);
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+      }
+      if (name === "precio") {
+        setForm((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+        let errorObj = validatePrecio({ [name]: value });
+        setErrorsForm((prev) => ({ ...prev, ...errorObj }));
+      }
     }
   };
 
@@ -604,14 +696,33 @@ const ProductForm = () => {
     let formToSubmit = {};
 
     if (productToUpdate?._id?.length) {
+      formToSubmit = formUpdate;
       if (formUpdate?.precio?.length) {
         formToSubmit = {
           ...formUpdate,
           precio: Number(formUpdate.precio),
         };
-      } else {
-        formToSubmit = formUpdate;
       }
+
+      if (formToSubmit?.descuento?.length) {
+        formToSubmit = {
+          ...formToSubmit,
+          descuento: Number(formUpdate.descuento),
+        };
+      }
+      if (formToSubmit?.qxbulto?.length) {
+        formToSubmit = {
+          ...formToSubmit,
+          qxbulto: Number(formUpdate.cantidad),
+        };
+      }
+      if (formToSubmit?.stock?.length) {
+        formToSubmit = {
+          ...formToSubmit,
+          stock: Number(formUpdate.stock),
+        };
+      }
+      formToSubmit = eliminarPropiedadesSinValor(formToSubmit);
     } else {
       formToSubmit = {
         ...form,
@@ -650,6 +761,7 @@ const ProductForm = () => {
       ? true
       : false;
  */
+
   let isFormDisabled =
     !Object.values(form).join("").length ||
     !image?.length ||
@@ -717,7 +829,7 @@ const ProductForm = () => {
                   name="color"
                   value={color}
                   onChange={handleColorChange}
-                  onFocus={validateOnBlur}
+                  onBlur={validateOnBlur}
                   placeholder="Color"
                 />
                 {errorColor?.color?.length > 0 && (
@@ -803,7 +915,7 @@ const ProductForm = () => {
                   name="talle"
                   value={size.talle}
                   onChange={handleSizeChange}
-                  onFocus={validateOnBlur}
+                  onBlur={validateOnBlur}
                   placeholder="Talle"
                 />
                 {errorSize?.talle?.length > 0 ? (
@@ -832,7 +944,7 @@ const ProductForm = () => {
                   name="cantidad"
                   value={size.cantidad}
                   onChange={handleSizeChange}
-                  onFocus={validateOnBlur}
+                  onBlur={validateOnBlur}
                   placeholder="Cantidad"
                 />
                 {errorSize?.cantidad?.length > 0 && (
@@ -906,7 +1018,7 @@ const ProductForm = () => {
                   className="file-input-xs sm:file-input bg-grey w-full text-white"
                   name="image"
                   onChange={handleImageChange}
-                  onFocus={validateOnBlur}
+                  onBlur={validateOnBlur}
                   placeholder="Imagen"
                   ref={fileInputRef}
                 />
@@ -967,7 +1079,7 @@ const ProductForm = () => {
                 placeholder="Tipo de producto"
                 name="tipo"
                 onChange={handleChangeForm}
-                onFocus={validateOnBlur}
+                onBlur={validateOnBlur}
                 defaultValue="Elige un tipo de producto"
               >
                 <option disabled>Elige un tipo de producto</option>
@@ -998,7 +1110,7 @@ const ProductForm = () => {
                   productToUpdate?._id?.length ? formUpdate.modelo : form.modelo
                 }
                 onChange={handleChangeForm}
-                onFocus={validateOnBlur}
+                onBlur={validateOnBlur}
               />
               {errorsForm?.modelo?.length > 0 && (
                 <small className="h-6 text-red-600 w-full flex self-start mb-1">
@@ -1058,7 +1170,7 @@ const ProductForm = () => {
                     : form.descripcion
                 }
                 onChange={handleChangeForm}
-                onFocus={validateOnBlur}
+                onBlur={validateOnBlur}
                 placeholder="Descripción"
               />
               {errorsForm?.descripcion?.length > 0 && (
@@ -1078,7 +1190,7 @@ const ProductForm = () => {
                   productToUpdate?._id?.length ? formUpdate.precio : form.precio
                 }
                 onChange={handleChangeForm}
-                onFocus={validateOnBlur}
+                onBlur={validateOnBlur}
                 placeholder="Precio"
               />
               {errorsForm?.precio?.length > 0 && (
@@ -1092,7 +1204,7 @@ const ProductForm = () => {
                 </label>
                 <input
                   autoComplete="off"
-                  type="number"
+                  type="text"
                   min={0}
                   className="input bg-white text-lg"
                   name="stock"
@@ -1110,13 +1222,13 @@ const ProductForm = () => {
                   </small>
                 )}
               </div>
-              <div className={`flex flex-col w-full `}>
+              {/* <div className={`flex flex-col w-full `}>
                 <label className="label pt-2 pb-0">
                   <span>Cantidad por bulto</span>
                 </label>
                 <input
                   autoComplete="off"
-                  type="number"
+                  type="text"
                   min={0}
                   className="input bg-white text-lg"
                   name="qxbulto"
@@ -1133,14 +1245,14 @@ const ProductForm = () => {
                     {errorsForm.qxbulto}
                   </small>
                 )}
-              </div>
+              </div> */}
               <div className={`flex flex-col w-full `}>
                 <label className="label pt-2 pb-0">
                   <span>Aplicar descuento</span>
                 </label>
                 <input
                   autoComplete="off"
-                  type="number"
+                  type="text"
                   min={0}
                   className="input bg-white text-lg"
                   name="descuento"
@@ -1200,7 +1312,7 @@ const ProductForm = () => {
                   productToUpdate?._id?.length ? formUpdate.codigo : form.codigo
                 }
                 onChange={handleChangeForm}
-                onFocus={validateOnBlur}
+                onBlur={validateOnBlur}
                 placeholder="Código"
               />
               {errorsForm?.codigo?.length > 0 && (
@@ -1220,7 +1332,7 @@ const ProductForm = () => {
                   productToUpdate?._id?.length ? formUpdate.genero : form.genero
                 }
                 onChange={handleChangeForm}
-                onFocus={validateOnBlur}
+                onBlur={validateOnBlur}
                 placeholder="Género"
               />
               {errorsForm?.genero?.length > 0 && (
@@ -1242,7 +1354,7 @@ const ProductForm = () => {
                     : form.proveedor
                 }
                 onChange={handleChangeForm}
-                onFocus={validateOnBlur}
+                onBlur={validateOnBlur}
                 placeholder="Proveedor"
               />
               {errorsForm?.proveedor?.length > 0 && (
@@ -1264,7 +1376,7 @@ const ProductForm = () => {
                     : form.disciplina
                 }
                 onChange={handleChangeForm}
-                onFocus={validateOnBlur}
+                onBlur={validateOnBlur}
                 placeholder="Disciplina"
               />
               {errorsForm?.disciplina?.length > 0 && (

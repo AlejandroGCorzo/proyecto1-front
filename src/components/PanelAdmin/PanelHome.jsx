@@ -8,13 +8,14 @@ import Discounts from "./Discount/Discounts";
 import Categories from "./Category/Categories";
 import Products from "./Product/Products";
 import CategoriesForm from "./Category/CategoriesForm";
+import DiscountsForm from "./Discount/DiscountsForm";
 
 const PanelHome = () => {
   return (
     <div className="w-full h-auto min-h-[450px] flex flex-row justify-start items-start lg:justify-center   max-h-max bg-grey mt-10 lg:mt-5">
-      <div className=" max-w-[340px] sm:max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl w-full xl:w-4/5 h-auto flex justify-between items-start  ">
+      <div className=" max-w-full sm:max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl w-full xl:w-4/5 h-auto flex justify-between items-start  ">
         <SideBar />
-        <aside className="flex w-full justify-center items-center p-4 ">
+        <aside className="flex w-full justify-center items-center px-4 ">
           <Routes>
             <Route path="/products" element={<Products />} />
             <Route path="/products/form" element={<ProductForm />} />
@@ -25,6 +26,8 @@ const PanelHome = () => {
             <Route path="/categories" element={<Categories />} />
             <Route path="/categories/form/:id" element={<CategoriesForm />} />
             <Route path="/categories/form" element={<CategoriesForm />} />
+            <Route path="/discounts/form" element={<DiscountsForm />} />
+            <Route path="/discounts/form/:id" element={<DiscountsForm />} />
           </Routes>
         </aside>
       </div>

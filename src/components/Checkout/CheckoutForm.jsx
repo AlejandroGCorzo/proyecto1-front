@@ -6,12 +6,9 @@ import { formatearPrecio } from "../../utils/formatPrice";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import { postCartAction } from "../../redux/shoppingCartActions";
 import Loading from "../../utils/Loading";
-import {
-  clearCart,
-  clearOrder,
-  setLoading,
-} from "../../redux/shopingCartSlice";
+import { clearCart, setLoading } from "../../redux/shopingCartSlice";
 import { BsFillCheckCircleFill } from "react-icons/bs";
+import { clearCurrentOrder } from "../../redux/ordersSlice";
 
 function CheckoutForm() {
   const modalRef = useRef(null);
@@ -135,7 +132,7 @@ function CheckoutForm() {
 
       const redirect = async () => {
         window.open(order.linkMP, "_blank");
-        await dispatch(setLoading(false));
+        dispatch(setLoading(false));
         toggleModal();
         // Guarda en localStorage que el usuario ya ha sido redirigido.
         localStorage.setItem("alreadyRedirected", "true");
@@ -394,7 +391,7 @@ function CheckoutForm() {
   };
 
   const handleBack = () => {
-    dispatch(clearOrder());
+    dispatch(clearCurrentOrder());
   };
 
   let disabled =
@@ -424,7 +421,7 @@ function CheckoutForm() {
   return (
     <div className="flex flex-col  items-center justify-start min-h-[450px] sm:min-h-[650px] md:min-h-[450px] w-full border border-yellow mt-5 xl:mt-0">
       <dialog ref={modalRef} className="modal bg-grey/40">
-        <div className="modal-box bg-white">
+        <div className="modal-box bg-white w-[650px] max-w-full">
           <div className="w-full flex flex-col justify-center items-center text-header">
             <div className="py-4 flex flex-col justify-center items-center">
               <BsFillCheckCircleFill fontSize={45} className="text-green-400" />
@@ -442,7 +439,7 @@ function CheckoutForm() {
                 <a
                   href={order.linkMP}
                   target="_blank"
-                  className="text-lg underline text-blue-500 font-semibold"
+                  className="text-lg underline text-blue-500 font-semibold py-2"
                 >
                   Ir a MercadoPago
                 </a>

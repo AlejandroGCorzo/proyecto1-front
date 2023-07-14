@@ -5,6 +5,7 @@ const initialState = {
   ordersPending: [],
   ordersAccepted: [],
   ordersCanceled: [],
+  currentOrder: "",
   error: null,
 };
 const orderSlice = createSlice({
@@ -23,6 +24,12 @@ const orderSlice = createSlice({
     setOrdersCanceled: (state, action) => {
       state.ordersCanceled = action.payload;
     },
+    setCurrentOrder: (state, action) => {
+      state.currentOrder = action.payload;
+    },
+    clearCurrentOrder: (state, action) => {
+      state.currentOrder = initialState.currentOrder;
+    },
     setError: (state, action) => {
       state.error = action.payload;
     },
@@ -33,6 +40,8 @@ export const {
   setOrdersAccepted,
   setOrdersCanceled,
   setOrdersPendings,
+  clearCurrentOrder,
+  setCurrentOrder,
   setError,
 } = orderSlice.actions;
 

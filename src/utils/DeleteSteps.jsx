@@ -13,6 +13,7 @@ import {
 } from "../redux/productActions";
 import { removeFromCartAction } from "../redux/shoppingCartActions";
 import { removeProductFromWishlist } from "../redux/wishListActions";
+import { deleteCuponesAction } from "../redux/discountsActions";
 
 export const ConfirmationComponent = ({
   onDelete,
@@ -265,6 +266,8 @@ export const DeleteComponent = ({
             idProduct: itemToDelete.idProduct,
           })
         );
+      } else if (section === "Cupones") {
+        dispatch(deleteCuponesAction(itemToDelete.id));
       }
       setItemToDelete({ nombre: "", id: "" });
     }

@@ -265,7 +265,8 @@ const CategoriesForm = () => {
                   {errorName.nombre}
                 </small>
               ) : (
-                form.nombre.length === 0 && (
+                form.nombre.length === 0 &&
+                !params?.id?.length && (
                   <small className="h-6 text-red-600 w-full flex self-start mb-1">
                     * Campo requerido
                   </small>
@@ -293,7 +294,8 @@ const CategoriesForm = () => {
                   {errorImage.image}
                 </small>
               ) : (
-                !image.length && (
+                !image.length &&
+                !params?.id?.length && (
                   <small className="h-6 text-red-600 w-full flex self-start mb-1">
                     * Campo requerido
                   </small>
@@ -310,7 +312,7 @@ const CategoriesForm = () => {
                     <img
                       src={img}
                       alt={`preview ${index}`}
-                      className="w-full h-full object-contain rounded-md  "
+                      className="w-full h-full max-h-48 object-contain rounded-md  "
                     />
                     <button
                       className="border rounded-full hover:bg-nav hover:text-grey bg-white text-header text-xl relative flex px-2 transition-all"
@@ -331,7 +333,7 @@ const CategoriesForm = () => {
                     <img
                       src={img}
                       alt={`edit ${index}`}
-                      className="w-full h-full object-contain rounded-md  "
+                      className="w-full h-full max-h-48 object-contain rounded-md  "
                     />
                     <button
                       className="border rounded-full hover:bg-nav hover:text-grey bg-white text-header text-xl relative flex px-2 transition-all"
